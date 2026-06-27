@@ -388,6 +388,25 @@ const faqSchema = [{
     </div>
   </section>
 
+  <!-- ── TESTIMONIALS ─────────────────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">In their words</span>
+        <h2>Don't take our word for it.</h2>
+      </div>
+      <div class="grid grid-3 tlist">
+        {SITE.testimonials.map((t) => (
+          <figure class="tcard">
+            <div class="tcard__q" aria-hidden="true">“</div>
+            <blockquote>{t.quote}</blockquote>
+            <figcaption><strong>{t.name}</strong><span>{t.role}</span></figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <!-- ── LEAD TOOLS ───────────────────────────────────────────────────── -->
   <section class="section section--alt">
     <div class="container">
@@ -593,6 +612,14 @@ const faqSchema = [{
   .cert2 :global(.ico) { color: var(--brand-600); }
 
   @media (max-width: 760px) { .nums { grid-template-columns: repeat(2, 1fr); } }
+
+  /* Testimonials */
+  .tcard { position: relative; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; }
+  .tcard__q { position: absolute; top: 6px; right: 22px; font-size: 4rem; line-height: 1; color: var(--brand-100); font-weight: 900; font-family: Georgia, serif; }
+  .tcard blockquote { margin: 0 0 18px; font-size: 1.02rem; color: var(--ink); line-height: 1.5; font-weight: 500; flex: 1; }
+  .tcard figcaption { display: flex; flex-direction: column; border-top: 1px solid var(--line); padding-top: 14px; }
+  .tcard figcaption strong { color: var(--ink); font-size: .98rem; }
+  .tcard figcaption span { color: var(--muted); font-size: .85rem; }
 
   /* Lead tools cards */
   .ltools { max-width: 900px; margin-inline: auto; }

@@ -12,6 +12,7 @@ const questions = [
   { id: "q6", q: "Do you know your exact receivables & retention today?", max: 0.4, fix: "AR/AP Tracker + Collections" },
   { id: "q7", q: "Is everything from quote to bill in ONE connected system?", max: 0.3, fix: "sotyn.ai — all modules, one system" },
 ];
+const total = questions.length + 1; // + turnover step
 ---
 <BaseLayout
   title="EPC Profit Leak Scorecard — find where your money goes in 2 minutes | sotyn.ai"
@@ -29,69 +30,96 @@ const questions = [
     </div>
   </section>
 
-  <section class="section" style="padding-top:10px">
-    <div class="container sc">
-      <!-- Quiz -->
-      <form class="sc__quiz" id="scForm">
-        <label class="sc__turn">Your annual turnover (₹ Cr)
-          <input type="number" id="sc_turn" value="25" min="1" />
-        </label>
+  <section class="section" style="padding-top:6px">
+    <div class="container sq">
+      <div class="sq__progress" id="sqProgress">
+        <div class="sq__track"><div class="sq__bar" id="sqBar"></div></div>
+        <span class="sq__count" id="sqCount">Step 1 of {total}</span>
+      </div>
+
+      <div class="sq__steps" id="sqSteps">
+        <!-- Step 0: turnover -->
+        <div class="sq__step is-active" data-step>
+          <span class="sq__qn">Let's start</span>
+          <h2>What's your annual turnover?</h2>
+          <div class="sq__turn-in">
+            <input type="number" id="sc_turn" value="25" min="1" inputmode="numeric" />
+            <span>₹ Cr</span>
+          </div>
+          <div class="sq__nav">
+            <span></span>
+            <button type="button" class="btn btn--primary" data-next>Start the scorecard →</button>
+          </div>
+        </div>
+
+        <!-- Question steps -->
         {questions.map((item, i) => (
-          <fieldset class="sc__q">
-            <legend>{i + 1}. {item.q}</legend>
-            <div class="sc__opts" data-q={item.id}>
-              <label><input type="radio" name={item.id} value="0" /> Yes</label>
-              <label><input type="radio" name={item.id} value="0.5" checked /> Sometimes</label>
-              <label><input type="radio" name={item.id} value="1" /> No</label>
+          <div class="sq__step" data-step data-qid={item.id}>
+            <span class="sq__qn">Question {i + 1} of {questions.length}</span>
+            <h2>{item.q}</h2>
+            <div class="sq__opts">
+              <button type="button" class="sq__opt" data-opt="0"><b>A</b> Yes, always</button>
+              <button type="button" class="sq__opt" data-opt="0.5"><b>B</b> Sometimes</button>
+              <button type="button" class="sq__opt" data-opt="1"><b>C</b> No / not really</button>
             </div>
-          </fieldset>
+            <div class="sq__nav">
+              <button type="button" class="sq__back" data-back>← Back</button>
+              <span class="sq__hint">Tap an answer to continue</span>
+            </div>
+          </div>
         ))}
-        <button type="submit" class="btn btn--primary btn--lg" style="width:100%">Get my leak score</button>
-      </form>
+      </div>
 
       <!-- Result -->
-      <aside class="sc__result" id="scResult" aria-live="polite">
-        <div class="sc__placeholder" id="scPlaceholder">
-          <div class="sc__ic"><Icon name="gauge" size={28} /></div>
-          <p>Answer the questions and hit <strong>Get my leak score</strong> — your result appears here.</p>
+      <div class="sq__card" id="scCard" hidden>
+        <span class="sc__lbl">Your Profit Leak Score</span>
+        <div class="sc__score"><strong id="scScore">—</strong><span>/100</span></div>
+        <div class="sc__level" id="scLevel">—</div>
+        <div class="sc__money">
+          <span>Estimated leaking every year</span>
+          <strong id="scMoney">—</strong>
         </div>
-        <div class="sc__card" id="scCard" hidden>
-          <span class="sc__lbl">Your Profit Leak Score</span>
-          <div class="sc__score"><strong id="scScore">—</strong><span>/100</span></div>
-          <div class="sc__level" id="scLevel">—</div>
-          <div class="sc__money">
-            <span>Estimated leaking every year</span>
-            <strong id="scMoney">—</strong>
-          </div>
-          <div class="sc__gaps" id="scGaps"></div>
-          <div class="sc__form">
-            <p class="sc__formlbl">Get your full breakdown + a free 1-on-1 leak audit:</p>
-            <RegisterForm source="scorecard" />
-          </div>
+        <div class="sc__gaps" id="scGaps"></div>
+        <div class="sc__form">
+          <p class="sc__formlbl">Get your full breakdown + a free 1-on-1 leak audit:</p>
+          <RegisterForm source="scorecard" />
         </div>
-      </aside>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .sc { display: grid; grid-template-columns: 1.1fr .9fr; gap: 32px; align-items: start; }
-  .sc__quiz { display: grid; gap: 16px; }
-  .sc__turn { display: grid; gap: 6px; font-weight: 700; color: var(--ink); font-size: .95rem; background: var(--brand-50); border: 1px solid var(--brand-100); border-radius: 12px; padding: 16px 18px; }
-  .sc__turn input { font-family: inherit; font-size: 1.1rem; padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 10px; width: 100%; }
-  .sc__q { border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin: 0; }
-  .sc__q legend { font-weight: 600; color: var(--ink); font-size: .98rem; padding: 0; }
-  .sc__opts { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-  .sc__opts label { display: inline-flex; align-items: center; gap: 7px; font-size: .92rem; font-weight: 600; color: var(--body); background: var(--bg-alt); border: 1.5px solid var(--line); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
-  .sc__opts input { accent-color: var(--brand-600); }
+  .sq { max-width: 720px; margin: 0 auto; }
+  .sq__progress { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .sq__track { flex: 1; height: 8px; background: var(--graphite-200); border-radius: 999px; overflow: hidden; }
+  .sq__bar { height: 100%; background: var(--brand-600); width: 12%; transition: width .35s ease; }
+  .sq__count { font-size: .82rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
 
-  .sc__result { position: sticky; top: 96px; }
-  .sc__placeholder { background: var(--bg-alt); border: 1px dashed var(--graphite-300); border-radius: var(--radius); padding: 40px 28px; text-align: center; color: var(--muted); }
-  .sc__placeholder .sc__ic { width: 60px; height: 60px; border-radius: 50%; background: #fff; color: var(--brand-600); display: grid; place-items: center; margin: 0 auto 14px; }
-  .sc__card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-lg); }
+  .sq__steps { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: clamp(28px, 5vw, 44px); }
+  .sq__step { display: none; }
+  .sq__step.is-active { display: block; animation: sqin .25s ease; }
+  @keyframes sqin { from { opacity: 0; transform: translateX(10px); } }
+  .sq__qn { font-size: .8rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--brand-600); }
+  .sq__step h2 { font-size: clamp(1.3rem, 3vw, 1.75rem); margin: 8px 0 22px; }
+  .sq__turn-in { display: flex; align-items: center; gap: 10px; }
+  .sq__turn-in input { font-size: 1.4rem; font-weight: 800; padding: 12px 16px; border: 1.5px solid var(--line); border-radius: 12px; width: 160px; color: var(--ink); }
+  .sq__turn-in input:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+  .sq__turn-in span { font-weight: 700; color: var(--muted); }
+  .sq__opts { display: grid; gap: 10px; }
+  .sq__opt { text-align: left; background: var(--bg-alt); border: 1.5px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 1.02rem; font-weight: 600; color: var(--ink); cursor: pointer; transition: .15s; display: flex; align-items: center; gap: 12px; }
+  .sq__opt:hover { border-color: var(--brand-500); background: var(--brand-50); transform: translateX(2px); }
+  .sq__opt b { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--graphite-300); display: grid; place-items: center; font-size: .82rem; color: var(--muted); flex: none; font-weight: 800; }
+  .sq__nav { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; }
+  .sq__back { background: none; border: 0; color: var(--muted); font-weight: 600; cursor: pointer; font-size: .9rem; }
+  .sq__back:hover { color: var(--ink); }
+  .sq__hint { font-size: .8rem; color: var(--muted); }
+
+  /* Result */
+  .sq__card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(28px, 5vw, 40px); box-shadow: var(--shadow-lg); max-width: 560px; margin: 0 auto; }
   .sc__lbl { font-size: .82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
   .sc__score { display: flex; align-items: baseline; gap: 6px; margin: 4px 0 6px; }
-  .sc__score strong { font-size: 3.4rem; font-weight: 900; color: var(--brand-700); letter-spacing: -.03em; line-height: 1; }
+  .sc__score strong { font-size: 3.6rem; font-weight: 900; color: var(--brand-700); letter-spacing: -.03em; line-height: 1; }
   .sc__score span { font-size: 1.1rem; color: var(--muted); font-weight: 700; }
   .sc__level { display: inline-block; font-weight: 800; font-size: .9rem; padding: 5px 14px; border-radius: 999px; margin-bottom: 16px; }
   .sc__level[data-lvl="Low"] { background: var(--brand-50); color: var(--brand-700); border: 1px solid var(--brand-100); }
@@ -105,11 +133,6 @@ const questions = [
   .sc__gap :global(.ico) { color: var(--brand-600); flex: none; margin-top: 2px; }
   .sc__gap b { color: var(--ink); }
   .sc__formlbl { font-weight: 700; color: var(--ink); margin: 0 0 12px; font-size: .98rem; border-top: 1px solid var(--line); padding-top: 18px; }
-
-  @media (max-width: 900px) {
-    .sc { grid-template-columns: 1fr; }
-    .sc__result { position: static; }
-  }
 </style>
 
 <script is:inline define:vars={{ QUESTIONS: questions }}>
@@ -120,18 +143,47 @@ const questions = [
     return "₹" + Math.round(n).toLocaleString("en-IN");
   };
   const maxLeak = QUESTIONS.reduce((s, q) => s + q.max, 0);
-  const form = $("scForm");
+  const steps = Array.from(document.querySelectorAll(".sq__step"));
+  const total = steps.length;
+  const bar = $("sqBar"), count = $("sqCount"), stepsWrap = $("sqSteps"), progress = $("sqProgress");
+  const answers = {};
+  let cur = 0;
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
+  function render() {
+    steps.forEach((s, i) => s.classList.toggle("is-active", i === cur));
+    bar.style.width = ((cur + 1) / total) * 100 + "%";
+    count.textContent = "Step " + (cur + 1) + " of " + total;
+  }
+  function goto(i) {
+    cur = Math.max(0, Math.min(total - 1, i));
+    render();
+    stepsWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+  render();
+
+  document.querySelectorAll("[data-next]").forEach((b) => b.addEventListener("click", () => goto(cur + 1)));
+  document.querySelectorAll("[data-back]").forEach((b) => b.addEventListener("click", () => goto(cur - 1)));
+
+  steps.forEach((step, idx) => {
+    const qid = step.getAttribute("data-qid");
+    if (!qid) return;
+    step.querySelectorAll(".sq__opt").forEach((opt) => {
+      opt.addEventListener("click", () => {
+        answers[qid] = +opt.getAttribute("data-opt");
+        if (idx === total - 1) compute();
+        else goto(cur + 1);
+      });
+    });
+  });
+
+  function compute() {
     const cr = +$("sc_turn").value || 0;
     let leakPct = 0;
     const gaps = [];
     QUESTIONS.forEach((q) => {
-      const sel = form.querySelector(`input[name="${q.id}"]:checked`);
-      const v = sel ? +sel.value : 0;
+      const v = answers[q.id] || 0;
       leakPct += q.max * v;
-      if (v > 0) gaps.push({ fix: q.fix, partial: v < 1 });
+      if (v > 0) gaps.push(q.fix);
     });
     const money = cr * 1e7 * (leakPct / 100);
     const score = Math.max(20, Math.round(100 - (leakPct / maxLeak) * 70));
@@ -142,16 +194,16 @@ const questions = [
     lvl.textContent = level + " leak risk";
     lvl.dataset.lvl = level;
     $("scMoney").textContent = inr(money);
-
     const gapsEl = $("scGaps");
     gapsEl.innerHTML = gaps.length
       ? "<p style='font-weight:700;color:var(--ink);margin:0 0 4px;font-size:.9rem'>Biggest gaps to plug:</p>" +
-        gaps.map((g) => `<div class="sc__gap"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6c3 3.9 5.5 6.8 5.5 9.6a5.5 5.5 0 0 1-11 0c0-2.8 2.5-5.7 5.5-9.6Z"/></svg><span>Fixed by <b>${g.fix}</b></span></div>`).join("")
+        gaps.map((f) => `<div class="sc__gap"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6c3 3.9 5.5 6.8 5.5 9.6a5.5 5.5 0 0 1-11 0c0-2.8 2.5-5.7 5.5-9.6Z"/></svg><span>Fixed by <b>${f}</b></span></div>`).join("")
       : "<div class='sc__gap'><span>Impressive — few obvious leaks. sotyn.ai keeps it that way as you scale.</span></div>";
 
     if (window.fbq) window.fbq("track", "Lead");
-    $("scPlaceholder").hidden = true;
+    progress.style.display = "none";
+    stepsWrap.style.display = "none";
     $("scCard").hidden = false;
     $("scCard").scrollIntoView({ behavior: "smooth", block: "nearest" });
-  });
+  }
 </script>

@@ -1,0 +1,70 @@
+---
+// Exit-intent popup — shows once per 7 days when a visitor is about to leave.
+// Offers the free scorecard / checklist to capture the lead before they go.
+---
+<div class="xp" id="xp" hidden>
+  <div class="xp__backdrop" data-xp-close></div>
+  <div class="xp__card" role="dialog" aria-modal="true" aria-label="Before you go">
+    <button class="xp__x" data-xp-close aria-label="Close">&times;</button>
+    <span class="eyebrow">Wait — before you go</span>
+    <h2>Find out how much you're leaking. Free.</h2>
+    <p>Take the 2-minute EPC Profit Leak Scorecard and see exactly where — and how much — your business is losing every year.</p>
+    <div class="xp__btns">
+      <a href="/scorecard" class="btn btn--primary btn--lg">Take the free scorecard</a>
+      <a href="/#checklist" class="btn btn--ghost" data-xp-close>Grab the free checklist instead</a>
+    </div>
+    <button class="xp__no" data-xp-close>No thanks — I'm fine losing money</button>
+  </div>
+</div>
+
+<style>
+  .xp { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; }
+  .xp[hidden] { display: none; }
+  .xp__backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .6); backdrop-filter: blur(2px); animation: xpfade .2s ease; }
+  .xp__card { position: relative; background: #fff; border-radius: var(--radius); max-width: 480px; width: 100%; padding: 40px 34px 28px; box-shadow: var(--shadow-lg); text-align: center; animation: xppop .25s ease; }
+  .xp__card h2 { font-size: clamp(1.5rem, 4vw, 2rem); margin: 8px 0 10px; }
+  .xp__card p { color: var(--muted); margin-bottom: 22px; }
+  .xp__x { position: absolute; top: 12px; right: 16px; background: none; border: 0; font-size: 1.8rem; line-height: 1; color: var(--graphite-500); cursor: pointer; }
+  .xp__x:hover { color: var(--ink); }
+  .xp__btns { display: grid; gap: 10px; }
+  .xp__no { margin-top: 16px; background: none; border: 0; color: var(--muted); font-size: .82rem; cursor: pointer; text-decoration: underline; }
+  .xp__no:hover { color: var(--graphite-700); }
+  @keyframes xpfade { from { opacity: 0; } }
+  @keyframes xppop { from { opacity: 0; transform: translateY(12px) scale(.98); } }
+</style>
+
+<script>
+  const KEY = "sotyn_xp_seen";
+  const DAYS = 7;
+  const path = location.pathname;
+  const skipPage = path.startsWith("/scorecard") || path.startsWith("/thank-you");
+  const seen = (() => {
+    try {
+      const t = localStorage.getItem(KEY);
+      return t && Date.now() - Number(t) < DAYS * 86400000;
+    } catch (_) { return false; }
+  })();
+
+  const pop = document.getElementById("xp");
+  let shown = false;
+  function show() {
+    if (shown || seen || skipPage || !pop) return;
+    shown = true;
+    pop.hidden = false;
+    try { localStorage.setItem(KEY, String(Date.now())); } catch (_) {}
+  }
+  function close() { if (pop) pop.hidden = true; }
+
+  if (pop && !seen && !skipPage) {
+    pop.querySelectorAll("[data-xp-close]").forEach((el) => el.addEventListener("click", close));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    // Desktop: mouse leaves the top of the viewport.
+    document.addEventListener("mouseout", (e) => {
+      if (!e.relatedTarget && e.clientY <= 0) show();
+    });
+    // Touch / no fine pointer: time-based fallback.
+    if (!window.matchMedia("(pointer: fine)").matches) {
+      setTimeout(show, 35000);
+    }
+  }
+</script>

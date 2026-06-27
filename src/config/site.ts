@@ -71,6 +71,26 @@ export const SITE = {
     certs: ["ISO 9001:2015 certified", "MSME registered", "14 years in business", "GST-registered company"],
   },
 
+  // Testimonials — ⚠️ REPLACE the placeholder entries with REAL client quotes.
+  // Never publish fabricated testimonials. Cards render in this order.
+  testimonials: [
+    {
+      quote: "We run 535+ projects across 18 states on sotyn.ai — quote, site, labour and money, all in one place. It's our single source of truth.",
+      name: "Er. Ankur Kaplesh",
+      role: "Founder, Secured Engineers — customer #1",
+    },
+    {
+      quote: "⚠️ REPLACE with a real client quote — e.g. “sotyn.ai cut our quoting time from 3 days to 2 hours.”",
+      name: "Add client name",
+      role: "Designation, Company",
+    },
+    {
+      quote: "⚠️ REPLACE with a real client quote — e.g. “We found ₹40 lakh of leakage in the first month.”",
+      name: "Add client name",
+      role: "Designation, Company",
+    },
+  ],
+
   // ── Marketing / ad tracking ──────────────────────────────────────────────
   metaPixelId: "", // ⚠️ paste your Facebook/Meta Pixel ID to track ad → webinar → buy
 
