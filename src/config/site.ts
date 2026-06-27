@@ -13,7 +13,7 @@ export const SITE = {
   name: "sotyn.ai",
   legalName: "sotyn.ai",
   brandShort: "sotyn.ai",
-  tagline: "The AI-powered ERP built only for EPC contractors",
+  tagline: "India’s first AI-native ERP — built only for EPC contractors",
   promise:
     "AI that shows you exactly where your money is leaking — from quote to site to collection — and helps you plug it.",
   parentCompany: "Secured Engineers Pvt. Ltd.",
