@@ -104,6 +104,16 @@ const faqSchema = [{
   </section>
 
   <!-- ── SOCIAL PROOF: client names ───────────────────────────────────── -->
+  <!-- ── PRODUCT SHOWCASE (dashboard) ─────────────────────────────────── -->
+  <section class="showcase">
+    <div class="container text-center">
+      <span class="eyebrow">Your whole business, on one screen</span>
+      <h2>This is your War Room.</h2>
+      <p class="lead" style="margin-inline:auto">Margin, cash, receivables and every profit leak — live, in one place. No more month-end surprises.</p>
+      <img class="showcase__img" src="/images/hero-dashboard.png" alt="sotyn.ai War Room dashboard showing margin, cash, receivables and flagged profit leaks" width="1280" height="820" loading="lazy" />
+    </div>
+  </section>
+
   <section class="clients">
     <div class="container">
       <p class="clients__label">Proven on 535+ real projects delivered for India’s biggest names</p>
@@ -172,6 +182,16 @@ const faqSchema = [{
   </section>
 
   <!-- ── THESIS PULL-QUOTE (big hook) ─────────────────────────────────── -->
+  <!-- ── LEAKS INFOGRAPHIC ────────────────────────────────────────────── -->
+  <section class="section section--alt">
+    <div class="container text-center">
+      <span class="eyebrow">The leaks, at a glance</span>
+      <h2>6 places your money disappears.</h2>
+      <p class="lead" style="margin-inline:auto">Share it with your team — then let sotyn.ai plug every one.</p>
+      <img class="ig" src="/images/leak-infographic.png" alt="Where EPC contractors leak money: quoting, procurement, labour, execution, billing and collection" width="1080" height="1080" loading="lazy" />
+    </div>
+  </section>
+
   <section class="thesis">
     <div class="container">
       <h2>You don’t have a profit problem.<br />You have a <span class="hl-w">visibility</span> problem.</h2>
@@ -280,6 +300,24 @@ const faqSchema = [{
   </section>
 
   <!-- ── MODULES (suite breadth) ──────────────────────────────────────── -->
+  <!-- ── BUILT FOR THE FIELD (mobile) ─────────────────────────────────── -->
+  <section class="section field">
+    <div class="container field__in">
+      <img class="field__img" src="/images/app-mobile.png" alt="sotyn.ai site app on a phone — daily report, attendance and snags" width="600" height="1080" loading="lazy" />
+      <div class="field__copy">
+        <span class="eyebrow">Built for the field</span>
+        <h2>The whole site, in your worker's pocket.</h2>
+        <p class="lead">Your site team doesn't open laptops. sotyn.ai is mobile-first and in plain language — so daily reports, attendance and snags actually get logged, from the site.</p>
+        <ul class="check-list" style="margin-top:8px">
+          <li>Daily progress reports in two taps</li>
+          <li>Real attendance — no ghost labour</li>
+          <li>Snags raised with a photo, on the spot</li>
+          <li>Works on any phone, even low-end</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <section class="section section--alt" id="modules">
     <div class="container">
       <div class="sec-head text-center">
@@ -612,6 +650,19 @@ const faqSchema = [{
   .cert2 :global(.ico) { color: var(--brand-600); }
 
   @media (max-width: 760px) { .nums { grid-template-columns: repeat(2, 1fr); } }
+
+  /* Product showcase */
+  .showcase { padding: clamp(40px, 6vw, 72px) 0; }
+  .showcase h2 { margin: 10px 0 12px; }
+  .showcase__img { width: 100%; max-width: 1060px; height: auto; margin: 34px auto 0; }
+
+  /* Leak infographic embed */
+  .ig { width: 100%; max-width: 540px; height: auto; margin: 28px auto 0; border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow); }
+
+  /* Built for the field */
+  .field__in { display: grid; grid-template-columns: .85fr 1fr; gap: 48px; align-items: center; }
+  .field__img { width: 100%; max-width: 340px; height: auto; margin: 0 auto; }
+  @media (max-width: 860px) { .field__in { grid-template-columns: 1fr; } .field__img { max-width: 280px; } }
 
   /* Testimonials */
   .tcard { position: relative; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; }
