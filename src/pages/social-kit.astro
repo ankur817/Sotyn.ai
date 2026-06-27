@@ -25,6 +25,11 @@ const lead = [
   { f: "lead-09", c: "6 places money leaks" },
   { f: "lead-10", c: "Book a free demo" },
 ];
+const ba = [
+  { f: "before-after-wide", c: "Before vs after — wide (posts & ads)" },
+  { f: "before-after-1", c: "Before vs after — square" },
+  { f: "before-after-2", c: "The transformation — numbers" },
+];
 ---
 <BaseLayout
   title="Social media kit — sotyn.ai"
@@ -63,6 +68,21 @@ const lead = [
             <img src={`/images/social/${l.f}.png`} alt={l.c} width="1080" height="1080" loading="lazy" />
             <figcaption>{l.c}</figcaption>
             <a class="btn btn--ghost" href={`/images/social/${l.f}.png`} download>Download</a>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 style="margin-bottom:22px">Before / After (3)</h2>
+      <div class="kit">
+        {ba.map((b) => (
+          <figure class="kit__item">
+            <img src={`/images/${b.f}.png`} alt={b.c} loading="lazy" />
+            <figcaption>{b.c}</figcaption>
+            <a class="btn btn--ghost" href={`/images/${b.f}.png`} download>Download</a>
           </figure>
         ))}
       </div>
