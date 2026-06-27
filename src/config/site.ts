@@ -104,12 +104,24 @@ export const SITE = {
     includes: [
       "Every module — CRM, quotation, procurement, site, finance, HR & solar",
       "Unlimited users — office and site, no per-seat fees ever",
-      "Free setup, Tally + Excel migration & team training",
+      "Tally + Excel migration & team training during onboarding",
       "Mobile app for every site worker, in plain language",
       "Your own secure workspace, hosted in India",
       "WhatsApp + priority support",
       "No lock-in — cancel anytime",
     ],
+    // One-time setup & onboarding fee, scaled by employee count.
+    setup: {
+      label: "One-time setup & onboarding",
+      note: "Charged once. Covers data migration from Tally & Excel, master setup and team training — so you go live in weeks, not months.",
+      bands: [
+        { team: "Up to 10 employees", fee: "1,000" },
+        { team: "11–25 employees", fee: "5,000" },
+        { team: "26–50 employees", fee: "10,000" },
+        { team: "51–100 employees", fee: "18,000" },
+        { team: "100+ employees", fee: "25,000" },
+      ],
+    },
     // Drives the ROI / leakage calculator.
     roi: {
       defaultTurnover: 25, // ₹ Cr
