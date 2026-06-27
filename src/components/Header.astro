@@ -1,0 +1,83 @@
+---
+import { SITE } from "../config/site";
+---
+<header class="hdr">
+  <div class="container hdr__in">
+    <a href="/" class="hdr__brand" aria-label={`${SITE.name} home`}>
+      <span class="hdr__mark" aria-hidden="true">S</span>
+      <span class="hdr__name">Sotyn<span>ERP</span></span>
+    </a>
+
+    <nav class="hdr__nav" aria-label="Primary">
+      <a href="/features">Features</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/about">About</a>
+      <a href="/#leaks">Why it pays</a>
+    </nav>
+
+    <div class="hdr__cta">
+      <a href={SITE.appUrl} class="hdr__login" rel="nofollow">Login</a>
+      <a href="/#demo" class="btn btn--primary hdr__demo">Book a demo</a>
+    </div>
+
+    <button class="hdr__burger" aria-label="Menu" aria-expanded="false" id="burger">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="hdr__mobile" id="mobileMenu" hidden>
+    <a href="/features">Features</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/about">About</a>
+    <a href="/#leaks">Why it pays</a>
+    <a href={SITE.appUrl} rel="nofollow">Login</a>
+    <a href="/#demo" class="btn btn--primary">Book a demo</a>
+  </div>
+</header>
+
+<style>
+  .hdr {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255, 255, 255, .82); backdrop-filter: saturate(180%) blur(16px);
+    border-bottom: 1px solid var(--line);
+  }
+  .hdr__in { display: flex; align-items: center; gap: 24px; height: 64px; }
+  .hdr__brand { display: inline-flex; align-items: center; gap: 10px; }
+  .hdr__brand:hover { text-decoration: none; }
+  .hdr__mark {
+    width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center;
+    background: linear-gradient(135deg, var(--brand-700), var(--brand-500));
+    color: #fff; font-weight: 900; font-size: 1.05rem;
+  }
+  .hdr__name { font-weight: 800; font-size: 1.18rem; color: var(--ink); letter-spacing: -.03em; }
+  .hdr__name span { color: var(--brand-600); }
+  .hdr__nav { display: flex; gap: 26px; margin-left: 8px; }
+  .hdr__nav a { color: var(--body); font-weight: 500; font-size: .96rem; }
+  .hdr__nav a:hover { color: var(--brand-700); text-decoration: none; }
+  .hdr__cta { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+  .hdr__login { color: var(--ink); font-weight: 600; font-size: .96rem; }
+  .hdr__demo { padding: 9px 20px; font-size: .96rem; }
+  .hdr__burger { display: none; flex-direction: column; gap: 5px; background: none; border: 0; cursor: pointer; padding: 8px; margin-left: auto; }
+  .hdr__burger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; transition: .2s; }
+  .hdr__mobile { display: none; flex-direction: column; gap: 4px; padding: 14px 22px 22px; border-top: 1px solid var(--line); background: #fff; }
+  .hdr__mobile a { padding: 12px 4px; font-weight: 600; color: var(--ink); border-bottom: 1px solid var(--bg-alt); }
+  .hdr__mobile a.btn { margin-top: 10px; border-bottom: 0; color: #fff; }
+
+  @media (max-width: 860px) {
+    .hdr__nav, .hdr__cta { display: none; }
+    .hdr__burger { display: flex; }
+    .hdr__mobile[data-open] { display: flex; }
+  }
+</style>
+
+<script>
+  const burger = document.getElementById("burger");
+  const menu = document.getElementById("mobileMenu");
+  burger?.addEventListener("click", () => {
+    const open = menu?.hasAttribute("data-open");
+    if (open) { menu?.removeAttribute("data-open"); menu?.setAttribute("hidden", ""); burger?.setAttribute("aria-expanded", "false"); }
+    else { menu?.setAttribute("data-open", ""); menu?.removeAttribute("hidden"); burger?.setAttribute("aria-expanded", "true"); }
+  });
+  menu?.querySelectorAll("a").forEach((a) =>
+    a.addEventListener("click", () => { menu.removeAttribute("data-open"); menu.setAttribute("hidden", ""); burger?.setAttribute("aria-expanded", "false"); })
+  );
+</script>

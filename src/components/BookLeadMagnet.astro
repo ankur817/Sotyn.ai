@@ -1,0 +1,128 @@
+---
+import { SITE } from "../config/site";
+import Icon from "./Icon.astro";
+const PDF = "/downloads/11-point-project-savings-checklist.pdf";
+const { source = "book-checklist" } = Astro.props;
+---
+<div class="magnet">
+  <form class="magnet__form" id="magnetForm" data-source={source} novalidate>
+    <div class="magnet__grid">
+      <div class="field">
+        <label for="mg-name">Name<span aria-hidden="true">*</span></label>
+        <input id="mg-name" name="name" type="text" required autocomplete="name" placeholder="Your full name" />
+      </div>
+      <div class="field">
+        <label for="mg-phone">Phone / WhatsApp<span aria-hidden="true">*</span></label>
+        <input id="mg-phone" name="phone" type="tel" required autocomplete="tel" placeholder="10-digit mobile" pattern="[0-9+ ]{8,15}" />
+      </div>
+      <div class="field field--full">
+        <label for="mg-email">Work email <span class="opt">(to send you future guides)</span></label>
+        <input id="mg-email" name="email" type="email" autocomplete="email" placeholder="you@company.com" />
+      </div>
+    </div>
+    <input type="text" name="website_hp" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+    <button type="submit" class="btn btn--primary btn--lg" id="mg-submit"><Icon name="download" size={20} /> Get the free checklist</button>
+    <p class="magnet__note"><Icon name="lock" size={14} /> Instant download. No spam — just practical project guides, occasionally.</p>
+    <p class="magnet__status" id="mg-status" role="status" aria-live="polite"></p>
+  </form>
+
+  <div class="magnet__done" id="magnetDone" hidden>
+    <div class="magnet__check" aria-hidden="true"><Icon name="check" size={30} /></div>
+    <h3>Your checklist is ready</h3>
+    <p class="muted">Thanks! Your download should have started automatically.</p>
+    <a class="btn btn--primary" href={PDF} download id="mg-dl">Download the PDF again</a>
+    <p class="magnet__note" style="margin-top:14px">Want the full playbook? <a href="https://www.amazon.in/Deadly-Facts-value-project-Bestsellers/dp/8197111332" target="_blank" rel="noopener nofollow">View the book on Amazon →</a></p>
+  </div>
+</div>
+
+<style>
+  .magnet { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); }
+  .magnet__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field--full { grid-column: 1 / -1; }
+  .field label { font-size: .85rem; font-weight: 600; color: var(--ink); }
+  .field label .opt { font-weight: 400; color: var(--muted); }
+  .field input { font-family: inherit; font-size: 1rem; padding: 12px 13px; border: 1.5px solid var(--line);
+    border-radius: 10px; background: #fff; color: var(--ink); width: 100%; transition: .15s; }
+  .field input::placeholder { color: #9ca3af; }
+  .field input:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .magnet .btn--lg { width: 100%; }
+  .magnet__note { display: flex; align-items: center; gap: 7px; font-size: .8rem; color: var(--muted); margin: 12px 0 0; }
+  .magnet__note :global(.ico) { flex: none; }
+  .magnet__status { margin: 10px 0 0; font-weight: 600; font-size: .92rem; min-height: 1.1em; }
+  .magnet__status[data-state="ok"] { color: var(--brand-700); }
+  .magnet__status[data-state="err"] { color: var(--graphite-800); }
+  #mg-submit[disabled] { opacity: .6; cursor: progress; }
+  .magnet__done { text-align: center; padding: 8px 4px; }
+  .magnet__check { width: 60px; height: 60px; border-radius: 50%; background: var(--brand-50); color: var(--brand-600); display: grid; place-items: center; margin: 0 auto 10px; }
+  .magnet__done h3 { margin: 6px 0 4px; }
+  @media (max-width: 560px) { .magnet__grid { grid-template-columns: 1fr; } }
+</style>
+
+<script is:inline define:vars={{ WEBHOOK: SITE.leadWebhookUrl, WA: SITE.whatsapp, PDF }}>
+  const form = document.getElementById("magnetForm");
+  const statusEl = document.getElementById("mg-status");
+  const btn = document.getElementById("mg-submit");
+  const done = document.getElementById("magnetDone");
+
+  function triggerDownload() {
+    const a = document.createElement("a");
+    a.href = PDF;
+    a.download = "";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (form.website_hp.value) return; // bot
+    const data = Object.fromEntries(new FormData(form).entries());
+    delete data.website_hp;
+    data.source = form.dataset.source || "book-checklist";
+    data.magnet = "11-point-project-savings-checklist";
+    data.page = location.pathname;
+    data.submittedAt = new Date().toISOString();
+
+    if (!data.name || !data.phone) {
+      statusEl.textContent = "Please add your name and phone.";
+      statusEl.dataset.state = "err";
+      return;
+    }
+
+    btn.disabled = true;
+    statusEl.dataset.state = "";
+    statusEl.textContent = "Preparing your download…";
+
+    // 1) Record the lead via the same ERP/CRM webhook the demo form uses
+    let delivered = false;
+    if (WEBHOOK) {
+      try {
+        const r = await fetch(WEBHOOK, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        delivered = r.ok;
+      } catch (_) { delivered = false; }
+    }
+
+    // 2) Always give them the asset
+    triggerDownload();
+
+    // 3) If no webhook captured it, hand the lead to WhatsApp so it is never lost
+    if (!delivered) {
+      const msg =
+        `Free checklist request%0A` +
+        `Name: ${data.name}%0APhone: ${data.phone}%0A` +
+        (data.email ? `Email: ${data.email}%0A` : "") +
+        `Downloaded: 11-Point Project Savings Checklist`;
+      window.open(`https://wa.me/${WA}?text=${msg}`, "_blank");
+    }
+
+    // 4) Show the success state
+    form.hidden = true;
+    done.hidden = false;
+  });
+</script>

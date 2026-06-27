@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE, waLink } from "../config/site";
+---
+<BaseLayout
+  title="Thank you — we’ll be in touch | SotynERP"
+  description="Your SotynERP demo request has been received."
+  noindex={true}
+>
+  <section class="section">
+    <div class="container container--narrow text-center">
+      <div class="ty__check" aria-hidden="true">✓</div>
+      <h1>Got it. Thank you!</h1>
+      <p class="lead" style="margin-inline:auto">
+        Your demo request has reached us. A SotynERP specialist will WhatsApp you shortly to fix a
+        20-minute walkthrough on your own numbers.
+      </p>
+      <div class="btn-row" style="justify-content:center;margin-top:28px">
+        <a href={waLink("Hi SotynERP, I just requested a demo on your website.")} class="btn btn--wa btn--lg" rel="nofollow">Message us now on WhatsApp</a>
+        <a href="/" class="btn btn--ghost btn--lg">Back to home</a>
+      </div>
+      <p class="muted" style="margin-top:24px">Or call us directly: <a href={`tel:${SITE.phoneHref}`}>{SITE.phone}</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ty__check { width: 76px; height: 76px; border-radius: 50%; background: var(--brand-50); color: var(--brand-600); display: grid; place-items: center; font-size: 2.4rem; font-weight: 900; margin: 0 auto 24px; }
+</style>

@@ -1,0 +1,296 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CTABand from "../components/CTABand.astro";
+import Icon from "../components/Icon.astro";
+import { SITE } from "../config/site";
+const { currency, billingNote, gstNote, disclaimer, tiers, roi } = SITE.pricing;
+
+// Feature comparison matrix (Growth / Scale / Enterprise)
+const matrix = [
+  { f: "CRM, Quotation + Estimator + Price Breakup", g: true, s: true, e: true },
+  { f: "Projects, Daily Reports (DPR), Checklists, Snags", g: true, s: true, e: true },
+  { f: "Procurement (RFQ, Vendors), Inventory", g: true, s: true, e: true },
+  { f: "Sales Billing & Invoices, Attendance, Tally link", g: true, s: true, e: true },
+  { f: "Full Finance: AR/AP, Collections, Cash Flow, Cheques", g: false, s: true, e: true },
+  { f: "Sub-contractor billing, Labour Rate, Payroll", g: false, s: true, e: true },
+  { f: "Gantt, PMS Tasks, Rentals, Assets, Audit Log", g: false, s: true, e: true },
+  { f: "Solar Division + AI Auto-Quotation", g: false, s: false, e: true },
+  { f: "War Room, Operating Console, multi-location", g: false, s: false, e: true },
+  { f: "API + integrations, dedicated manager, SLA", g: false, s: false, e: true },
+];
+
+const included = [
+  ["Free demo & setup help", "We load your rates, items and team for you."],
+  ["Tally + Excel migration", "Start with your real data, not a blank slate."],
+  ["Unlimited field users", "Every site worker on the app — you only pay for core users."],
+  ["Your own secure workspace", "Hosted in India · role-based access · full audit log."],
+  ["Training included", "Your team gets onboarded, not just handed a login."],
+  ["Your data is yours", "Export any time. Never shared with anyone."],
+];
+
+const faqs = [
+  { q: "How is it billed — and what's a 'core user'?", a: "Plans are billed annually and priced by company size. You only pay for core users (office & management). Every site/field worker uses the mobile app for free and unlimited — so adoption never inflates your bill. GST (18%) is extra." },
+  { q: "Why annual, and is there a setup fee?", a: "Annual billing keeps the per-month price low; monthly is available on request. A one-time onboarding fee covers data migration from Tally/Excel, master setup and team training — it's how we get you live in weeks, not months." },
+  { q: "Can I start small and add modules later?", a: "Yes — that's the point. Start on Growth to stop the obvious leaks, then move to Scale or Enterprise as you grow. Your quote only reflects the modules you switch on." },
+  { q: "Is there a long lock-in?", a: "No multi-year lock-in. We earn the renewal by closing your leaks. Prepay 2 years and you get 15–20% off; if it isn't paying for itself, you shouldn't stay." },
+  { q: "Will this really pay for itself?", a: "On a ₹50 Cr turnover, recovering even 2.5% of leakage is ₹1.25 Cr a year — against a ₹9 L plan, that's roughly 14× back. Use the calculator above with your own numbers." },
+];
+
+const faqSchema = [{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+}];
+---
+<BaseLayout
+  title="Pricing — built for ₹10–100 Cr contractors | SotynERP"
+  description="Simple, ROI-anchored SotynERP pricing for Indian contractors with ₹10–100 Cr turnover. Three plans — Growth, Scale and Enterprise — billed annually, with unlimited free field users. Use the leak calculator to see your payback. Book a free demo."
+  path="/pricing"
+  schema={faqSchema}
+>
+  <section class="section" style="padding-bottom:24px">
+    <div class="container container--narrow text-center">
+      <span class="eyebrow">Pricing</span>
+      <h1>Priced for ₹10–100 Cr contractors.</h1>
+      <p class="lead" style="margin-inline:auto">
+        Banded by your turnover, billed annually, with <strong>unlimited free field users</strong> —
+        you only pay for core office &amp; management users. Start where you are, add modules as you grow.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── ROI / LEAK CALCULATOR ────────────────────────────────────────── -->
+  <section style="padding-bottom:clamp(36px,6vw,64px)">
+    <div class="container">
+      <div class="roi">
+        <div class="roi__controls">
+          <span class="eyebrow">Leak calculator</span>
+          <h2>How much are you leaking?</h2>
+          <p class="muted">Move the sliders to your numbers. Even recovering a small slice pays for SotynERP many times over.</p>
+          <div class="roi__field">
+            <label for="roiTurn">Your annual turnover <output id="roiTo">₹50 Cr</output></label>
+            <input type="range" id="roiTurn" min="10" max="100" step="5" value="50" />
+            <div class="roi__scale"><span>₹10 Cr</span><span>₹100 Cr</span></div>
+          </div>
+          <div class="roi__field">
+            <label for="roiLeak">Assume you recover just <output id="roiLeakO">2.5%</output> of leakage</label>
+            <input type="range" id="roiLeak" min="1" max="5" step="0.5" value="2.5" />
+            <div class="roi__scale"><span>1%</span><span>5%</span></div>
+          </div>
+        </div>
+        <div class="roi__out">
+          <span class="roi__lbl">You could recover, every year</span>
+          <strong class="roi__big" id="roiRecover">₹1.25 Cr</strong>
+          <div class="roi__grid">
+            <div><span class="roi__lbl">Recommended plan</span><b id="roiPlan">Scale</b></div>
+            <div><span class="roi__lbl">Plan cost / year</span><b id="roiCost">₹9 L</b></div>
+            <div><span class="roi__lbl">Return on cost</span><b id="roiMult">≈ 14×</b></div>
+          </div>
+          <a href="/#demo" class="btn btn--primary btn--lg" style="width:100%">Book a demo to plug these leaks</a>
+          <p class="roi__note">Illustrative — construction leakage is typically far higher. We use a conservative figure on purpose.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TIERS ────────────────────────────────────────────────────────── -->
+  <section style="padding-bottom:clamp(40px,7vw,80px)">
+    <div class="container">
+      <div class="tiers">
+        {tiers.map((t) => (
+          <article class={`tier ${t.highlight ? "tier--hl" : ""}`}>
+            {t.badge && <span class="tier__badge">{t.badge}</span>}
+            <h3 class="tier__name">{t.name}</h3>
+            <p class="tier__blurb">{t.blurb}</p>
+            <p class="tier__turnover">{t.turnover}</p>
+            <div class="tier__price">
+              {t.from && <span class="tier__from">from</span>}
+              <span class="tier__cur">{currency}</span><span class="tier__amt">{t.price}</span><span class="tier__per">/mo</span>
+            </div>
+            <p class="tier__bill">{t.annual} · billed annually</p>
+            <p class="tier__peruser">{t.perUser}</p>
+            <div class="tier__users">
+              <span><Icon name="users" size={15} /> {t.coreUsers}</span>
+              <span><Icon name="check" size={15} /> {t.fieldUsers}</span>
+            </div>
+            <a href="/#demo" class={`btn ${t.highlight ? "btn--primary" : "btn--ghost"}`} style="width:100%">{t.cta}</a>
+            <p class="tier__onboard">+ {t.onboarding}</p>
+            <ul class="tier__feats">
+              {t.features.map((f) => <li>{f}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+      <p class="disclaimer">{gstNote}<br />{disclaimer}</p>
+    </div>
+  </section>
+
+  <!-- ── FEATURE COMPARISON ───────────────────────────────────────────── -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Compare plans</span>
+        <h2>What's in each plan</h2>
+      </div>
+      <div class="cmp-wrap">
+        <table class="cmp">
+          <thead>
+            <tr><th>Capability</th><th>Growth</th><th>Scale</th><th>Enterprise</th></tr>
+          </thead>
+          <tbody>
+            {matrix.map((r) => (
+              <tr>
+                <td>{r.f}</td>
+                <td>{r.g ? <Icon name="check" size={18} /> : <span class="cmp__no">—</span>}</td>
+                <td>{r.s ? <Icon name="check" size={18} /> : <span class="cmp__no">—</span>}</td>
+                <td>{r.e ? <Icon name="check" size={18} /> : <span class="cmp__no">—</span>}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── INCLUDED EVERYWHERE ──────────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">In every plan</span>
+        <h2>What you get no matter which plan you pick</h2>
+      </div>
+      <div class="grid grid-3">
+        {included.map(([t, d]) => (
+          <div class="card">
+            <h3>{t}</h3>
+            <p class="muted">{d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ──────────────────────────────────────────────────────────── -->
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Pricing questions</span>
+        <h2>The fine print, in plain words</h2>
+      </div>
+      <div class="faqs">
+        {faqs.map((f) => (
+          <details class="faq"><summary>{f.q}</summary><p>{f.a}</p></details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTABand
+    title="Not sure which plan? Let's look at your numbers."
+    text="Tell us your turnover and trade — we'll recommend the smallest plan that closes your biggest leak."
+  />
+</BaseLayout>
+
+<style>
+  /* ROI calculator */
+  .roi { display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  .roi__controls { padding: clamp(26px, 4vw, 40px); }
+  .roi__controls h2 { margin-bottom: 8px; }
+  .roi__field { margin-top: 24px; }
+  .roi__field label { display: flex; justify-content: space-between; align-items: baseline; font-weight: 600; color: var(--ink); font-size: .95rem; margin-bottom: 10px; }
+  .roi__field output { font-weight: 800; color: var(--brand-700); font-size: 1.15rem; }
+  .roi__field input[type=range] { width: 100%; accent-color: var(--brand-600); }
+  .roi__scale { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); margin-top: 4px; }
+  .roi__out { background: linear-gradient(160deg, var(--graphite-900), #0b1220); color: #fff; padding: clamp(26px, 4vw, 40px); display: flex; flex-direction: column; justify-content: center; }
+  .roi__lbl { display: block; font-size: .82rem; color: #94a3b8; font-weight: 600; }
+  .roi__big { font-size: clamp(2.4rem, 5vw, 3.4rem); font-weight: 900; color: #fff; letter-spacing: -.03em; line-height: 1; margin: 4px 0 22px; }
+  .roi__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+  .roi__grid b { display: block; font-size: 1.25rem; font-weight: 800; color: #fff; margin-top: 2px; }
+  .roi__grid b#roiPlan { color: var(--brand-500); }
+  .roi__note { font-size: .76rem; color: #94a3b8; margin: 12px 0 0; }
+
+  /* Tiers */
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: start; }
+  .tier { position: relative; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow-sm); }
+  .tier--hl { border: 2px solid var(--brand-600); box-shadow: var(--shadow-lg); }
+  .tier__badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--brand-600); color: #fff; font-size: .76rem; font-weight: 700; padding: 5px 14px; border-radius: 999px; letter-spacing: .03em; white-space: nowrap; }
+  .tier__name { font-size: 1.4rem; margin-bottom: 2px; }
+  .tier__blurb { color: var(--muted); font-size: .92rem; min-height: 2.6em; margin-bottom: 10px; }
+  .tier__turnover { display: inline-block; font-size: .8rem; font-weight: 700; color: var(--brand-700); background: var(--brand-50); border: 1px solid var(--brand-100); padding: 4px 11px; border-radius: 999px; margin-bottom: 14px; }
+  .tier__price { display: flex; align-items: baseline; gap: 3px; }
+  .tier__from { font-size: .9rem; font-weight: 700; color: var(--muted); margin-right: 4px; align-self: center; }
+  .tier__cur { font-size: 1.5rem; font-weight: 700; color: var(--ink); }
+  .tier__amt { font-size: 2.7rem; font-weight: 900; color: var(--ink); letter-spacing: -.03em; line-height: 1; }
+  .tier__per { font-size: 1rem; font-weight: 600; color: var(--muted); }
+  .tier__bill { font-size: .85rem; color: var(--muted); margin: 6px 0 2px; }
+  .tier__peruser { font-size: .85rem; font-weight: 600; color: var(--graphite-700); margin-bottom: 16px; }
+  .tier__users { display: grid; gap: 8px; margin-bottom: 18px; }
+  .tier__users span { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--body); font-weight: 600; }
+  .tier__users :global(.ico) { color: var(--brand-600); flex: none; }
+  .tier__onboard { font-size: .82rem; color: var(--muted); text-align: center; margin: 10px 0 0; }
+  .tier__feats { list-style: none; display: grid; gap: 11px; margin-top: 18px; border-top: 1px solid var(--line); padding-top: 18px; }
+  .tier__feats li { position: relative; padding-left: 28px; font-size: .92rem; color: var(--body); }
+  .tier__feats li::before { content: ""; position: absolute; left: 0; top: 3px; width: 18px; height: 18px; background: var(--brand-600); border-radius: 50%;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center/13px no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center/13px no-repeat; }
+  .tier__feats li:first-child { font-weight: 700; color: var(--ink); padding-left: 0; }
+  .tier__feats li:first-child::before { display: none; }
+  .disclaimer { max-width: 760px; margin: 30px auto 0; text-align: center; font-size: .86rem; color: var(--muted); line-height: 1.6; }
+
+  /* Comparison table */
+  .cmp-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; box-shadow: var(--shadow-sm); }
+  .cmp { width: 100%; border-collapse: collapse; min-width: 620px; }
+  .cmp th, .cmp td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--line); }
+  .cmp thead th { background: var(--graphite-900); color: #fff; font-size: .85rem; }
+  .cmp thead th:not(:first-child) { text-align: center; width: 130px; }
+  .cmp tbody td:not(:first-child) { text-align: center; }
+  .cmp tbody tr:nth-child(even) { background: var(--bg-alt); }
+  .cmp tbody td:first-child { font-size: .94rem; color: var(--ink); font-weight: 500; }
+  .cmp :global(.ico) { color: var(--brand-600); }
+  .cmp__no { color: var(--graphite-300); font-weight: 700; }
+
+  /* FAQ */
+  .faqs { display: grid; gap: 12px; }
+  .faq { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 4px 20px; }
+  .faq summary { cursor: pointer; font-weight: 700; color: var(--ink); padding: 18px 0; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--brand-600); font-weight: 700; font-size: 1.4rem; line-height: 1; }
+  .faq[open] summary::after { content: "–"; }
+  .faq p { margin: 0 0 18px; color: var(--body); font-size: .98rem; }
+
+  @media (max-width: 920px) {
+    .roi { grid-template-columns: 1fr; }
+    .tiers { grid-template-columns: 1fr; max-width: 440px; margin-inline: auto; }
+    .tier--hl { transform: none; }
+  }
+</style>
+
+<script is:inline define:vars={{ ROI: roi }}>
+  const turn = document.getElementById("roiTurn");
+  const leak = document.getElementById("roiLeak");
+  const toOut = document.getElementById("roiTo");
+  const leakOut = document.getElementById("roiLeakO");
+  const recover = document.getElementById("roiRecover");
+  const planOut = document.getElementById("roiPlan");
+  const costOut = document.getElementById("roiCost");
+  const multOut = document.getElementById("roiMult");
+
+  function inr(n) {
+    if (n >= 1e7) { const v = n / 1e7; return "₹" + (v >= 10 ? Math.round(v) : v.toFixed(2).replace(/\.?0+$/, "")) + " Cr"; }
+    const v = n / 1e5; return "₹" + (v >= 10 ? Math.round(v) : v.toFixed(1).replace(/\.0$/, "")) + " L";
+  }
+
+  function update() {
+    const cr = Number(turn.value);
+    const pct = Number(leak.value);
+    toOut.textContent = "₹" + cr + " Cr";
+    leakOut.textContent = pct + "%";
+    const recoverable = cr * 1e7 * (pct / 100);
+    const band = ROI.bands.find((b) => cr <= b.maxCr) || ROI.bands[ROI.bands.length - 1];
+    recover.textContent = inr(recoverable);
+    planOut.textContent = band.plan;
+    costOut.textContent = inr(band.annual);
+    multOut.textContent = "≈ " + Math.max(1, Math.round(recoverable / band.annual)) + "×";
+  }
+  if (turn && leak) { turn.addEventListener("input", update); leak.addEventListener("input", update); update(); }
+</script>

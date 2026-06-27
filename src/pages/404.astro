@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE } from "../config/site";
+---
+<BaseLayout
+  title="Page not found — SotynERP"
+  description="That page doesn't exist. Head back to SotynERP."
+  noindex={true}
+>
+  <section class="section">
+    <div class="container container--narrow text-center">
+      <p class="nf__code">404</p>
+      <h1>This page took an unscheduled site visit.</h1>
+      <p class="lead" style="margin-inline:auto">The link is broken or the page has moved. Let's get you back to where the leaks get plugged.</p>
+      <div class="btn-row" style="justify-content:center;margin-top:28px">
+        <a href="/" class="btn btn--primary btn--lg">Back to home</a>
+        <a href="/pricing" class="btn btn--ghost btn--lg">See pricing</a>
+      </div>
+      <p class="muted" style="margin-top:22px">Or call us: <a href={`tel:${SITE.phoneHref}`}>{SITE.phone}</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf__code { font-size: clamp(4rem, 14vw, 8rem); font-weight: 900; letter-spacing: -.04em; line-height: 1; color: var(--brand-100); margin-bottom: 8px; }
+</style>

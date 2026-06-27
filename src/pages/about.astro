@@ -1,0 +1,147 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CTABand from "../components/CTABand.astro";
+import Icon from "../components/Icon.astro";
+import { SITE } from "../config/site";
+
+// The case study: what the ERP did for the company that built it.
+const beforeAfter = [
+  { metric: "Projects run on it", before: "Spreadsheets & WhatsApp", after: "535+ projects, one system" },
+  { metric: "Project delivery", before: "Slipping, found out late", after: "93.32% delivered early" },
+  { metric: "Client savings tracked", before: "Invisible", after: "₹11.7 Cr+ identified" },
+  { metric: "Repeat clients", before: "Hard to retain", after: "89.77% come back" },
+  { metric: "Team on one platform", before: "Siloed teams", after: "300+ people, daily" },
+  { metric: "Safety incidents", before: "Manual tracking", after: "0, on 1.1L+ man-hours" },
+];
+
+const values = [
+  { icon: "hardhat", t: "Built on real sites", d: "Every feature exists because a real jobsite problem demanded it — not because it looked good in a demo." },
+  { icon: "chat", t: "In plain language", d: "If a site supervisor can't use it on his phone in 30 seconds, we redesign it. No jargon, no training marathons." },
+  { icon: "refresh", t: "Improved every week", d: "We use it ourselves, daily. Bugs hurt us first, so they get fixed fast — and you inherit every improvement." },
+];
+---
+<BaseLayout
+  title="About & case study — built by contractors who were losing money too | SotynERP"
+  description="SotynERP was built by Secured Engineers Pvt. Ltd., a 14-year-old MEPF & Solar EPC company, to run its own business first. See what it did for them — 535+ projects, 93% early delivery, ₹11.7 Cr+ savings tracked — and why they now offer it to contractors across India."
+  path="/about"
+>
+  <section class="section" style="padding-bottom:24px">
+    <div class="container container--narrow text-center">
+      <span class="eyebrow">Our story</span>
+      <h1>Built by contractors who were losing money too.</h1>
+      <p class="lead" style="margin-inline:auto">
+        SotynERP wasn't dreamed up by a software company. It was built by
+        <strong>{SITE.parentCompany}</strong> — a 14-year-old MEPF &amp; Solar EPC contractor —
+        to fix the leaks in our <em>own</em> business first.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container story">
+      <div class="story__col">
+        <h2>The problem we lived</h2>
+        <p>By our tenth year we were running 500+ projects across 18 states — on spreadsheets, WhatsApp groups and memory. We were profitable on paper but money kept disappearing: under-priced quotes, material bought above market, labour we couldn't verify, work we forgot to bill, and payments stuck for months.</p>
+        <p>No off-the-shelf ERP fit how an Indian contractor actually works. So we built our own.</p>
+      </div>
+      <div class="story__col">
+        <h2>What we built</h2>
+        <p>One system that follows a job from the first lead to the final rupee collected — quoting, procurement, site execution, labour, billing and cash, all talking to each other. Mobile-first, in plain language, used by 300+ of our own people every day.</p>
+        <p>It worked so well on our own business that contractors kept asking for it. So we made it available to everyone. That's <strong>SotynERP</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Case study · the company that built it</span>
+        <h2>What it did for our own business</h2>
+        <p class="lead" style="margin-inline:auto">The honest proof: we are customer number one. These are our real numbers.</p>
+      </div>
+      <div class="ba">
+        <div class="ba__head"><span>What changed</span><span>Before</span><span>With SotynERP</span></div>
+        {beforeAfter.map((r) => (
+          <div class="ba__row">
+            <span class="ba__metric">{r.metric}</span>
+            <span class="ba__before">{r.before}</span>
+            <span class="ba__after"><Icon name="check" size={16} /> {r.after}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container founder">
+      <img class="founder__photo" src="/images/founder-ankur-kaplesh.jpg" alt="Er. Ankur Kaplesh — CMD & Founder of Secured Engineers and SotynERP" width="638" height="720" loading="lazy" />
+      <div class="founder__copy">
+        <blockquote>“We didn't set out to build software. We set out to stop the bleeding in our own company — and ended up with a system every contractor in India deserves.”</blockquote>
+        <p class="founder__name">Er. Ankur Kaplesh</p>
+        <p class="founder__role">CMD &amp; Founder, {SITE.parentCompany} · TEDx Speaker · Published Author</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Why it's different</span>
+        <h2>Built by users, not vendors</h2>
+      </div>
+      <div class="grid grid-3">
+        {values.map((v) => (
+          <div class="card">
+            <div class="icon-badge" aria-hidden="true"><Icon name={v.icon} size={26} /></div>
+            <h3>{v.t}</h3>
+            <p class="muted">{v.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTABand
+    title="Run your business the way we run ours."
+    text="See SotynERP on your own trades and project sizes. Book a free 20-minute demo — customer number one will show you around."
+  />
+</BaseLayout>
+
+<style>
+  .story { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; }
+  .story__col h2 { font-size: 1.6rem; margin-bottom: 14px; }
+
+  .ba { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+  .ba__head, .ba__row { display: grid; grid-template-columns: 1.1fr 1fr 1.2fr; gap: 0; }
+  .ba__head { background: var(--graphite-900); color: #fff; font-weight: 700; font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; }
+  .ba__head span { padding: 14px 18px; }
+  .ba__head span:nth-child(2) { color: #9ca3af; }
+  .ba__head span:nth-child(3) { color: var(--brand-500); }
+  .ba__row { border-top: 1px solid var(--line); background: #fff; }
+  .ba__row:nth-child(even) { background: var(--bg-alt); }
+  .ba__row span { padding: 16px 18px; display: flex; align-items: center; gap: 8px; font-size: .96rem; }
+  .ba__metric { font-weight: 700; color: var(--ink); }
+  .ba__before { color: var(--muted); }
+  .ba__after { font-weight: 700; color: var(--brand-700); }
+  .ba__after :global(.ico) { color: var(--brand-600); flex: none; }
+
+  .founder { display: grid; grid-template-columns: auto 1fr; gap: 32px; align-items: center; }
+  .founder__photo { width: 156px; height: 188px; object-fit: cover; object-position: top center; border-radius: 20px; flex: none; box-shadow: var(--shadow-lg); border: 1px solid rgba(255,255,255,.14); }
+  .founder blockquote { font-size: clamp(1.2rem, 2.4vw, 1.6rem); font-weight: 700; color: #fff; line-height: 1.4; margin: 0 0 16px; letter-spacing: -.02em; }
+  .founder__name { color: #fff; font-weight: 700; margin: 0; }
+  .founder__role { color: #94a3b8; font-size: .92rem; margin: 2px 0 0; }
+
+  @media (max-width: 820px) {
+    .story { grid-template-columns: 1fr; gap: 28px; }
+    .founder { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+  }
+  @media (max-width: 620px) {
+    .ba__head { display: none; }
+    .ba__row { grid-template-columns: 1fr; gap: 0; padding: 6px 0; }
+    .ba__row span { padding: 6px 18px; }
+    .ba__metric { padding-top: 14px !important; }
+    .ba__before::before { content: "Before: "; font-weight: 700; color: var(--ink); }
+    .ba__after::before { content: "Now: "; font-weight: 700; color: var(--ink); }
+    .ba__after { padding-bottom: 14px !important; }
+  }
+</style>

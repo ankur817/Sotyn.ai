@@ -1,0 +1,116 @@
+---
+import { SITE } from "../config/site";
+---
+<form class="df" id="demoForm" novalidate>
+  <div class="df__row">
+    <label>Your name
+      <input type="text" name="name" required autocomplete="name" placeholder="e.g. Ankur Kaplesh" />
+    </label>
+    <label>Company / firm
+      <input type="text" name="company" required placeholder="e.g. ABC Contractors" />
+    </label>
+  </div>
+  <div class="df__row">
+    <label>Phone / WhatsApp
+      <input type="tel" name="phone" required inputmode="tel" autocomplete="tel" placeholder="10-digit mobile" />
+    </label>
+    <label>City
+      <input type="text" name="city" placeholder="e.g. Ludhiana" />
+    </label>
+  </div>
+  <label>What kind of contractor are you?
+    <select name="trade">
+      <option value="">Select your trade…</option>
+      <option>MEPF / HVAC / Electrical / Plumbing / Fire</option>
+      <option>Solar EPC</option>
+      <option>Civil / General contractor</option>
+      <option>Interior / Fit-out</option>
+      <option>Infrastructure / Other</option>
+    </select>
+  </label>
+  <label>Team size
+    <select name="team">
+      <option value="">Select…</option>
+      <option>1–15 people</option>
+      <option>15–50 people</option>
+      <option>50–150 people</option>
+      <option>150+ people</option>
+    </select>
+  </label>
+
+  <!-- honeypot: hidden from humans, bots fill it -->
+  <input type="text" name="website" class="df__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <button type="submit" class="btn btn--primary btn--lg df__submit">Book my free demo</button>
+  <p class="df__status" id="dfStatus" role="status" aria-live="polite"></p>
+  <p class="df__note">No spam. We’ll WhatsApp you to fix a 20-minute walkthrough on your own numbers.</p>
+</form>
+
+<style>
+  .df { display: grid; gap: 16px; }
+  .df__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .df label { display: grid; gap: 7px; font-weight: 600; font-size: .9rem; color: var(--ink); }
+  .df input, .df select {
+    font-family: inherit; font-size: 1rem; padding: 13px 14px; border: 1.5px solid var(--line);
+    border-radius: 11px; background: #fff; color: var(--ink); width: 100%; transition: .15s;
+  }
+  .df input::placeholder { color: #94a3b8; }
+  .df input:focus, .df select:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, .15); }
+  .df__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .df__submit { width: 100%; margin-top: 4px; }
+  .df__submit[disabled] { opacity: .6; cursor: progress; }
+  .df__status { margin: 0; font-weight: 600; font-size: .92rem; min-height: 1.2em; }
+  .df__status[data-state="ok"] { color: var(--brand-700); }
+  .df__status[data-state="err"] { color: var(--graphite-800); }
+  .df__note { margin: 0; font-size: .82rem; color: var(--muted); }
+  @media (max-width: 560px) { .df__row { grid-template-columns: 1fr; } }
+</style>
+
+<script define:vars={{ WEBHOOK: SITE.leadWebhookUrl, WA: SITE.whatsapp, MAIL: SITE.emailFallback }}>
+  const form = document.getElementById("demoForm");
+  const status = document.getElementById("dfStatus");
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    if (data.website) return; // honeypot tripped → silently drop bot
+    if (!data.name || !data.company || !data.phone) {
+      status.dataset.state = "err";
+      status.textContent = "Please add your name, company and phone.";
+      return;
+    }
+
+    const btn = form.querySelector("button[type=submit]");
+    btn.disabled = true;
+    status.dataset.state = "";
+    status.textContent = "Sending…";
+
+    const payload = {
+      ...data,
+      source: "sotynerp-website",
+      page: location.pathname,
+      submittedAt: new Date().toISOString(),
+    };
+
+    // 1) Try the CRM/ERP webhook if configured.
+    if (WEBHOOK) {
+      try {
+        const res = await fetch(WEBHOOK, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) { window.location.href = "/thank-you"; return; }
+      } catch (_) { /* fall through to WhatsApp */ }
+    }
+
+    // 2) Fallback so NO lead is ever lost → open a pre-filled WhatsApp chat.
+    const msg =
+      `New SotynERP demo request%0A` +
+      `Name: ${data.name}%0ACompany: ${data.company}%0APhone: ${data.phone}` +
+      `%0ACity: ${data.city || "-"}%0ATrade: ${data.trade || "-"}%0ATeam: ${data.team || "-"}`;
+    status.dataset.state = "ok";
+    status.textContent = "Opening WhatsApp to confirm your demo…";
+    window.location.href = `https://wa.me/${WA}?text=${msg}`;
+  });
+</script>

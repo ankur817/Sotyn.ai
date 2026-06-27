@@ -1,0 +1,22 @@
+---
+import { SITE, waLink } from "../config/site";
+export interface Props {
+  title?: string;
+  text?: string;
+}
+const {
+  title = "See exactly where you’re leaking money.",
+  text = "Book a free 20-minute demo on your own numbers. No slides, no jargon — just where your margin, cash and sites really stand.",
+} = Astro.props;
+---
+<section class="section section--dark ctaband">
+  <div class="container container--narrow text-center">
+    <h2>{title}</h2>
+    <p class="lead" style="margin-inline:auto">{text}</p>
+    <div class="btn-row" style="justify-content:center;margin-top:26px">
+      <a href="/#demo" class="btn btn--primary btn--lg">Book a free demo</a>
+      <a href={waLink()} class="btn btn--wa btn--lg" rel="nofollow">WhatsApp us</a>
+    </div>
+    <p class="muted" style="margin-top:18px;color:#94a3b8">Or call {SITE.phone}</p>
+  </div>
+</section>

@@ -1,0 +1,172 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CTABand from "../components/CTABand.astro";
+import Icon from "../components/Icon.astro";
+
+const flow = ["Lead", "Quote", "Order", "Procure", "Execute", "Bill", "Collect"];
+
+const groups = [
+  {
+    name: "Sales & CRM",
+    icon: "target",
+    lead: "Win the right jobs at the right margin — and never let a lead go cold.",
+    leak: "Slow, inconsistent quotes and forgotten follow-ups lose deals and margin.",
+    items: [
+      ["Leads & CRM Funnel", "Every enquiry tracked through a visible pipeline with reminders."],
+      ["AI Auto-Quotation", "Generate accurate quotes in minutes from your own rate masters."],
+      ["Estimator & Price Breakup", "See true cost and margin on every line before you send."],
+      ["Quotations & Orders", "Versioned quotes that convert cleanly into orders."],
+      ["Solar Sales Funnel", "A dedicated pipeline tuned for solar enquiries."],
+    ],
+  },
+  {
+    name: "Finance & Cash",
+    icon: "wallet",
+    lead: "Know your cash position and chase every rupee owed to you.",
+    leak: "Money stuck in receivables and un-billed work — you end up financing your client.",
+    items: [
+      ["Sales Billing & Invoices", "Bill on milestones; nothing delivered goes un-invoiced."],
+      ["AR/AP Tracker", "See exactly who owes you and whom you owe, at a glance."],
+      ["Collections", "Structured follow-up so receivables don't age silently."],
+      ["Cash Flow", "Forward view of money in vs money out."],
+      ["Cheques & Expenses", "Track instruments and control site spend."],
+      ["Tally link", "Keeps your accountant's books in sync."],
+    ],
+  },
+  {
+    name: "Procurement & Stock",
+    icon: "box",
+    lead: "Buy right, store right, and stop material walking off site.",
+    leak: "Buying above market and off-record purchases quietly eat your margin.",
+    items: [
+      ["RFQ Queue", "Compare vendor rates before every purchase."],
+      ["Vendors & Item Master", "One clean catalogue of who and what you buy."],
+      ["Indent → Dispatch", "Site raises an indent; it's tracked all the way to delivery."],
+      ["Inventory", "Live stock so you never over-order or run dry."],
+      ["Tool & Room Rentals", "Stop paying for idle rented kit and rooms."],
+      ["Company Assets", "Every owned asset accounted for."],
+    ],
+  },
+  {
+    name: "Site Execution",
+    icon: "building",
+    lead: "Every site on one screen, updated daily — problems surface same-day.",
+    leak: "Rework, snags and delays discovered at month-end, when it's too late to fix.",
+    items: [
+      ["Daily Reports (DPR)", "Site progress from the field, every day, on a phone."],
+      ["Snags & Checklists", "Catch defects early; close them with proof."],
+      ["Schedule (Gantt)", "Plan, sequence and spot slippage before it costs you."],
+      ["PMS Tasks", "Nothing falls through the cracks between teams."],
+      ["Full Kitting", "Everything a job needs, staged before mobilisation."],
+      ["Fire NOC Renewal", "Statutory renewals tracked so they never lapse."],
+    ],
+  },
+  {
+    name: "People & Labour",
+    icon: "users",
+    lead: "Pay for the work that actually happened — no ghost labour.",
+    leak: "Ghost labour on muster rolls and rate creep on sub-contractor bills.",
+    items: [
+      ["HRMS & Employees", "One record for every person in the business."],
+      ["Attendance", "Real attendance, so payroll matches reality."],
+      ["Payroll", "Run payroll on verified attendance and rates."],
+      ["Hiring & Onboarding", "From offer letter to induction, all documented."],
+      ["Labour Rate Master", "Agreed rates that bills are checked against."],
+      ["Sub-contractor Hiring", "Onboard and bill subcons against their contracts."],
+    ],
+  },
+  {
+    name: "Owner's Control Tower",
+    icon: "gauge",
+    lead: "Run the whole business from one screen — and finally delegate.",
+    leak: "When you are the only one who can see everything, the business can't grow.",
+    items: [
+      ["Executive Dashboard", "Margin, cash and sites — the numbers that matter, live."],
+      ["War Room & Operating Console", "Drill into any project, any number, any day."],
+      ["Delegations", "Hand off decisions with clear ownership and trails."],
+      ["Scorecard & Champions League", "Make performance visible and a little competitive."],
+      ["Audit Log", "Every change tracked — accountability by default."],
+      ["Roles & Permissions", "People see exactly what they should, no more."],
+    ],
+  },
+];
+---
+<BaseLayout
+  title="Features — every module from lead to cash | SotynERP"
+  description="SotynERP's modules in detail: CRM & AI quotations, finance & cash, procurement & inventory, site execution (DPR, snags, Gantt), HR & sub-contractor labour, and the owner's control tower. The all-in-one ERP for Indian contractors."
+  path="/features"
+>
+  <section class="section" style="padding-bottom:32px">
+    <div class="container container--narrow text-center">
+      <span class="eyebrow">Features</span>
+      <h1>One system for the entire job — quote to cash.</h1>
+      <p class="lead" style="margin-inline:auto">
+        No more seven disconnected apps and thirty Excel sheets. Every module below talks to the
+        others, so a number entered on site shows up in your margin, your stock and your cash flow.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding-bottom:20px">
+    <div class="container">
+      <div class="flow">
+        {flow.map((step, i) => (
+          <>
+            <span class="flow__step">{step}</span>
+            {i < flow.length - 1 && <span class="flow__arr" aria-hidden="true"><Icon name="arrow-right" size={18} /></span>}
+          </>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {groups.map((g, i) => (
+    <section class={`section ${i % 2 ? "section--alt" : ""}`}>
+      <div class="container feat">
+        <div class="feat__head">
+          <span class="feat__icon" aria-hidden="true"><Icon name={g.icon} size={30} /></span>
+          <h2>{g.name}</h2>
+          <p class="lead">{g.lead}</p>
+          <p class="feat__leak"><strong>Plugs this leak:</strong> {g.leak}</p>
+        </div>
+        <div class="feat__grid">
+          {g.items.map(([t, d]) => (
+            <div class="feat__item">
+              <h3>{t}</h3>
+              <p class="muted">{d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <CTABand
+    title="That's the whole business, in one place."
+    text="See your own trades, rates and project sizes inside SotynERP. Book a free 20-minute demo."
+  />
+</BaseLayout>
+
+<style>
+  .flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; }
+  .flow__step { font-weight: 700; color: var(--brand-700); background: var(--brand-50); border: 1px solid var(--brand-100); padding: 9px 16px; border-radius: 999px; font-size: .95rem; }
+  .flow__arr { color: var(--graphite-300); display: inline-flex; }
+
+  .feat { display: grid; grid-template-columns: 1fr 1.3fr; gap: 48px; align-items: start; }
+  .feat__head { position: sticky; top: 96px; }
+  .feat__icon { width: 56px; height: 56px; border-radius: 14px; background: var(--brand-50); color: var(--brand-700); display: grid; place-items: center; margin-bottom: 16px; }
+  .feat__head h2 { margin-bottom: 12px; }
+  .feat__head .lead { font-size: 1.15rem; margin-bottom: 16px; }
+  .feat__leak { font-size: .95rem; color: var(--graphite-800); background: var(--graphite-100); border: 1px solid var(--line); border-left: 4px solid var(--graphite-700); border-radius: 12px; padding: 12px 15px; margin: 0; }
+  .feat__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .feat__item { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: var(--shadow-sm); }
+  .feat__item h3 { font-size: 1.05rem; margin-bottom: 6px; }
+  .feat__item p { margin: 0; font-size: .92rem; }
+  .section--alt .feat__item { background: #fff; }
+
+  @media (max-width: 880px) {
+    .feat { grid-template-columns: 1fr; gap: 28px; }
+    .feat__head { position: static; }
+  }
+  @media (max-width: 560px) { .feat__grid { grid-template-columns: 1fr; } }
+</style>

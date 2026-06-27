@@ -1,0 +1,543 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DemoForm from "../components/DemoForm.astro";
+import BookLeadMagnet from "../components/BookLeadMagnet.astro";
+import Icon from "../components/Icon.astro";
+import { SITE, waLink } from "../config/site";
+
+// ── The 4 money questions every contractor asks ─────────────────────────────
+const leaks = [
+  {
+    q: "Where am I losing money?",
+    icon: "trending-down",
+    leak: "Margin dies at the quote — you win jobs you actually lose money on, and only find out months later.",
+    plug: "Every quote shows real margin before you send it.",
+    modules: ["AI Auto-Quotation", "Estimator", "Price Breakup Master", "Rate Masters"],
+  },
+  {
+    q: "Where is the leakage going on?",
+    icon: "droplet",
+    leak: "Material bought above market, ghost labour on muster rolls, inflated sub-contractor bills — the classic three EPC leaks.",
+    plug: "Rate-compared purchasing, real attendance, sub-contractor bills checked against agreed rates.",
+    modules: ["RFQ Queue", "Vendors", "Attendance", "Sub-contractor Master", "Indent Labour Payment"],
+  },
+  {
+    q: "Where am I facing issues?",
+    icon: "alert",
+    leak: "Rework, snags and delays — the silent profit-killers you only discover at month-end, when it's too late to fix.",
+    plug: "Every site on one screen, updated daily. Problems surface the same day.",
+    modules: ["Daily Reports (DPR)", "Snags", "Checklists", "Schedule (Gantt)", "War Room"],
+  },
+  {
+    q: "Why am I not growing?",
+    icon: "trending-up",
+    leak: "You ARE the system. Every decision waits for you, so the business can't grow past what one person can hold in their head.",
+    plug: "A control tower with the numbers, so you can delegate with confidence and take on more work.",
+    modules: ["Executive Dashboard", "CRM Sales Funnel", "Delegations", "Scorecard"],
+  },
+];
+
+// ── Full module map (grouped) — pulled from the live ERP ────────────────────
+const moduleGroups = [
+  { name: "Sales & CRM", icon: "target", items: ["Leads & CRM Funnel", "AI Auto-Quotation", "Estimator", "Quotations & Orders", "Customers", "Solar Sales Funnel"] },
+  { name: "Finance & Cash", icon: "wallet", items: ["Sales Billing & Invoices", "AR/AP Tracker", "Collections", "Cash Flow", "Cheques", "Expenses", "Tally link"] },
+  { name: "Procurement & Stock", icon: "box", items: ["RFQ Queue", "Vendors", "Indent → Dispatch", "Inventory", "Item Master", "Tool & Room Rentals", "Assets"] },
+  { name: "Site Execution", icon: "building", items: ["Daily Reports (DPR)", "Checklists", "Snags", "PMS Tasks", "Schedule (Gantt)", "Full Kitting", "Fire NOC Renewal"] },
+  { name: "People & Labour", icon: "users", items: ["HRMS & Employees", "Attendance", "Payroll", "Hiring & Onboarding", "Training", "Labour Rate", "Sub-contractor Hiring"] },
+  { name: "Owner's Control Tower", icon: "gauge", items: ["Executive Dashboard", "War Room", "Operating Console", "Delegations", "Scorecard", "Champions League", "Audit Log"] },
+];
+
+// Real names the parent EPC company has delivered for (social proof).
+const clients = ["Airtel", "Dabur", "Indian Army", "Fortis", "Hyatt"];
+
+// Credentials (real, from the company profile).
+const creds = ["14+ years in business", "ISO 9001:2015", "MSME certified", "18+ states", "300+ users daily"];
+
+const how = [
+  { n: "1", t: "Free demo on your numbers", d: "A 20-minute walkthrough using your trades and your project sizes — not a generic slideshow." },
+  { n: "2", t: "We set up your masters", d: "Your rates, items, vendors and team are loaded in. We migrate from your spreadsheets and Tally." },
+  { n: "3", t: "Your team goes live", d: "Mobile-first, in plain language, on the same app 300+ people already use every day. Training included." },
+  { n: "4", t: "You watch the leaks close", d: "Within weeks you can see margin, cash and site status on one screen — and act before money is lost." },
+];
+
+const faqs = [
+  { q: "Is this only for MEPF and solar contractors?", a: "No. It was built and battle-tested in a live MEPF & Solar EPC business, but the same lifecycle — quote, procure, execute, bill, collect — fits civil, interior/fit-out, infrastructure and general contractors too." },
+  { q: "Is my data safe and separate from yours?", a: "Yes. Each company runs in its own secure workspace, hosted in India, with role-based access and a full audit log. Your data is yours — never shared with us or any other contractor." },
+  { q: "We already use Tally and Excel. Do we throw them away?", a: "No. SotynERP links with Tally and we migrate your existing masters and spreadsheets during setup, so you start with your real data, not a blank slate." },
+  { q: "Will my site team actually use it?", a: "It's mobile-first and in plain language — 300+ people, including site staff, use it daily in our own company. Daily reports, attendance and snags are designed for the phone in a worker's pocket." },
+  { q: "How much does it cost?", a: "Pricing is tailored to your team size. Book a free demo and we'll quote you on exactly the modules you need — start small and add as you grow." },
+];
+
+const faqSchema = [{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+}];
+---
+<BaseLayout
+  title="SotynERP — The ERP built by contractors, for contractors | India"
+  description="See exactly where your contracting business is losing money — from quote to site to collection. SotynERP is the all-in-one ERP for MEPF, solar, civil and EPC contractors across India. Built and run by a live EPC company. Book a free demo."
+  schema={faqSchema}
+>
+  <!-- ── HERO ─────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="container hero__in">
+      <span class="pill"><Icon name="pin" size={15} /> Built &amp; run by a real EPC company across {SITE.stats[1].value}</span>
+      <h1>Run your <span class="hl">entire</span> contracting business on one system.</h1>
+      <p class="hero__rotator" aria-live="polite"><span data-rotate>Won the bid. Lost the margin. Found out at month-end.</span></p>
+      <p class="lead">
+        From the first lead to the final rupee collected — quoting, procurement, site, labour,
+        billing and cash. {SITE.name} shows you exactly where your money leaks, and plugs it.
+        The all-in-one ERP for MEPF, solar, civil &amp; EPC contractors across India.
+      </p>
+      <div class="btn-row">
+        <a href="#demo" class="btn btn--primary btn--lg">Book a free demo</a>
+        <a href="#leaks" class="btn btn--ghost btn--lg">See where you’re losing money</a>
+      </div>
+      <div class="hero__stats">
+        {SITE.stats.map((s) => (
+          <div class="hero__stat"><strong>{s.value}</strong><span>{s.label}</span></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SOCIAL PROOF: client names ───────────────────────────────────── -->
+  <section class="clients">
+    <div class="container">
+      <p class="clients__label">Proven on 535+ real projects delivered for India’s biggest names</p>
+      <div class="clients__row">
+        {clients.map((c) => <span class="clients__name">{c}</span>)}
+        <span class="clients__more">+ 500&nbsp;more</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TRUST STRIP ──────────────────────────────────────────────────── -->
+  <section class="strip">
+    <div class="container strip__in">
+      <p>Not built by a software company guessing what contractors need —</p>
+      <p class="strip__big">it runs <strong>{SITE.parentCompany}</strong> every single day.</p>
+    </div>
+  </section>
+
+  <!-- ── SOUND FAMILIAR (hooks) ───────────────────────────────────────── -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Sound familiar?</span>
+        <h2>If you’ve said any of these, it’s not bad luck. It’s a leak.</h2>
+      </div>
+      <div class="sf">
+        <div class="sf__card"><p><span class="sf__q">“</span>Won the bid. Lost the margin.<span class="sf__q">”</span></p></div>
+        <div class="sf__card"><p><span class="sf__q">“</span>The job was profitable — so where did the money go?<span class="sf__q">”</span></p></div>
+        <div class="sf__card"><p><span class="sf__q">“</span>I’m financing my clients — for free.<span class="sf__q">”</span></p></div>
+        <div class="sf__card"><p><span class="sf__q">“</span>Ghost labour shows up in my bank balance, not on site.<span class="sf__q">”</span></p></div>
+        <div class="sf__card"><p><span class="sf__q">“</span>Every spreadsheet is a place money hides.<span class="sf__q">”</span></p></div>
+        <div class="sf__card"><p><span class="sf__q">“</span>If everything needs my approval, nothing grows.<span class="sf__q">”</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── THE 4 LEAKS ──────────────────────────────────────────────────── -->
+  <section class="section" id="leaks">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">The 4 questions that decide your profit</span>
+        <h2>Where is your money <span class="hl-ink">actually</span> leaking?</h2>
+        <p class="lead" style="margin-inline:auto">
+          You're not losing money on bad projects. You're losing it in the gaps —
+          between the quote, the site and the collection. Here's each gap, and the part of SotynERP that closes it.
+        </p>
+      </div>
+
+      <div class="leaks">
+        {leaks.map((l) => (
+          <article class="leak">
+            <div class="leak__icon" aria-hidden="true"><Icon name={l.icon} size={26} /></div>
+            <h3>“{l.q}”</h3>
+            <p class="leak__problem"><strong>The leak:</strong> {l.leak}</p>
+            <div class="leak__plug">
+              <span class="dot" aria-hidden="true"></span>
+              <p><strong>How SotynERP plugs it:</strong> {l.plug}</p>
+            </div>
+            <ul class="leak__mods">
+              {l.modules.map((m) => <li>{m}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── THESIS PULL-QUOTE (big hook) ─────────────────────────────────── -->
+  <section class="thesis">
+    <div class="container">
+      <h2>You don’t have a profit problem.<br />You have a <span class="hl-w">visibility</span> problem.</h2>
+      <p>You can’t fix a leak you can’t see. SotynERP makes every rupee visible — from quote to collection.</p>
+    </div>
+  </section>
+
+  <!-- ── PROOF / DOGFOOD ──────────────────────────────────────────────── -->
+  <section class="section section--dark" id="proof">
+    <div class="container proof">
+      <div class="proof__copy">
+        <span class="eyebrow">Built by contractors, not coders</span>
+        <h2>Most ERPs are sold by software companies. This one is sold by a contractor.</h2>
+        <p class="lead">
+          {SITE.parentCompany} is a 14-year-old MEPF &amp; Solar EPC company. We got tired of losing
+          money in the gaps — so we built SotynERP to run our own business first. Every module exists
+          because a real jobsite problem demanded it.
+        </p>
+        <ul class="check-list" style="margin-top:8px">
+          <li>Designed on real Indian project sites, not in a boardroom</li>
+          <li>In plain language your site team actually uses</li>
+          <li>Improved every week from our own daily use</li>
+        </ul>
+        <div class="btn-row" style="margin-top:26px">
+          <a href="#demo" class="btn btn--white btn--lg">See it on your numbers</a>
+        </div>
+      </div>
+      <div class="proof__stats">
+        {SITE.stats.map((s) => (
+          <div class="proof__stat"><strong>{s.value}</strong><span>{s.label}</span></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PUBLISHED AUTHOR / BOOKS (credibility) ───────────────────────── -->
+  <section class="section" id="books">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Published author</span>
+        <h2>The hard-won lessons behind SotynERP — in print.</h2>
+        <p class="lead" style="margin-inline:auto">Our founder didn't just build the software. He wrote the books on exactly where Indian projects lose money and time.</p>
+        <div class="author">
+          <img class="author__photo" src="/images/founder-ankur-kaplesh.jpg" alt="Er. Ankur Kaplesh" width="638" height="720" loading="lazy" />
+          <div class="author__txt"><strong>Er. Ankur Kaplesh</strong><span>CMD &amp; Founder · TEDx Speaker · Published Author</span></div>
+        </div>
+      </div>
+      <div class="books">
+        <article class="book">
+          <img class="book__cover" src="/images/book-11-deadly-facts.jpg" alt="Book cover: 11 Deadly Facts You Must Know to Save up to 27% of Your Project Value, by Er. Ankur Kaplesh" width="964" height="1500" loading="lazy" />
+          <div class="book__body">
+            <span class="pill">Bestseller on Amazon</span>
+            <h3>11 Deadly Facts to Save up to 27% of Your Project Value</h3>
+            <p>15+ years and 31,000+ on-site hours distilled into the exact checks that stop projects leaking money and time.</p>
+            <a class="book__link" href="https://www.amazon.in/Deadly-Facts-value-project-Bestsellers/dp/8197111332" target="_blank" rel="noopener nofollow">View on Amazon <Icon name="arrow-right" size={16} /></a>
+          </div>
+        </article>
+        <article class="book">
+          <img class="book__cover" src="/images/book-autocad-to-site.jpg" alt="Book cover: From AutoCAD to Actual Site, by Er. Ankur Kaplesh" width="551" height="780" loading="lazy" />
+          <div class="book__body">
+            <span class="pill">New release</span>
+            <h3>From AutoCAD to Actual Site</h3>
+            <p>Why Indian buildings never match the drawing — 20 pain points and 20 solutions from the field.</p>
+            <span class="book__link book__link--muted">Launching soon</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── LEAD MAGNET (free checklist) ─────────────────────────────────── -->
+  <section class="section section--tint" id="checklist">
+    <div class="container magnetband">
+      <div class="magnetband__copy">
+        <span class="eyebrow">Free download · from the founder's book</span>
+        <h2>Get the 11-Point Project Savings Checklist</h2>
+        <p class="lead">The exact checks our engineers run on every project — distilled from 15+ years and 31,000+ on-site hours. Grab it free before you sign your next contract.</p>
+        <ul class="check-list" style="margin-top:6px">
+          <li>Catch the delays that start before the work does</li>
+          <li>Protect 25-year yield on every solar job</li>
+          <li>The habits that quietly cut energy and rework cost</li>
+        </ul>
+        <p class="magnetband__tie">No credit card, no demo required — just the checklist. The same SotynERP team will be glad to help when you're ready.</p>
+      </div>
+      <div class="magnetband__form">
+        <BookLeadMagnet source="home-checklist" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MODULES (suite breadth) ──────────────────────────────────────── -->
+  <section class="section section--alt" id="modules">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">One login, the whole business</span>
+        <h2>Everything from first lead to final rupee collected</h2>
+        <p class="lead" style="margin-inline:auto">
+          No more 7 disconnected apps and 30 Excel sheets. Quote, procurement, site, labour, billing
+          and cash — all in one place, talking to each other.
+        </p>
+      </div>
+      <div class="grid grid-3">
+        {moduleGroups.map((g) => (
+          <div class="card mod">
+            <div class="mod__head"><span class="mod__icon" aria-hidden="true"><Icon name={g.icon} size={24} /></span><h3>{g.name}</h3></div>
+            <ul class="mod__list">
+              {g.items.map((i) => <li>{i}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p class="text-center muted" style="margin-top:28px">…plus a full Solar Division, Help Desk, Roles &amp; Permissions, Backups and AI settings.</p>
+    </div>
+  </section>
+
+  <!-- ── MADE IN INDIA / DATA RESIDENCY (trust differentiator) ────────── -->
+  <section class="section india">
+    <div class="container india__in">
+      <div class="india__copy">
+        <span class="eyebrow">Made in India, for Indian contractors</span>
+        <h2>Your data stays in India — and stays yours.</h2>
+        <p class="lead">
+          Built in India for the way Indian contractors actually work: GST, Tally, sub-contractor
+          labour, site realities. Hosted in India, in your own secure workspace, with a full audit
+          log. We never sell your data, and never share it with another contractor.
+        </p>
+        <div class="creds">
+          {creds.map((c) => (
+            <span class="cred"><Icon name="check" size={16} /> {c}</span>
+          ))}
+        </div>
+      </div>
+      <div class="india__pillars">
+        <div class="pillar"><Icon name="shield" size={26} /><h3>Your data is yours</h3><p>Export any time. Never sold, never shared.</p></div>
+        <div class="pillar"><Icon name="pin" size={26} /><h3>Hosted in India</h3><p>Indian data centres, Indian compliance.</p></div>
+        <div class="pillar"><Icon name="layers" size={26} /><h3>One secure workspace</h3><p>Role-based access and a full audit trail.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ─────────────────────────────────────────────────── -->
+  <section class="section section--alt" id="how">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Live in weeks, not months</span>
+        <h2>How you get started</h2>
+      </div>
+      <div class="grid grid-4 steps">
+        {how.map((s) => (
+          <div class="step">
+            <div class="step__n">{s.n}</div>
+            <h3>{s.t}</h3>
+            <p class="muted">{s.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ──────────────────────────────────────────────────────────── -->
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Straight answers</span>
+        <h2>Questions contractors ask us</h2>
+      </div>
+      <div class="faqs">
+        {faqs.map((f) => (
+          <details class="faq">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DEMO / CTA ───────────────────────────────────────────────────── -->
+  <section class="section section--dark" id="demo">
+    <div class="container demo">
+      <div class="demo__copy">
+        <span class="eyebrow">Book a free demo</span>
+        <h2>See exactly where you’re leaking money.</h2>
+        <p class="lead">
+          A 20-minute walkthrough on your own trades and project sizes. No slides, no jargon —
+          just where your margin, cash and sites really stand. Then you decide.
+        </p>
+        <ul class="check-list" style="margin-top:6px">
+          <li>Free, no obligation</li>
+          <li>Tailored pricing for your team size — start small</li>
+          <li>We migrate your Tally + Excel data for you</li>
+        </ul>
+        <p style="margin-top:22px">
+          Prefer to talk now? <a href={waLink()} rel="nofollow" style="color:#fff;text-decoration:underline">WhatsApp us</a>
+          or call <a href={`tel:${SITE.phoneHref}`} style="color:#fff;text-decoration:underline">{SITE.phone}</a>.
+        </p>
+      </div>
+      <div class="demo__form">
+        <DemoForm />
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const el = document.querySelector("[data-rotate]");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (el && el.parentElement && !reduce) {
+      const wrap = el.parentElement;
+      const lines = [
+        "Won the bid. Lost the margin. Found out at month-end.",
+        "The job was profitable — so where did the money go?",
+        "You paid for labour that never showed up on site.",
+        "You’re financing your clients — for free.",
+        "You can’t fix a leak you can’t see.",
+      ];
+      let i = 0;
+      setInterval(() => {
+        wrap.classList.add("is-fading");
+        setTimeout(() => {
+          i = (i + 1) % lines.length;
+          el.textContent = lines[i];
+          wrap.classList.remove("is-fading");
+        }, 320);
+      }, 2900);
+    }
+  </script>
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .hero { background: linear-gradient(180deg, var(--brand-50) 0%, #fff 60%); padding: clamp(56px, 9vw, 100px) 0 clamp(44px, 7vw, 72px); border-bottom: 1px solid var(--line); }
+  .hero__in { max-width: 840px; margin-inline: auto; text-align: center; }
+  .hero h1 { margin: 22px 0 18px; }
+  .hero .hl { color: var(--brand-600); }
+  .hero .lead { margin-inline: auto; }
+  .hero .btn-row { justify-content: center; margin-top: 30px; }
+  .hero__stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 52px; border-top: 1px solid var(--line); padding-top: 30px; }
+  .hero__stat { display: flex; flex-direction: column; gap: 2px; }
+  .hero__stat strong { font-size: clamp(1.5rem, 3.5vw, 2.1rem); font-weight: 900; color: var(--brand-700); letter-spacing: -.03em; }
+  .hero__stat span { font-size: .82rem; color: var(--muted); }
+
+  /* Clients strip */
+  .clients { padding: 30px 0; border-bottom: 1px solid var(--line); }
+  .clients__label { text-align: center; font-size: .9rem; font-weight: 600; color: var(--muted); margin-bottom: 16px; }
+  .clients__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px 34px; }
+  .clients__name { font-size: 1.35rem; font-weight: 800; color: var(--graphite-300); letter-spacing: -.02em; transition: color .2s; }
+  .clients__name:hover { color: var(--graphite-600); }
+  .clients__more { font-size: .92rem; font-weight: 700; color: var(--brand-600); }
+
+  /* Trust strip */
+  .strip { background: var(--graphite-900); color: #cbd5e1; padding: 30px 0; }
+  .strip__in { text-align: center; }
+  .strip p { margin: 0; font-size: 1.05rem; }
+  .strip__big { font-size: clamp(1.2rem, 2.6vw, 1.6rem); color: #fff; font-weight: 700; margin-top: 4px; }
+  .strip__big strong { color: var(--brand-500); }
+
+  .hl-ink { color: var(--brand-600); }
+
+  /* Leaks — problem tone = graphite, solution tone = royal blue */
+  .leaks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .leak { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--graphite-700); border-radius: var(--radius); padding: 30px; transition: .25s; }
+  .leak:hover { box-shadow: var(--shadow); transform: translateY(-3px); border-left-color: var(--brand-600); }
+  .leak__icon { width: 52px; height: 52px; border-radius: 13px; background: var(--graphite-100); color: var(--graphite-700); display: grid; place-items: center; margin-bottom: 14px; }
+  .leak h3 { font-size: 1.35rem; color: var(--ink); margin-bottom: 14px; }
+  .leak__problem { color: var(--body); font-size: .98rem; margin-bottom: 16px; }
+  .leak__plug { display: flex; gap: 12px; align-items: flex-start; background: var(--brand-50); border: 1px solid var(--brand-100); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; }
+  .leak__plug .dot { margin-top: 7px; flex: none; }
+  .leak__plug p { margin: 0; font-size: .96rem; color: var(--brand-800); }
+  .leak__mods { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+  .leak__mods li { font-size: .8rem; font-weight: 600; color: var(--brand-700); background: var(--brand-50); border: 1px solid var(--brand-100); padding: 5px 11px; border-radius: 999px; }
+
+  /* Proof */
+  .proof { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: center; }
+  .proof__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .proof__stat { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 24px; }
+  .proof__stat strong { display: block; font-size: 2rem; font-weight: 900; color: #fff; letter-spacing: -.03em; }
+  .proof__stat span { font-size: .85rem; color: #94a3b8; }
+
+  /* Modules */
+  .mod__head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .mod__icon { width: 44px; height: 44px; border-radius: 11px; background: var(--brand-50); color: var(--brand-700); display: grid; place-items: center; flex: none; }
+  .mod__head h3 { margin: 0; }
+  .mod__list { list-style: none; display: grid; gap: 9px; }
+  .mod__list li { position: relative; padding-left: 20px; font-size: .94rem; color: var(--body); }
+  .mod__list li::before { content: ""; position: absolute; left: 0; top: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--brand-500); }
+
+  /* Made in India */
+  .india__in { display: grid; grid-template-columns: 1.1fr 1fr; gap: 52px; align-items: center; }
+  .india__copy h2 { margin-bottom: 14px; }
+  .creds { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .cred { display: inline-flex; align-items: center; gap: 7px; font-size: .9rem; font-weight: 600; color: var(--graphite-700); background: var(--graphite-100); border: 1px solid var(--line); padding: 8px 14px; border-radius: 999px; }
+  .cred :global(.ico) { color: var(--brand-600); }
+  .india__pillars { display: grid; gap: 16px; }
+  .pillar { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; box-shadow: var(--shadow-sm); }
+  .pillar :global(.ico) { color: var(--brand-600); margin-bottom: 10px; }
+  .pillar h3 { font-size: 1.1rem; margin-bottom: 4px; }
+  .pillar p { margin: 0; font-size: .94rem; color: var(--muted); }
+
+  /* Steps */
+  .step__n { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-weight: 900; color: #fff; background: var(--brand-600); margin-bottom: 16px; font-size: 1.1rem; }
+  .step h3 { margin-bottom: 8px; }
+
+  /* Author chip */
+  .author { display: inline-flex; align-items: center; gap: 12px; margin-top: 24px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 8px 20px 8px 8px; box-shadow: var(--shadow-sm); }
+  .author__photo { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; object-position: top center; flex: none; }
+  .author__txt { display: flex; flex-direction: column; text-align: left; line-height: 1.25; }
+  .author__txt strong { color: var(--ink); font-size: .95rem; }
+  .author__txt span { color: var(--muted); font-size: .82rem; }
+
+  /* Books */
+  .books { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .book { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); transition: .25s; }
+  .book:hover { box-shadow: var(--shadow); transform: translateY(-3px); border-color: var(--graphite-300); }
+  .book__cover { width: 132px; height: 188px; object-fit: cover; border-radius: 10px; box-shadow: var(--shadow); flex: none; }
+  .book__body h3 { font-size: 1.12rem; margin: 12px 0 8px; }
+  .book__body p { font-size: .93rem; color: var(--muted); margin-bottom: 12px; }
+  .book__link { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .92rem; color: var(--brand-700); }
+  .book__link--muted { color: var(--muted); }
+
+  /* Lead magnet band */
+  .magnetband { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+  .magnetband__copy h2 { margin-bottom: 14px; }
+  .magnetband__tie { margin: 20px 0 0; font-size: .92rem; color: var(--muted); }
+  @media (max-width: 920px) { .magnetband { grid-template-columns: 1fr; gap: 32px; } }
+
+  /* FAQ */
+  .faqs { display: grid; gap: 12px; }
+  .faq { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 4px 20px; }
+  .faq summary { cursor: pointer; font-weight: 700; color: var(--ink); padding: 18px 0; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--brand-600); font-weight: 700; font-size: 1.4rem; line-height: 1; }
+  .faq[open] summary::after { content: "–"; }
+  .faq p { margin: 0 0 18px; color: var(--body); font-size: .98rem; }
+
+  /* Demo */
+  .demo { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: start; }
+  .demo__form { background: #fff; border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow-lg); }
+
+  /* Hero rotating hook */
+  .hero__rotator { min-height: 1.7em; margin: 2px 0 16px; font-size: clamp(1.05rem, 2.2vw, 1.3rem); font-weight: 600; color: var(--graphite-600); }
+  .hero__rotator [data-rotate] { display: inline-block; position: relative; padding-left: 18px; transition: opacity .3s ease; }
+  .hero__rotator [data-rotate]::before { content: ""; position: absolute; left: 0; top: .18em; bottom: .18em; width: 4px; border-radius: 4px; background: var(--brand-600); }
+  .hero__rotator.is-fading [data-rotate] { opacity: 0; }
+
+  /* Sound familiar — hook cards */
+  .sf { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .sf__card { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--brand-600); border-radius: 14px; padding: 24px; box-shadow: var(--shadow-sm); transition: .2s; }
+  .sf__card:hover { box-shadow: var(--shadow); transform: translateY(-3px); }
+  .sf__card p { margin: 0; font-size: 1.12rem; font-weight: 700; color: var(--ink); line-height: 1.35; }
+  .sf__q { color: var(--brand-600); font-weight: 900; }
+
+  /* Thesis pull-quote band (royal blue) */
+  .thesis { background: linear-gradient(135deg, var(--brand-700), var(--brand-600)); color: #fff; padding: clamp(56px, 8vw, 92px) 0; text-align: center; }
+  .thesis h2 { color: #fff; font-size: clamp(1.9rem, 4.4vw, 3.1rem); max-width: 900px; margin: 0 auto 14px; letter-spacing: -.03em; line-height: 1.12; }
+  .thesis .hl-w { color: #bfdbfe; }
+  .thesis p { color: #dbe4ff; font-size: clamp(1.05rem, 2vw, 1.3rem); max-width: 660px; margin: 0 auto; }
+
+  @media (max-width: 880px) { .sf { grid-template-columns: 1fr 1fr; } .books { grid-template-columns: 1fr; } }
+  @media (max-width: 920px) {
+    .proof, .demo, .india__in { grid-template-columns: 1fr; gap: 36px; }
+  }
+  @media (max-width: 560px) {
+    .sf { grid-template-columns: 1fr; }
+    .book { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  }
+  @media (max-width: 700px) {
+    .leaks { grid-template-columns: 1fr; }
+    .hero__stats { grid-template-columns: repeat(2, 1fr); gap: 24px 12px; }
+  }
+</style>
