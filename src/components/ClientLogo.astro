@@ -1,0 +1,28 @@
+---
+export interface Props {
+  name: string;
+  class?: string;
+}
+const { name, class: className } = Astro.props;
+
+// Use real logos directly from local public directory (fetched via Uplead API)
+const logos: Record<string, string> = {
+  "Airtel": "/images/logos/airtel_ai.png",
+  "Dabur": "/images/logos/dabur_ai.png",
+  "Indian Army": "/images/logos/indianarmy_ai.png",
+  "Fortis": "/images/logos/fortis_ai.png",
+  "Hyatt": "/images/logos/hyatt_ai.png",
+  "Reliance Jio": "/images/logos/jio_ai.png",
+  "HDFC Ergo": "/images/logos/hdfc_ai.png",
+  "Power Grid": "/images/logos/powergrid_ai.png",
+  "Shapoorji Pallonji": "/images/logos/shapoorji_ai.png",
+  "Hero Cycles": "/images/logos/hero_ai.png",
+};
+
+const src = logos[name];
+---
+{src ? (
+  <img src={src} alt={`${name} logo`} class={className} height="36" loading="lazy" />
+) : (
+  <span class={className}>{name}</span>
+)}

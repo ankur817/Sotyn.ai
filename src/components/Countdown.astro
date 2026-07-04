@@ -9,8 +9,11 @@ const c = SITE.countdown;
     <span class="cd__label">{c.label}</span>
     <div class="cd__units">
       <div class="cd__u"><strong data-cd="d">00</strong><span>days</span></div>
+      <div class="cd__sep" aria-hidden="true">:</div>
       <div class="cd__u"><strong data-cd="h">00</strong><span>hrs</span></div>
+      <div class="cd__sep" aria-hidden="true">:</div>
       <div class="cd__u"><strong data-cd="m">00</strong><span>min</span></div>
+      <div class="cd__sep" aria-hidden="true">:</div>
       <div class="cd__u"><strong data-cd="s">00</strong><span>sec</span></div>
     </div>
     {c.sublabel && <span class="cd__sub">{c.sublabel}</span>}
@@ -19,21 +22,76 @@ const c = SITE.countdown;
 
 <style>
   .cd { text-align: center; }
-  .cd__label { display: block; font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
-  .cd__units { display: flex; gap: 8px; justify-content: center; }
-  .cd__u { min-width: 58px; border-radius: 10px; padding: 9px 6px; }
-  .cd__u strong { display: block; font-size: 1.7rem; font-weight: 900; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-  .cd__u span { font-size: .64rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
-  .cd__sub { display: block; font-size: .78rem; margin-top: 10px; }
+  .cd__label {
+    display: block;
+    font-size: .76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-bottom: 14px;
+  }
+  .cd__units {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+  }
+  .cd__u {
+    min-width: 64px;
+    border-radius: var(--radius-sm);
+    padding: 12px 8px;
+    position: relative;
+  }
+  .cd__u strong {
+    display: block;
+    font-size: 1.9rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .cd__u span {
+    font-size: .62rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-weight: 700;
+    margin-top: 4px;
+    display: block;
+  }
+  .cd__sep {
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .cd__sub {
+    display: block;
+    font-size: .78rem;
+    margin-top: 14px;
+    max-width: 400px;
+    margin-inline: auto;
+  }
 
+  /* Dark variant */
   .cd--dark .cd__label { color: #94a3b8; }
-  .cd--dark .cd__u { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); color: #fff; }
+  .cd--dark .cd__u {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1);
+    color: #fff;
+  }
   .cd--dark .cd__u span { color: #94a3b8; }
+  .cd--dark .cd__sep { color: rgba(255,255,255,.3); }
   .cd--dark .cd__sub { color: #94a3b8; }
 
+  /* Light variant */
   .cd--light .cd__label { color: var(--brand-700); }
-  .cd--light .cd__u { background: var(--brand-50); border: 1px solid var(--brand-100); color: var(--brand-800); }
+  .cd--light .cd__u {
+    background: var(--brand-50);
+    border: 1px solid var(--brand-100);
+    color: var(--brand-800);
+  }
   .cd--light .cd__u span { color: var(--muted); }
+  .cd--light .cd__sep { color: var(--brand-200); }
   .cd--light .cd__sub { color: var(--muted); }
 </style>
 

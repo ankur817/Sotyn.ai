@@ -2,13 +2,14 @@
 import { SITE } from "../config/site";
 ---
 <a class="announce" href="/webinar">
-  <strong>Free live masterclass</strong> for contractors — stop losing money on every project. <u>Reserve your seat →</u>
+  <span class="announce__inner">
+    <strong>Free live masterclass</strong> for contractors — stop losing money on every project. <u>Reserve your seat →</u>
+  </span>
 </a>
-<header class="hdr">
+<header class="hdr" id="siteHeader">
   <div class="container hdr__in">
     <a href="/" class="hdr__brand" aria-label={`${SITE.name} home`}>
-      <span class="hdr__mark" aria-hidden="true">S</span>
-      <span class="hdr__name">sotyn<span>.ai</span></span>
+      <img src="/images/sotyn_logo_v2.png" alt="sotyn.ai Logo" class="hdr__logo-img" />
     </a>
 
     <nav class="hdr__nav" aria-label="Primary">
@@ -29,64 +30,270 @@ import { SITE } from "../config/site";
     </button>
   </div>
   <div class="hdr__mobile" id="mobileMenu" hidden>
-    <a href="/features">Features</a>
-    <a href="/tools">Free Tools</a>
-    <a href="/pricing">Pricing</a>
-    <a href="/about">About</a>
-    <a href="/webinar" class="hdr__hot">Free Webinar</a>
-    <a href={SITE.appUrl} rel="nofollow">Login</a>
-    <a href="/#demo" class="btn btn--primary">Book a demo</a>
+    <nav class="hdr__mobile-nav">
+      <a href="/features">Features</a>
+      <a href="/tools">Free Tools</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/about">About</a>
+      <a href="/webinar" class="hdr__hot">Free Webinar</a>
+      <a href={SITE.appUrl} rel="nofollow">Login</a>
+      <a href="/#demo" class="btn btn--primary">Book a demo</a>
+    </nav>
   </div>
 </header>
 
 <style>
-  .announce { display: block; text-align: center; background: var(--brand-700); color: #fff; font-size: .88rem; padding: 9px 16px; text-decoration: none; }
-  .announce:hover { background: var(--brand-800); text-decoration: none; }
-  .announce u { text-underline-offset: 2px; }
-  .hdr__nav a.hdr__hot, .hdr__mobile a.hdr__hot { color: var(--brand-700); font-weight: 700; }
-  .hdr {
-    position: sticky; top: 0; z-index: 50;
-    background: rgba(255, 255, 255, .82); backdrop-filter: saturate(180%) blur(16px);
-    border-bottom: 1px solid var(--line);
+  /* ── Announcement bar ──────────────────────────────────────── */
+  .announce {
+    display: block;
+    text-align: center;
+    background: linear-gradient(135deg, var(--brand-700) 0%, var(--brand-800) 100%);
+    color: #fff;
+    font-size: .86rem;
+    padding: 10px 16px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
   }
-  .hdr__in { display: flex; align-items: center; gap: 24px; height: 64px; }
-  .hdr__brand { display: inline-flex; align-items: center; gap: 10px; }
-  .hdr__brand:hover { text-decoration: none; }
-  .hdr__mark {
-    width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center;
-    background: linear-gradient(135deg, var(--brand-700), var(--brand-500));
-    color: #fff; font-weight: 900; font-size: 1.05rem;
+  .announce::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 20%, rgba(255,255,255,.08) 50%, transparent 80%);
+    background-size: 200% 100%;
+    animation: shimmer 4s linear infinite;
   }
-  .hdr__name { font-weight: 800; font-size: 1.18rem; color: var(--ink); letter-spacing: -.03em; }
-  .hdr__name span { color: var(--brand-600); }
-  .hdr__nav { display: flex; gap: 26px; margin-left: 8px; }
-  .hdr__nav a { color: var(--body); font-weight: 500; font-size: .96rem; }
-  .hdr__nav a:hover { color: var(--brand-700); text-decoration: none; }
-  .hdr__cta { display: flex; align-items: center; gap: 14px; margin-left: auto; }
-  .hdr__login { color: var(--ink); font-weight: 600; font-size: .96rem; }
-  .hdr__demo { padding: 9px 20px; font-size: .96rem; }
-  .hdr__burger { display: none; flex-direction: column; gap: 5px; background: none; border: 0; cursor: pointer; padding: 8px; margin-left: auto; }
-  .hdr__burger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; transition: .2s; }
-  .hdr__mobile { display: none; flex-direction: column; gap: 4px; padding: 14px 22px 22px; border-top: 1px solid var(--line); background: #fff; }
-  .hdr__mobile a { padding: 12px 4px; font-weight: 600; color: var(--ink); border-bottom: 1px solid var(--bg-alt); }
-  .hdr__mobile a.btn { margin-top: 10px; border-bottom: 0; color: #fff; }
+  .announce:hover { background: linear-gradient(135deg, var(--brand-800) 0%, var(--brand-900) 100%); text-decoration: none; }
+  .announce__inner { position: relative; z-index: 1; }
+  .announce u { text-underline-offset: 3px; }
 
-  @media (max-width: 860px) {
+  /* ── Header ────────────────────────────────────────────────── */
+  .hdr__nav a.hdr__hot, .hdr__mobile-nav a.hdr__hot { color: var(--brand-700); font-weight: 700; }
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, .72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(229, 231, 235, .6);
+    transition: background .3s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease);
+  }
+  .hdr.is-scrolled {
+    background: rgba(255, 255, 255, .88);
+    border-bottom-color: var(--line);
+    box-shadow: 0 1px 3px rgba(17, 24, 39, .04);
+  }
+  .hdr__in {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    height: 96px;
+  }
+
+  /* ── Brand ──────────────────────────────────────────────────── */
+  .hdr__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform .2s var(--ease);
+  }
+  .hdr__brand:hover { text-decoration: none; transform: scale(1.02); }
+  .hdr__logo-img {
+    height: 72px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  /* ── Nav links with animated underline ──────────────────────── */
+  .hdr__nav {
+    display: flex;
+    gap: 8px;
+    margin-left: 8px;
+  }
+  .hdr__nav a {
+    color: var(--graphite-600);
+    font-weight: 500;
+    font-size: .95rem;
+    padding: 8px 14px;
+    border-radius: 8px;
+    position: relative;
+    transition: color .2s var(--ease), background .2s var(--ease);
+  }
+  .hdr__nav a::after {
+    content: "";
+    position: absolute;
+    bottom: 2px;
+    left: 14px;
+    right: 14px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--brand-600);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s var(--ease);
+  }
+  .hdr__nav a:hover {
+    color: var(--ink);
+    background: var(--graphite-50);
+    text-decoration: none;
+  }
+  .hdr__nav a:hover::after { transform: scaleX(1); }
+  /* Active state — matches current path */
+  .hdr__nav a[aria-current="page"] {
+    color: var(--brand-700);
+    font-weight: 600;
+  }
+  .hdr__nav a[aria-current="page"]::after { transform: scaleX(1); }
+
+  /* ── CTA area ──────────────────────────────────────────────── */
+  .hdr__cta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto;
+  }
+  .hdr__login {
+    color: var(--graphite-600);
+    font-weight: 600;
+    font-size: .95rem;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: color .2s var(--ease), background .2s var(--ease);
+  }
+  .hdr__login:hover {
+    color: var(--ink);
+    background: var(--graphite-50);
+    text-decoration: none;
+  }
+  .hdr__demo {
+    padding: 10px 22px;
+    font-size: .95rem;
+  }
+
+  /* ── Burger ─────────────────────────────────────────────────── */
+  .hdr__burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: auto;
+    border-radius: 8px;
+    transition: background .2s;
+  }
+  .hdr__burger:hover { background: var(--graphite-50); }
+  .hdr__burger span {
+    width: 22px;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: transform .25s var(--ease), opacity .15s;
+  }
+  /* Open state */
+  .hdr__burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hdr__burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .hdr__burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ── Mobile menu — full-screen overlay ─────────────────────── */
+  .hdr__mobile {
+    display: none;
+    position: fixed;
+    inset: 72px 0 0 0;
+    background: rgba(255, 255, 255, .98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 49;
+    overflow-y: auto;
+  }
+  .hdr__mobile[data-open] {
+    display: block;
+    animation: fadeIn .2s var(--ease);
+  }
+  .hdr__mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 8px var(--gutter) 40px;
+    max-width: var(--container);
+    margin-inline: auto;
+  }
+  .hdr__mobile-nav a {
+    padding: 16px 4px;
+    font-weight: 600;
+    font-size: 1.08rem;
+    color: var(--ink);
+    border-bottom: 1px solid var(--graphite-100);
+    transition: color .2s, padding-left .2s;
+  }
+  .hdr__mobile-nav a:hover {
+    text-decoration: none;
+    color: var(--brand-700);
+    padding-left: 8px;
+  }
+  .hdr__mobile-nav a.btn {
+    margin-top: 16px;
+    border-bottom: 0;
+    color: #fff;
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
     .hdr__nav, .hdr__cta { display: none; }
     .hdr__burger { display: flex; }
-    .hdr__mobile[data-open] { display: flex; }
   }
 </style>
 
 <script>
+  // Sticky header scroll effect
+  const header = document.getElementById("siteHeader");
+  if (header) {
+    let ticking = false;
+    window.addEventListener("scroll", () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          header.classList.toggle("is-scrolled", window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
+  // Burger toggle
   const burger = document.getElementById("burger");
   const menu = document.getElementById("mobileMenu");
   burger?.addEventListener("click", () => {
     const open = menu?.hasAttribute("data-open");
-    if (open) { menu?.removeAttribute("data-open"); menu?.setAttribute("hidden", ""); burger?.setAttribute("aria-expanded", "false"); }
-    else { menu?.setAttribute("data-open", ""); menu?.removeAttribute("hidden"); burger?.setAttribute("aria-expanded", "true"); }
+    if (open) {
+      menu?.removeAttribute("data-open");
+      menu?.setAttribute("hidden", "");
+      burger?.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    } else {
+      menu?.setAttribute("data-open", "");
+      menu?.removeAttribute("hidden");
+      burger?.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+    }
   });
   menu?.querySelectorAll("a").forEach((a) =>
-    a.addEventListener("click", () => { menu.removeAttribute("data-open"); menu.setAttribute("hidden", ""); burger?.setAttribute("aria-expanded", "false"); })
+    a.addEventListener("click", () => {
+      menu.removeAttribute("data-open");
+      menu.setAttribute("hidden", "");
+      burger?.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    })
   );
+
+  // Set aria-current on active nav link
+  const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
+  document.querySelectorAll(".hdr__nav a, .hdr__mobile-nav a").forEach((link) => {
+    const href = (link as HTMLAnchorElement).getAttribute("href")?.replace(/\/$/, "") || "/";
+    if (href === currentPath) {
+      link.setAttribute("aria-current", "page");
+    }
+  });
 </script>
