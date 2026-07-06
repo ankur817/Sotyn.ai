@@ -4,6 +4,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import WhatsAppFloat from "../components/WhatsAppFloat.astro";
 import ExitPopup from "../components/ExitPopup.astro";
+import ScrollAnimations from "../components/ScrollAnimations.astro";
 import { SITE } from "../config/site";
 
 export interface Props {
@@ -64,6 +65,7 @@ const fbNoscript = SITE.metaPixelId
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -90,11 +92,13 @@ const fbNoscript = SITE.metaPixelId
     <meta name="author" content={SITE.parentCompany} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Inter Variable Font — optical sizing, 300-900 weight range -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
     />
 
     <!-- Structured data (JSON-LD) -->
@@ -115,5 +119,6 @@ const fbNoscript = SITE.metaPixelId
     <Footer />
     <WhatsAppFloat />
     <ExitPopup />
+    <ScrollAnimations />
   </body>
 </html>

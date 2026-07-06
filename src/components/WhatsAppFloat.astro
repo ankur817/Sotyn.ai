@@ -2,18 +2,36 @@
 import { waLink } from "../config/site";
 ---
 <a class="wafloat" href={waLink()} target="_blank" rel="noopener nofollow" aria-label="Chat on WhatsApp">
-  <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+  <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
     <path fill="#fff" d="M16 3C9 3 3.5 8.5 3.5 15.5c0 2.4.7 4.7 1.9 6.7L3 29l7-1.8c1.9 1 4 1.6 6.1 1.6 7 0 12.5-5.5 12.5-12.5S23 3 16 3zm0 22.6c-1.9 0-3.7-.5-5.3-1.5l-.4-.2-4.2 1.1 1.1-4-.2-.4c-1.1-1.7-1.6-3.6-1.6-5.6C5.2 9.6 10 4.9 16 4.9s10.8 4.7 10.8 10.6S22 25.6 16 25.6zm6.1-7.9c-.3-.2-1.9-1-2.2-1-.3-.1-.5-.2-.8.2s-.9 1-1 1.2c-.2.2-.4.2-.7.1s-1.4-.5-2.7-1.7c-1-.9-1.6-2-1.8-2.3s0-.5.2-.7l.5-.6c.2-.2.2-.3.3-.5s.1-.4 0-.6-.8-1.9-1-2.6c-.3-.7-.5-.6-.8-.6h-.7c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.5 3.8 6 5.3.8.4 1.5.6 2 .7.8.3 1.6.2 2.2.1.7-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/>
   </svg>
 </a>
 
 <style>
   .wafloat {
-    position: fixed; bottom: 22px; right: 22px; z-index: 60;
-    width: 56px; height: 56px; border-radius: 50%;
-    background: var(--brand-600); display: grid; place-items: center;
-    box-shadow: 0 8px 24px rgba(37, 99, 235, .4); transition: transform .2s;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 60;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--brand-600), var(--brand-500));
+    display: grid;
+    place-items: center;
+    box-shadow: var(--shadow-brand-lg);
+    transition: all .25s var(--ease);
+    animation: wafloat-enter .5s var(--ease-out) .8s both;
   }
-  .wafloat:hover { transform: scale(1.06); text-decoration: none; }
-  @media (max-width: 640px) { .wafloat { width: 52px; height: 52px; bottom: 16px; right: 16px; } }
+  .wafloat:hover {
+    transform: translateY(-3px) scale(1.04);
+    text-decoration: none;
+    box-shadow: 0 20px 60px rgba(37, 99, 235, .35);
+  }
+  .wafloat:active { transform: scale(.96); }
+  @keyframes wafloat-enter {
+    from { opacity: 0; transform: translateY(20px) scale(.8); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @media (max-width: 640px) { .wafloat { width: 52px; height: 52px; bottom: 18px; right: 18px; border-radius: 14px; } }
 </style>

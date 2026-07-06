@@ -43,19 +43,37 @@ import { SITE } from "../config/site";
 
   <button type="submit" class="btn btn--primary btn--lg df__submit">Book my free demo</button>
   <p class="df__status" id="dfStatus" role="status" aria-live="polite"></p>
-  <p class="df__note">No spam. We’ll WhatsApp you to fix a 20-minute walkthrough on your own numbers.</p>
+  <p class="df__note">No spam. We'll WhatsApp you to fix a 20-minute walkthrough on your own numbers.</p>
 </form>
 
 <style>
-  .df { display: grid; gap: 16px; }
+  .df { display: grid; gap: 18px; }
   .df__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .df label { display: grid; gap: 7px; font-weight: 600; font-size: .9rem; color: var(--ink); }
-  .df input, .df select {
-    font-family: inherit; font-size: 1rem; padding: 13px 14px; border: 1.5px solid var(--line);
-    border-radius: 11px; background: #fff; color: var(--ink); width: 100%; transition: .15s;
+  .df label {
+    display: grid;
+    gap: 8px;
+    font-weight: 600;
+    font-size: .88rem;
+    color: var(--ink);
+    letter-spacing: .01em;
   }
-  .df input::placeholder { color: #94a3b8; }
-  .df input:focus, .df select:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, .15); }
+  .df input, .df select {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 14px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--ink);
+    width: 100%;
+    transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .df input::placeholder { color: #9ca3af; }
+  .df input:focus, .df select:focus {
+    border-color: var(--brand-500);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, .1);
+  }
   .df__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
   .df__submit { width: 100%; margin-top: 4px; }
   .df__submit[disabled] { opacity: .6; cursor: progress; }
@@ -69,11 +87,19 @@ import { SITE } from "../config/site";
 <script define:vars={{ WEBHOOK: SITE.leadWebhookUrl, WA: SITE.whatsapp, MAIL: SITE.emailFallback }}>
   const form = document.getElementById("demoForm");
   const status = document.getElementById("dfStatus");
+  const loadTime = Date.now();
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form));
-    if (data.website) return; // honeypot tripped → silently drop bot
+    
+    // Advanced Honeypot & Speed Trap (Backend-less rate limiting for static sites)
+    // 1. If hidden website field is filled, it's a bot.
+    // 2. If form is submitted in under 3.5 seconds, it's a bot.
+    if (data.website || (Date.now() - loadTime) < 3500) {
+      console.warn("Bot detected: Form filled too quickly or honeypot triggered.");
+      return; 
+    }
     if (!data.name || !data.company || !data.phone) {
       status.dataset.state = "err";
       status.textContent = "Please add your name, company and phone.";

@@ -6,6 +6,9 @@
   <div class="xp__backdrop" data-xp-close></div>
   <div class="xp__card" role="dialog" aria-modal="true" aria-label="Before you go">
     <button class="xp__x" data-xp-close aria-label="Close">&times;</button>
+    <div class="xp__icon" aria-hidden="true">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6c3 3.9 5.5 6.8 5.5 9.6a5.5 5.5 0 0 1-11 0c0-2.8 2.5-5.7 5.5-9.6Z"/></svg>
+    </div>
     <span class="eyebrow">Wait — before you go</span>
     <h2>Find out how much you're leaking. Free.</h2>
     <p>Take the 2-minute EPC Profit Leak Scorecard and see exactly where — and how much — your business is losing every year.</p>
@@ -20,17 +23,70 @@
 <style>
   .xp { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; }
   .xp[hidden] { display: none; }
-  .xp__backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .6); backdrop-filter: blur(2px); animation: xpfade .2s ease; }
-  .xp__card { position: relative; background: #fff; border-radius: var(--radius); max-width: 480px; width: 100%; padding: 40px 34px 28px; box-shadow: var(--shadow-lg); text-align: center; animation: xppop .25s ease; }
-  .xp__card h2 { font-size: clamp(1.5rem, 4vw, 2rem); margin: 8px 0 10px; }
-  .xp__card p { color: var(--muted); margin-bottom: 22px; }
-  .xp__x { position: absolute; top: 12px; right: 16px; background: none; border: 0; font-size: 1.8rem; line-height: 1; color: var(--graphite-500); cursor: pointer; }
-  .xp__x:hover { color: var(--ink); }
+  .xp__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, .65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: xpfade .25s var(--ease);
+  }
+  .xp__card {
+    position: relative;
+    background: var(--bg-elevated);
+    border-radius: var(--radius);
+    max-width: 480px;
+    width: 100%;
+    padding: 44px 38px 32px;
+    box-shadow: var(--shadow-xl);
+    text-align: center;
+    animation: xppop .3s var(--ease-spring);
+  }
+  .xp__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: var(--brand-50);
+    color: var(--brand-600);
+    display: grid;
+    place-items: center;
+    margin: 0 auto 16px;
+  }
+  .xp__card h2 { font-size: clamp(1.5rem, 4vw, 2rem); margin: 8px 0 12px; }
+  .xp__card p { color: var(--muted); margin-bottom: 24px; }
+  .xp__x {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    background: var(--graphite-100);
+    border: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--graphite-500);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all .2s var(--ease);
+  }
+  .xp__x:hover { color: var(--ink); background: var(--graphite-200); }
   .xp__btns { display: grid; gap: 10px; }
-  .xp__no { margin-top: 16px; background: none; border: 0; color: var(--muted); font-size: .82rem; cursor: pointer; text-decoration: underline; }
+  .xp__no {
+    margin-top: 18px;
+    background: none;
+    border: 0;
+    color: var(--muted);
+    font-size: .82rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color .2s var(--ease);
+  }
   .xp__no:hover { color: var(--graphite-700); }
   @keyframes xpfade { from { opacity: 0; } }
-  @keyframes xppop { from { opacity: 0; transform: translateY(12px) scale(.98); } }
+  @keyframes xppop { from { opacity: 0; transform: translateY(16px) scale(.96); } }
 </style>
 
 <script>
