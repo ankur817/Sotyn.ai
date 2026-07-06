@@ -1,0 +1,195 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Icon from "../../components/Icon.astro";
+import { SITE, waLink } from "../../config/site";
+
+// Capability rows — the axes an EPC contractor actually decides on.
+const caps = [
+  "EPC bill types (Sales / RA / MB / Installation / T&C) with GST",
+  "AI BOQ → priced quote, margin per line",
+  "Procurement — Indent → PO → Payment, L1/L2 approvals",
+  "Geofenced attendance + payroll, built in",
+  "TOC War Room — ₹/day bottleneck costing",
+  "Built & run by a live EPC company",
+  "Data hosted in India, private workspace",
+  "Transparent public pricing",
+  "Risk-reversal guarantee",
+];
+const us = ["Native", "Yes — Excel/PDF", "Full engine", "Yes — no 2nd app", "Yes", "Yes — customer #1", "Yes", "₹6K–₹12.5K/mo", "30-day money-back"];
+
+export function getStaticPaths() {
+  const rivals = {
+  "sotyn-vs-rdash": {
+    name: "RDash",
+    metaTitle: "sotyn.ai vs RDash: An Honest Comparison for EPC Contractors (2026)",
+    metaDesc: "sotyn.ai vs RDash for EPC contractors — EPC-native billing, AI BOQ quoting and ₹/day TOC costing, built by a live EPC company. An honest, side-by-side comparison.",
+    tag: "Generalist construction platform vs EPC-native depth",
+    coreDiff: "RDash is a capable, well-funded construction-management platform with a genuinely simple interface and reach across many construction segments. sotyn.ai is narrower on purpose: it's built by Secured Engineers — a 14-year EPC company — to run its own 535+ projects across 18 states, and then offered to peers. That origin shows up in the parts generalists tend to simplify: EPC-native billing, BOQ-to-quote pricing, and costing bottlenecks in rupees per day.",
+    strong: ["Well-funded with a strong national brand", "Simple, polished interface", "Serves construction broadly, beyond EPC"],
+    vals: ["General billing*", "Estimation module*", "Yes", "Attendance; payroll*", "Dashboards, not ₹/day TOC", "No — software company", "*", "Sales-led / quote", "Deployment guarantee"],
+    them: "If you run mixed construction beyond EPC, want a big-brand vendor with outside funding, or prefer their specific UI, RDash is a fair pick — demo both.",
+    win: "If you need RA/MB/T&C billing that matches your measurement book, BOQ-to-quote pricing with per-line margin, and a CMD console that costs delays in ₹/day — from a team that runs an EPC business on it daily — sotyn.ai was built for exactly you.",
+  },
+  "sotyn-vs-powerplay": {
+    name: "Powerplay",
+    metaTitle: "sotyn.ai vs Powerplay: EPC ERP vs Site App (2026)",
+    metaDesc: "sotyn.ai vs Powerplay — a full quote-to-cash EPC ERP versus a site-collaboration app. Compare billing, procurement, payroll and owner dashboards.",
+    tag: "Site-collaboration app vs full quote-to-cash ERP",
+    coreDiff: "Powerplay is loved for field and daily-progress collaboration — it's a strong site app. sotyn.ai is a full ERP: the same site execution, plus EPC billing, procurement, HRMS-payroll, quotation and an owner's control tower in one system, so money and site live together.",
+    strong: ["Excellent field / DPR experience", "Popular with site teams", "Low-friction freemium entry"],
+    vals: ["Basic billing*", "Estimation*", "Material & PO mgmt", "Attendance*", "Reports, not ₹/day TOC", "No", "*", "Freemium + paid", "—"],
+    them: "If all you need is site updates and task collaboration for a small team, Powerplay is quick and pleasant to start with.",
+    win: "If you want the site AND the money — billing, cash, procurement and payroll — in one system that an owner can run the whole company from, sotyn.ai goes further.",
+  },
+  "sotyn-vs-onsite": {
+    name: "Onsite",
+    metaTitle: "sotyn.ai vs Onsite: EPC ERP vs Site Tracker (2026)",
+    metaDesc: "sotyn.ai vs Onsite — compare a full EPC ERP with EPC billing, procurement and payroll against a simple site-tracking app for small teams.",
+    tag: "SMB site-tracking vs EPC billing + procurement + payroll",
+    coreDiff: "Onsite is simple site and expense tracking that very small teams start with quickly. sotyn.ai is built for contractors who've outgrown that — where BOQ quoting, RA/MB billing, procurement approvals and payroll all need to be in one place.",
+    strong: ["Very simple for tiny teams", "Fast to start", "Low cost of entry"],
+    vals: ["Simple billing*", "Estimation*", "Basic PO", "Attendance", "Dashboards", "No", "*", "Freemium + paid", "—"],
+    them: "If you're a one-or-two-site operation that mainly needs to log site activity and expenses, Onsite is an easy first step.",
+    win: "The day you need real EPC billing, procurement approvals and payroll — not just tracking — sotyn.ai is the system you grow into.",
+  },
+  "sotyn-vs-procore": {
+    name: "Procore",
+    metaTitle: "sotyn.ai vs Procore: India-Priced EPC ERP vs Global Enterprise (2026)",
+    metaDesc: "sotyn.ai vs Procore — India-priced, EPC-native and GST-ready versus a global enterprise construction platform. Compare fit, price and billing for Indian EPC.",
+    tag: "Global enterprise platform vs India-priced, EPC-native",
+    coreDiff: "Procore is a mature, deep, global platform — and priced and built for that market. sotyn.ai is built for Indian EPC reality: RA/MB/T&C bill types with GST, ₹-based costing, data hosted in India, at a price a ₹5–100 Cr contractor can actually run on.",
+    strong: ["Deep enterprise feature set", "Large integration ecosystem", "Mature, global product"],
+    vals: ["Global types, not India EPC", "Estimating add-on*", "Yes (enterprise)", "Via integrations*", "Analytics, not ₹/day TOC", "No — US software co.", "Global cloud*", "Enterprise quote", "—"],
+    them: "If you're a large enterprise with global operations and the budget to match, Procore's depth is hard to beat.",
+    win: "If you're an Indian EPC contractor who needs GST-ready RA/MB billing and India-hosted data without an enterprise price tag, sotyn.ai fits the way you actually work.",
+  },
+  "sotyn-vs-zoho": {
+    name: "Zoho",
+    metaTitle: "sotyn.ai vs Zoho: EPC-Ready ERP vs Horizontal Suite (2026)",
+    metaDesc: "sotyn.ai vs Zoho — a vertical ERP that ships EPC-ready versus a horizontal suite you configure yourself. Compare billing, BOQ quoting and setup effort.",
+    tag: "Horizontal suite you configure vs vertical ERP that ships EPC-ready",
+    coreDiff: "Zoho is a broad, affordable suite you assemble and configure into a workflow. sotyn.ai arrives already shaped for EPC — BOQ estimation, RA/MB/T&C billing and site execution are built in, not something you stitch together across Books, Projects, Inventory and People.",
+    strong: ["Vast, affordable ecosystem", "Low per-user cost", "Familiar to many teams"],
+    vals: ["Generic invoicing (Books)", "No BOQ-native*", "Via Zoho Inventory", "Zoho People (add-on)", "Analytics, DIY", "No — software suite", "India DC available", "Per-user, public", "—"],
+    them: "If you have the appetite to configure and maintain a suite, and want the wider Zoho ecosystem, it's flexible and cheap per seat.",
+    win: "If you'd rather buy software that already knows what an RA bill and a BOQ are — and never pay per site worker — sotyn.ai is EPC-ready on day one.",
+  },
+  "sotyn-vs-odoo": {
+    name: "Odoo",
+    metaTitle: "sotyn.ai vs Odoo: Done-for-You EPC ERP vs Open-Source (2026)",
+    metaDesc: "sotyn.ai vs Odoo — a done-for-you, EPC-native ERP versus a flexible open-source platform that depends on an implementer. Compare fit, billing and onboarding.",
+    tag: "Implementer-dependent open ERP vs done-for-you EPC onboarding",
+    coreDiff: "Odoo is a powerful, flexible open-source ERP — but for EPC it depends heavily on an implementer to build and maintain the workflows. sotyn.ai ships EPC-native and is onboarded for you by a team that runs an EPC company, so you go live on your real data fast.",
+    strong: ["Highly flexible and modular", "Open-source foundation", "Broad app library"],
+    vals: ["Generic accounting", "No BOQ-native", "Purchase module", "Odoo HR (config)", "DIY dashboards", "No — open-source ERP", "Self/partner hosted", "Per-user + implementer", "—"],
+    them: "If you have strong in-house or partner ERP capability and want total flexibility, Odoo can be shaped into almost anything.",
+    win: "If you'd rather not run an ERP project — and just want EPC billing, quoting and payroll working next month — sotyn.ai is done for you.",
+  },
+  };
+  return Object.entries(rivals).map(([slug, r]) => ({ params: { slug }, props: { r, slug } }));
+}
+const { r, slug } = Astro.props as { r: any; slug: string };
+
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Compare", item: `${SITE.url}/compare` },
+    { "@type": "ListItem", position: 3, name: `sotyn.ai vs ${r.name}`, item: `${SITE.url}/compare/${slug}` },
+  ],
+};
+---
+<BaseLayout title={r.metaTitle} description={r.metaDesc} path={`/compare/${slug}`} schema={[breadcrumb]}>
+  <section class="section cmp-hero">
+    <div class="container text-center">
+      <span class="eyebrow">Honest comparison · 2026</span>
+      <h1>sotyn.ai <span class="hl">vs {r.name}</span></h1>
+      <p class="lead" style="margin-inline:auto">{r.tag}. For the EPC contractor deciding between them — including where {r.name} is genuinely strong.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a href="/#demo" class="btn btn--primary btn--lg">Book a free demo</a>
+        <a href="/compare" class="btn btn--ghost btn--lg">All comparisons</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="cmp-core">
+        <span class="eyebrow">The core difference</span>
+        <p>{r.coreDiff}</p>
+      </div>
+      <div class="ctable-wrap">
+        <table class="ctable">
+          <thead>
+            <tr><th>Capability</th><th class="c-us">sotyn.ai</th><th>{r.name}</th></tr>
+          </thead>
+          <tbody>
+            {caps.map((c, i) => (
+              <tr>
+                <td>{c}</td>
+                <td class="c-us"><Icon name="check" size={15} /> {us[i]}</td>
+                <td set:html={r.vals[i].replace("*", '<span class="vf">*</span>')}></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="ctable-note"><span class="vf">*</span> Verify against {r.name}'s current product before relying on it — we keep this fair and up to date, and never overstate a rival's gaps.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container cmp-verdict">
+      <div class="vcard">
+        <h3><Icon name="check" size={18} /> Where {r.name} may suit you better</h3>
+        <ul class="tick">{r.strong.map((s: string) => (<li>{s}</li>))}</ul>
+        <p>{r.them}</p>
+      </div>
+      <div class="vcard vcard--us">
+        <h3><Icon name="bolt" size={18} /> Where sotyn.ai wins</h3>
+        <p>{r.win}</p>
+        <a href="/#demo" class="btn btn--primary">See it on your numbers →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark cmp-cta">
+    <div class="container text-center">
+      <h2>The only real test is your own numbers.</h2>
+      <p class="lead" style="margin-inline:auto">A 20-minute demo on your trades and project sizes — not a generic slideshow. Then decide.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a href="/#demo" class="btn btn--white btn--lg">Book a free demo</a>
+        <a href={waLink(`Hi sotyn.ai, I'm comparing you with ${r.name} — can I get a demo?`)} class="btn btn--ghost-w btn--lg">WhatsApp us</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cmp-hero h1 { font-size: clamp(2rem, 5vw, 3rem); }
+  .cmp-core { max-width: 760px; margin: 0 auto 28px; }
+  .cmp-core p { font-size: 1.06rem; color: var(--body); margin-top: 8px; }
+  .ctable-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: var(--shadow-sm); }
+  .ctable { border-collapse: collapse; width: 100%; min-width: 620px; font-size: .95rem; }
+  .ctable th, .ctable td { text-align: left; padding: 13px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .ctable thead th { background: var(--graphite-900); color: #fff; font-size: .85rem; letter-spacing: .02em; }
+  .ctable thead th.c-us { background: var(--brand-700); }
+  .ctable td.c-us { color: var(--brand-800); font-weight: 700; background: var(--brand-50); }
+  .ctable td.c-us :global(svg) { color: var(--brand-600); vertical-align: -2px; }
+  .ctable tbody tr:last-child td { border-bottom: 0; }
+  .ctable :global(.vf) { color: var(--brand-600); font-weight: 800; }
+  .ctable-note { font-size: .84rem; color: var(--muted); margin-top: 12px; max-width: 760px; }
+  .cmp-verdict { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .vcard { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 26px 26px 28px; box-shadow: var(--shadow-sm); }
+  .vcard--us { border-color: var(--brand-200, #bfdbfe); background: var(--brand-50); }
+  .vcard h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .vcard h3 :global(svg) { color: var(--brand-600); }
+  .vcard p { color: var(--body); margin: 10px 0 16px; }
+  .tick { list-style: none; padding: 0; margin: 0 0 8px; }
+  .tick li { position: relative; padding-left: 22px; margin: 7px 0; color: var(--body); font-weight: 600; }
+  .tick li::before { content: "✓"; position: absolute; left: 0; color: var(--brand-600); font-weight: 800; }
+  .cmp-cta h2 { color: #fff; }
+  .btn--ghost-w { border: 1px solid rgba(255,255,255,.4); color: #fff; }
+  @media (max-width: 720px) { .cmp-verdict { grid-template-columns: 1fr; } }
+</style>

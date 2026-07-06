@@ -1,28 +1,29 @@
 /* ============================================================
    SOTYNERP — DESIGN SYSTEM
-   STRICT 3-COLOUR PALETTE: Royal Blue · Graphite Grey · White.
-   No other hues anywhere (no gold/red/green). Within the palette,
-   "problem" tone = graphite, "solution" tone = royal blue.
+   Palette synced to securedengineers.com (parent company):
+   Deep Navy ink · Azure Blue accent · cool blue-grey neutrals.
+   Within the palette, "problem" tone = navy-grey, "solution"
+   tone = azure blue.
    ============================================================ */
 :root {
-  /* Royal blue — primary brand / CTA / accent */
-  --brand-900: #172554;
-  --brand-800: #1e3a8a;
-  --brand-700: #1d4ed8;
-  --brand-600: #2563eb;   /* primary */
-  --brand-500: #3b82f6;
-  --brand-100: #dbeafe;
-  --brand-50:  #eff6ff;
+  /* Azure/navy blue — primary brand / CTA / accent (securedengineers.com) */
+  --brand-900: #0d2147;
+  --brand-800: #163a72;
+  --brand-700: #1b4ea0;
+  --brand-600: #1b6ef3;   /* primary */
+  --brand-500: #2997ff;
+  --brand-100: #cfe0f7;
+  --brand-50:  #f4f8ff;
 
-  /* Graphite grey — text, dark sections, secondary */
-  --graphite-900: #111827; /* darkest sections */
-  --graphite-800: #1f2937; /* ink */
-  --graphite-700: #374151; /* body */
-  --graphite-600: #4b5563;
-  --graphite-500: #6b7280; /* muted */
-  --graphite-300: #d1d5db;
-  --graphite-200: #e5e7eb; /* lines */
-  --graphite-100: #f3f4f6; /* alt bg */
+  /* Navy-grey — text, dark sections, secondary (parent site neutrals) */
+  --graphite-900: #0d2147; /* darkest sections */
+  --graphite-800: #14263f; /* ink */
+  --graphite-700: #3c4a5e; /* body */
+  --graphite-600: #5a6473;
+  --graphite-500: #8a94a3; /* muted */
+  --graphite-300: #aebfd6;
+  --graphite-200: #e6ebf2; /* lines */
+  --graphite-100: #f5f8fc; /* alt bg */
 
   /* Semantic aliases */
   --ink: var(--graphite-800);

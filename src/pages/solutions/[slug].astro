@@ -1,0 +1,154 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Icon from "../../components/Icon.astro";
+import { SITE, waLink } from "../../config/site";
+
+export function getStaticPaths() {
+  const verticals = {
+  "mep-contractors": {
+    name: "MEP contractors",
+    metaTitle: "ERP Software for MEP Contractors | sotyn.ai",
+    metaDesc: "The AI ERP built for MEP contractors — AI BOQ quoting, RA/MB billing that matches your measurement book, multi-trade site execution and a live owner's War Room. Book a demo.",
+    kicker: "For MEP contractors",
+    h1: "The ERP built for MEP contractors.",
+    intro: "MEP work lives and dies on BOQs and multi-trade coordination. sotyn.ai turns a client BOQ into a priced quote in minutes, bills exactly how you measure, and shows margin across every trade and site on one screen.",
+    pains: ["Quotes take days in Excel — and one wrong rate sinks the job", "RA bills lag the measurement book, so cash sits on site", "Many trades, many sites — no single view of margin"],
+    fits: [
+      { icon: "bolt", t: "AI Auto-Quotation", d: "Upload a client BOQ (Excel/PDF) and get a priced quote with margin per line, in minutes." },
+      { icon: "wallet", t: "RA / MB billing", d: "Bill exactly how you measure — RA, MB, Installation and T&C bill types, with GST." },
+      { icon: "building", t: "Multi-trade site execution", d: "Daily reports, snags and checklists across every trade and site, from the phone." },
+      { icon: "gauge", t: "Owner's War Room", d: "Live margin, cash and the ₹/day bottleneck across all your MEP jobs." },
+    ],
+  },
+  "solar-epc": {
+    name: "Solar EPC",
+    metaTitle: "ERP Software for Solar EPC Companies | sotyn.ai",
+    metaDesc: "Run your solar EPC business end-to-end on sotyn.ai — kW-based estimation, module & inverter procurement, installation, commissioning and RA billing in one AI ERP. Book a demo.",
+    kicker: "For solar EPC",
+    h1: "Run your solar EPC business end-to-end.",
+    intro: "From kW-based estimation to procurement, installation and commissioning, sotyn.ai keeps your whole solar EPC lifecycle in one system — with a dedicated solar division, not a generic bolt-on.",
+    pains: ["kW estimates and BOQs rebuilt from scratch for every tender", "Module and inverter procurement scattered across sheets", "Commissioning and T&C billing tracked by hand"],
+    fits: [
+      { icon: "gauge", t: "Solar division built in", d: "A dedicated solar sales funnel and kW-based estimation — designed for solar, not adapted to it." },
+      { icon: "box", t: "Procurement engine", d: "Indent → PO → payment for modules, inverters and balance-of-system, with approvals." },
+      { icon: "building", t: "Install & commissioning", d: "Site execution, checklists and T&C billing all the way through to handover." },
+      { icon: "wallet", t: "Cash & collections", d: "RA billing, retention tracking and AR/AP so solar payments don't slip." },
+    ],
+  },
+  "civil-contractors": {
+    name: "Civil contractors",
+    metaTitle: "ERP Software for Civil Contractors in India | sotyn.ai",
+    metaDesc: "Built for labour-heavy civil sites — geofenced attendance to payroll, material reconciliation, RA/MB billing and a ₹/day War Room. The AI ERP for Indian civil contractors.",
+    kicker: "For civil contractors",
+    h1: "Built for labour-heavy civil sites.",
+    intro: "Civil work is labour- and material-heavy, and that's exactly where money leaks. sotyn.ai makes the muster roll match reality, reconciles material issued against consumed, and shows the CMD which site is bleeding money today.",
+    pains: ["Ghost labour and inflated overtime on the muster roll", "Material issued vs consumed is never reconciled", "The CMD can't see which site is bleeding money"],
+    fits: [
+      { icon: "users", t: "Geofenced attendance", d: "GPS + selfie attendance straight to auto payroll — the roll matches who was really on site." },
+      { icon: "box", t: "Material reconciliation", d: "Indent, PO, GRN and issued-vs-consumed, so wastage finally shows up." },
+      { icon: "wallet", t: "EPC billing & cash", d: "RA/MB billing with GST, retention tracking and AR/AP in one place." },
+      { icon: "gauge", t: "₹/day War Room", d: "See which constraint on which site is costing the most, right now." },
+    ],
+  },
+  "industrial-epc": {
+    name: "Industrial & turnkey EPC",
+    metaTitle: "ERP for Industrial & Turnkey EPC Contractors | sotyn.ai",
+    metaDesc: "One console for turnkey EPC — engineering, quotation, procurement, site, billing and collection across every trade and site, with an owner's War Room. Built by a live EPC company.",
+    kicker: "For industrial & turnkey EPC",
+    h1: "One console for turnkey EPC.",
+    intro: "Turnkey and industrial EPC means many trades, many sites and one P&L. sotyn.ai puts the whole lifecycle in one system so the owner can delegate and still see the money — instead of firefighting to month-end.",
+    pains: ["Every trade and site lives in a different tool or sheet", "The owner firefights instead of delegating", "Margin is known only at month-end — too late to act"],
+    fits: [
+      { icon: "target", t: "Quote to cash, one system", d: "Engineering, quotation, procurement, site, billing and collection — together, not stitched." },
+      { icon: "gauge", t: "Delegate with control", d: "Delegations, scorecards and a War Room, so you delegate and still see the money." },
+      { icon: "box", t: "Full procurement", d: "L1/L2 approvals, PO pipeline, debit notes, dispatch and receiving." },
+      { icon: "shield", t: "Your data, in India", d: "A private workspace, nightly offsite backups and a full audit log." },
+    ],
+  },
+  };
+  return Object.entries(verticals).map(([slug, v]) => ({ params: { slug }, props: { v, slug } }));
+}
+const { v, slug } = Astro.props as { v: any; slug: string };
+
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Solutions", item: `${SITE.url}/#solutions` },
+    { "@type": "ListItem", position: 3, name: v.name, item: `${SITE.url}/solutions/${slug}` },
+  ],
+};
+---
+<BaseLayout title={v.metaTitle} description={v.metaDesc} path={`/solutions/${slug}`} schema={[breadcrumb]}>
+  <section class="section sol-hero">
+    <div class="container">
+      <span class="eyebrow">{v.kicker}</span>
+      <h1>{v.h1}</h1>
+      <p class="lead">{v.intro}</p>
+      <div class="btn-row">
+        <a href="/#demo" class="btn btn--primary btn--lg">Book a free demo</a>
+        <a href={waLink(`Hi sotyn.ai, I run ${v.name.toLowerCase()} work — I'd like a demo.`)} class="btn btn--ghost btn--lg">WhatsApp us</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <span class="eyebrow">Sound familiar?</span>
+      <h2>The leaks {v.name.toLowerCase()} feel most.</h2>
+      <div class="sol-pains">
+        {v.pains.map((p: string) => (
+          <div class="pain"><Icon name="x" size={16} /> <span>{p}</span></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">How sotyn.ai fits</span>
+      <h2>Built for how you actually work.</h2>
+      <div class="sol-fits">
+        {v.fits.map((f: any) => (
+          <div class="fit">
+            <div class="fit__ic"><Icon name={f.icon} size={22} /></div>
+            <h3>{f.t}</h3>
+            <p>{f.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container text-center">
+      <span class="eyebrow" style="color:var(--brand-100)">The proof</span>
+      <h2 style="color:#fff">Run on real EPC sites, not a demo.</h2>
+      <div class="sol-stats">
+        {SITE.stats.map((s) => (<div class="sol-stat"><strong>{s.value}</strong><span>{s.label}</span></div>))}
+      </div>
+      <div class="btn-row" style="justify-content:center;margin-top:26px">
+        <a href="/#demo" class="btn btn--white btn--lg">See it on your numbers</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .sol-hero h1 { font-size: clamp(2rem, 5vw, 3rem); max-width: 12ch; }
+  .sol-hero .lead { max-width: 640px; }
+  .sol-pains { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+  .pain { display: flex; gap: 10px; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--graphite-700); border-radius: 12px; padding: 16px 18px; font-weight: 600; color: var(--ink); }
+  .pain :global(svg) { color: var(--graphite-500); flex: none; margin-top: 2px; }
+  .sol-fits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 22px; }
+  .fit { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px 20px; box-shadow: var(--shadow-sm); }
+  .fit__ic { width: 46px; height: 46px; border-radius: 12px; background: var(--brand-50); color: var(--brand-700); display: grid; place-items: center; margin-bottom: 14px; }
+  .fit h3 { font-size: 1.05rem; margin-bottom: 7px; }
+  .fit p { font-size: .92rem; color: var(--body); margin: 0; }
+  .sol-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 22px; }
+  .sol-stat strong { display: block; font-size: 2rem; font-weight: 800; color: #fff; letter-spacing: -.02em; }
+  .sol-stat span { color: var(--brand-100); font-size: .9rem; }
+  @media (max-width: 860px) { .sol-pains, .sol-fits { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .sol-pains, .sol-fits { grid-template-columns: 1fr; } }
+</style>

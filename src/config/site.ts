@@ -16,6 +16,7 @@ export const SITE = {
   tagline: "India’s first AI-native ERP — built only for EPC contractors",
   promise:
     "AI that shows you exactly where your money is leaking — from quote to site to collection — and helps you plug it.",
+  motto: "If it's not in SOTYN, it didn't happen.",
   parentCompany: "Secured Engineers Pvt. Ltd.",
 
   // ── Domain / URL ─────────────────────────────────────────────────────────
@@ -63,8 +64,8 @@ export const SITE = {
     capabilities: [
       { icon: "wallet", t: "EPC-native billing", d: "Sales, RA, MB, Installation and T&C bill types with GST — built for how contractors actually bill. Rivals have nothing this specific." },
       { icon: "box", t: "Indent → PO → Payment", d: "A full procurement engine — L1/L2 approvals, PO pipeline, debit notes, dispatch and receiving." },
-      { icon: "bolt", t: "AI Auto-Quotation", d: "Upload a client BOQ (Excel/PDF) → AI matches your rates and returns a priced quote with margin per line." },
-      { icon: "users", t: "HRMS + geofenced payroll", d: "GPS + selfie attendance, leave & OT rules, auto payroll — no second app like Keka needed." },
+      { icon: "bolt", t: "AI Auto-Quotation (coming soon)", d: "Upload a client BOQ (Excel/PDF) → AI matches your rates and returns a priced quote with margin per line. Rolling out now." },
+      { icon: "users", t: "HRMS + payroll", d: "Attendance, leave & OT rules and auto payroll with GST, TDS, PF & ESI — geofenced GPS + selfie check-in coming soon." },
       { icon: "gauge", t: "TOC War Room", d: "A CMD-level console with ₹/day bottleneck costing — see exactly what's slowing your money." },
       { icon: "shield", t: "Your data, hosted in India", d: "Your own secure workspace, nightly offsite backups, full audit log. Never sold, never shared." },
     ],
@@ -148,9 +149,9 @@ export const SITE = {
         cta: "Book a demo",
         features: [
           "Everything in Starter, plus:",
-          "HRMS + geofenced attendance + payroll",
+          "HRMS + attendance + payroll",
           "Solar division",
-          "AI Auto-Quotation (BOQ → priced quote)",
+          "AI Auto-Quotation — BOQ → priced quote (coming soon)",
           "Scorecard & TOC War Room",
           "+ ₹50,000 one-time onboarding",
         ],
@@ -180,7 +181,7 @@ export const SITE = {
       "14 module groups — CRM, solar, quotes, procurement, projects, finance, HRMS, scorecard, inventory & more",
       "Unlimited site users — never a per-seat penalty for adding field staff",
       "EPC-native billing — Sales, RA, MB, Installation & T&C, with GST",
-      "AI Auto-Quotation — upload a BOQ, get a priced quote",
+      "AI Auto-Quotation — upload a BOQ, get a priced quote (coming soon)",
       "Mobile app for every site worker, in plain language",
       "Your own secure workspace, hosted in India, nightly backups",
       "No lock-in — cancel anytime",

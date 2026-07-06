@@ -1,0 +1,130 @@
+---
+// Campaign creatives — theme matched to the approved ad designs:
+// condensed uppercase (Anton), navy/yellow, chat & notification mockups,
+// coloured CTA bands. Stats sync from SITE config (single source of truth).
+import { SITE } from "../config/site";
+export interface Props { variant: "groups" | "phone" | "proof"; }
+const { variant } = Astro.props;
+
+const projects = SITE.stats[0].value;          // 535+
+const states = SITE.stats[1].value;            // 18+
+const years = SITE.trust.numbers[1].value;     // 14+
+---
+{variant === "groups" && (
+  <div class="cc cc--groups">
+    <div class="cc__pad">
+      <p class="cc__big"><span class="cc__y">40 groups. 1 brain.</span><br />Yours.</p>
+      <p class="cc__sub">Every person is working. The company still crawls.</p>
+      <div class="chat" aria-hidden="true">
+        <div class="chat__head">
+          <span class="chat__count">40</span>
+          <span class="chat__hd"><strong>Site Groups</strong><em>Ramesh is typing…</em></span>
+        </div>
+        <div class="chat__pill">999+ unread messages</div>
+        <div class="chat__msg"><span class="chat__meta"><b style="color:#38bdf8">Ramesh · Site 4</b><time>9:14 PM</time></span><p>Sir cement khatam. PO approval?</p></div>
+        <div class="chat__msg"><span class="chat__meta"><b style="color:#fb923c">Accounts</b><time>9:31 PM</time></span><p>Sir, vendor payment aaj hi karna</p></div>
+        <div class="chat__msg"><span class="chat__meta"><b style="color:#f472b6">Supervisor · Site 9</b><time>10:47 PM</time></span><p>12 labour absent, kya karein?</p></div>
+        <div class="chat__msg"><span class="chat__meta"><b style="color:#38bdf8">Ramesh · Site 4</b><time>11:38 PM</time></span><p>Sir?? Vendor wait kar raha hai</p></div>
+        <div class="chat__input"><span>Message</span><i>➤</i></div>
+      </div>
+    </div>
+    <div class="cc__band cc__band--green">
+      <strong>Get out of the groups.</strong>
+      <span>One login. Every project, every rupee. 30-day pilot → sotyn.ai</span>
+    </div>
+  </div>
+)}
+
+{variant === "phone" && (
+  <div class="cc cc--phone">
+    <img class="cc__bg" src="/images/real-phone.jpg" alt="" loading="lazy" width="1200" height="1697" />
+    <div class="cc__shade" aria-hidden="true"></div>
+    <div class="cc__pad cc__pad--overlay">
+      <div>
+        <p class="cc__brand">SOTYN.AI</p>
+        <p class="cc__big"><span class="cc__y">11:47 PM.</span><br />Your phone still runs your company.</p>
+      </div>
+      <div class="notifs" aria-hidden="true">
+        <div class="notif"><span class="notif__ic notif__ic--g">💬</span><span class="notif__tx"><span class="notif__t"><b>Site Engineer — Rajpura</b><time>now</time></span><p>Sir, PO approval pending. Urgent.</p></span></div>
+        <div class="notif"><span class="notif__ic notif__ic--g">💬</span><span class="notif__tx"><span class="notif__t"><b>Accounts</b><time>2 min</time></span><p>Sir, 3 payments need your OK</p></span><span class="notif__badge">3</span></div>
+        <div class="notif"><span class="notif__ic notif__ic--r">📞</span><span class="notif__tx"><span class="notif__t"><b>Site Supervisor</b><time>5 min</time></span><p>4 missed calls · site issue</p></span><span class="notif__badge">4</span></div>
+      </div>
+    </div>
+    <div class="cc__band cc__band--yellow">
+      <strong>Stop being the server.</strong>
+      <span>One login runs it all · 30-day pilot → sotyn.ai</span>
+    </div>
+  </div>
+)}
+
+{variant === "proof" && (
+  <div class="cc cc--proof">
+    <div class="cc__pad cc__pad--proof">
+      <p class="cc__big cc__big--blue">Anyone can sell software.</p>
+      <img class="cc__photo" src="/images/real-team.jpg" alt="" loading="lazy" width="1200" height="1697" />
+      <p class="cc__pline">We run our company on it.</p>
+      <p class="cc__pstats">{projects} projects · {years} years · {states} states</p>
+      <p class="cc__pcta">Commission your 30-day pilot → sotyn.ai</p>
+    </div>
+  </div>
+)}
+
+<style>
+  .cc { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; text-align: left; }
+  .cc__pad { position: relative; z-index: 2; flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 22px 20px 14px; }
+  .cc__big { font-family: "Anton", "Arial Narrow", Impact, sans-serif; font-weight: 400; text-transform: uppercase; line-height: 1.04; letter-spacing: .012em; font-size: 1.8rem; margin: 0 0 10px; color: #fff; }
+  .cc__y { color: #facc15; }
+  .cc__sub { font-size: .84rem; font-weight: 600; color: #cbd5e1; margin: 0 0 14px; }
+
+  /* CTA bands */
+  .cc__band { position: relative; z-index: 2; flex: none; padding: 11px 16px 12px; text-align: center; }
+  .cc__band strong { display: block; font-family: "Anton", "Arial Narrow", Impact, sans-serif; font-weight: 400; text-transform: uppercase; font-size: 1.18rem; letter-spacing: .015em; line-height: 1.1; }
+  .cc__band span { display: block; margin-top: 3px; font-size: .74rem; font-weight: 700; }
+  .cc__band--green { background: #22c55e; color: #052014; }
+  .cc__band--yellow { background: #facc15; color: #111827; }
+
+  /* Groups — chat mockup */
+  .cc--groups { background: linear-gradient(180deg, #0e1526 0%, #111c33 100%); }
+  .chat { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 7px; background: rgba(9, 14, 26, .72); border: 1px solid rgba(255,255,255,.14); border-radius: 16px; padding: 12px; overflow: hidden; }
+  .chat__head { display: flex; align-items: center; gap: 9px; padding-bottom: 4px; }
+  .chat__count { width: 26px; height: 26px; border-radius: 50%; background: #22c55e; color: #fff; font-size: .72rem; font-weight: 800; display: grid; place-items: center; flex: none; }
+  .chat__hd { display: flex; flex-direction: column; line-height: 1.2; }
+  .chat__hd strong { color: #fff; font-size: .84rem; }
+  .chat__hd em { color: #94a3b8; font-size: .68rem; font-style: normal; }
+  .chat__pill { align-self: center; font-size: .64rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #facc15; background: rgba(250, 204, 21, .12); border: 1px solid rgba(250, 204, 21, .3); border-radius: 999px; padding: 3px 10px; }
+  .chat__msg { background: rgba(255,255,255,.06); border-radius: 10px; padding: 7px 10px; }
+  .chat__meta { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .chat__meta b { font-size: .72rem; font-weight: 700; }
+  .chat__meta time { font-size: .6rem; color: #64748b; flex: none; }
+  .chat__msg p { margin: 2px 0 0; color: #e2e8f0; font-size: .76rem; line-height: 1.25; }
+  .chat__input { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: rgba(255,255,255,.08); border-radius: 999px; padding: 6px 6px 6px 13px; }
+  .chat__input span { color: #64748b; font-size: .74rem; }
+  .chat__input i { width: 26px; height: 26px; border-radius: 50%; background: #22c55e; color: #fff; display: grid; place-items: center; font-size: .7rem; font-style: normal; }
+
+  /* Phone — photo bg + notifications */
+  .cc--phone { background: #0b0f19; }
+  .cc__bg { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 30%; }
+  .cc__shade { position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(7,11,20,.86) 0%, rgba(7,11,20,.45) 45%, rgba(7,11,20,.55) 100%); }
+  .cc__pad--overlay { justify-content: space-between; }
+  .cc__brand { color: #e2e8f0; font-size: .66rem; font-weight: 800; letter-spacing: .3em; margin: 0 0 8px; }
+  .notifs { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
+  .notif { position: relative; display: flex; gap: 9px; align-items: flex-start; background: rgba(255,255,255,.94); border-radius: 13px; padding: 9px 11px; box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+  .notif__ic { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: .72rem; flex: none; }
+  .notif__ic--g { background: #dcfce7; }
+  .notif__ic--r { background: #fee2e2; }
+  .notif__tx { min-width: 0; flex: 1; }
+  .notif__t { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .notif__t b { color: #111827; font-size: .76rem; font-weight: 700; }
+  .notif__t time { color: #9ca3af; font-size: .62rem; flex: none; }
+  .notif__tx p { margin: 1px 0 0; color: #374151; font-size: .72rem; line-height: 1.25; }
+  .notif__badge { position: absolute; right: 9px; bottom: 8px; width: 17px; height: 17px; border-radius: 50%; background: #ef4444; color: #fff; font-size: .6rem; font-weight: 800; display: grid; place-items: center; }
+
+  /* Proof — white + blue Anton */
+  .cc--proof { background: #fff; }
+  .cc__pad--proof { text-align: center; align-items: center; padding: 26px 22px 22px; }
+  .cc__big--blue { color: #1d4ed8; font-size: 2rem; text-align: center; margin-bottom: 14px; }
+  .cc__photo { width: 100%; flex: 1; min-height: 0; object-fit: cover; object-position: 50% 35%; border-radius: 14px; }
+  .cc__pline { font-family: "Anton", "Arial Narrow", Impact, sans-serif; text-transform: uppercase; color: #1d4ed8; font-size: 1.15rem; margin: 14px 0 0; letter-spacing: .015em; }
+  .cc__pstats { font-family: "Anton", "Arial Narrow", Impact, sans-serif; text-transform: uppercase; color: #2563eb; font-size: .95rem; margin: 4px 0 0; letter-spacing: .03em; }
+  .cc__pcta { font-family: "Anton", "Arial Narrow", Impact, sans-serif; text-transform: uppercase; color: #1d4ed8; font-size: .88rem; margin: 12px 0 0; letter-spacing: .04em; border-top: 2px solid #dbeafe; padding-top: 12px; width: 100%; }
+</style>

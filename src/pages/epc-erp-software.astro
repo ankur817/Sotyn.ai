@@ -1,0 +1,126 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Icon from "../components/Icon.astro";
+import { SITE, waLink } from "../config/site";
+
+const pillars = [
+  { icon: "target", t: "Engineer & quote", d: "AI Auto-Quotation turns a client BOQ into a priced quote with margin per line — in minutes, not days." },
+  { icon: "box", t: "Procure", d: "A full engine: Indent → PO → Payment, L1/L2 approvals, debit notes, dispatch and receiving." },
+  { icon: "building", t: "Build", d: "Daily reports, snags, checklists and schedules from the phone in every site worker's pocket." },
+  { icon: "users", t: "People & labour", d: "Geofenced GPS + selfie attendance straight to payroll — no second app, no ghost labour." },
+  { icon: "wallet", t: "Bill & collect", d: "EPC-native billing — Sales, RA, MB, Installation and T&C — with GST, retention and AR/AP." },
+  { icon: "gauge", t: "Owner's control tower", d: "A TOC War Room that costs every bottleneck in ₹/day, so you act before margin is lost." },
+];
+
+const why = [
+  "Generic ERPs don't know what an RA bill or a BOQ is — you rebuild EPC logic in Excel anyway.",
+  "Point tools fragment your business: quotes here, attendance there, cash somewhere else.",
+  "By the time month-end reveals the margin, the money has already leaked.",
+];
+
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "EPC ERP Software", item: `${SITE.url}/epc-erp-software` },
+  ],
+};
+---
+<BaseLayout
+  title="EPC ERP Software, Built by Contractors | sotyn.ai"
+  description="sotyn.ai is the AI ERP built only for EPC contractors — engineering & quotation, procurement, site execution, EPC billing (RA/MB/T&C), payroll and an owner's War Room. Built and run by a 14-year EPC company. Book a free demo."
+  path="/epc-erp-software"
+  schema={[breadcrumb]}
+>
+  <section class="section pil-hero">
+    <div class="container">
+      <span class="pill"><Icon name="bolt" size={15} /> EPC ERP software</span>
+      <h1>The ERP built <span class="hl">only for EPC contractors.</span></h1>
+      <p class="lead">Most ERPs are built for factories or offices and bent to fit a jobsite. sotyn.ai is built for how EPC contractors actually work — engineer, quote, procure, build, bill and collect — in one AI-powered system, by a 14-year EPC company that runs its own business on it.</p>
+      <div class="btn-row">
+        <a href="/#demo" class="btn btn--primary btn--lg">Book a free demo</a>
+        <a href="/compare/sotyn-vs-rdash" class="btn btn--ghost btn--lg">See how it compares</a>
+      </div>
+      <div class="pil-stats">
+        {SITE.stats.map((s) => (<div class="pil-stat"><strong>{s.value}</strong><span>{s.label}</span></div>))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <span class="eyebrow">Why generic software fails EPC</span>
+      <h2>You don't have a project problem. You have a visibility problem.</h2>
+      <div class="pil-why">
+        {why.map((w) => (<div class="pwhy"><Icon name="x" size={16} /> <span>{w}</span></div>))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <span class="eyebrow">One system, the whole lifecycle</span>
+        <h2>Quote to cash, without the gaps.</h2>
+        <p class="lead" style="margin-inline:auto">Six pillars, one login. Every module exists because a real jobsite problem demanded it.</p>
+      </div>
+      <div class="pil-grid">
+        {pillars.map((p) => (
+          <div class="pcard">
+            <div class="pcard__ic"><Icon name={p.icon} size={22} /></div>
+            <h3>{p.t}</h3>
+            <p>{p.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container pil-built">
+      <div>
+        <span class="eyebrow" style="color:var(--brand-100)">Built by contractors, not coders</span>
+        <h2 style="color:#fff">Sold by a contractor who runs an EPC business on it.</h2>
+        <p class="lead" style="color:#cbd5e1">{SITE.parentCompany} is a 14-year EPC company. We built sotyn.ai to run our own business first — 535+ projects across 18+ states — then offered it to peers. You're buying software a contractor trusts with their own money.</p>
+        <a href="/#demo" class="btn btn--white btn--lg">See it on your numbers</a>
+      </div>
+      <div class="pil-creds">
+        {SITE.trust.certs.map((c) => (<span class="pcred"><Icon name="check" size={15} /> {c}</span>))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section pil-cta">
+    <div class="container text-center">
+      <h2>Ready to see where your money is leaking?</h2>
+      <p class="lead" style="margin-inline:auto">A 20-minute demo on your trades and project sizes. 30-day money-back guarantee once you're on board.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a href="/#demo" class="btn btn--primary btn--lg">Book a free demo</a>
+        <a href={waLink()} class="btn btn--ghost btn--lg">WhatsApp us</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pil-hero h1 { font-size: clamp(2.1rem, 5.5vw, 3.2rem); max-width: 15ch; }
+  .pil-hero .lead { max-width: 680px; }
+  .pil-stats { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 26px; }
+  .pil-stat strong { display: block; font-size: 1.7rem; font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
+  .pil-stat span { font-size: .84rem; color: var(--muted); }
+  .pil-why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+  .pwhy { display: flex; gap: 10px; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--graphite-700); border-radius: 12px; padding: 16px 18px; font-weight: 600; color: var(--ink); }
+  .pwhy :global(svg) { color: var(--graphite-500); flex: none; margin-top: 2px; }
+  .pil-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+  .pcard { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 24px 22px; box-shadow: var(--shadow-sm); }
+  .pcard__ic { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-50); color: var(--brand-700); display: grid; place-items: center; margin-bottom: 14px; }
+  .pcard h3 { font-size: 1.1rem; margin-bottom: 8px; }
+  .pcard p { font-size: .94rem; color: var(--body); margin: 0; }
+  .pil-built { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center; }
+  .pil-built .btn { margin-top: 8px; }
+  .pil-creds { display: flex; flex-wrap: wrap; gap: 10px; align-content: start; }
+  .pcred { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); color: #e2e8f0; border-radius: 999px; padding: 8px 14px; font-size: .85rem; font-weight: 600; }
+  .pcred :global(svg) { color: var(--brand-300, #93c5fd); }
+  @media (max-width: 860px) { .pil-why, .pil-grid { grid-template-columns: 1fr; } .pil-built { grid-template-columns: 1fr; } }
+</style>

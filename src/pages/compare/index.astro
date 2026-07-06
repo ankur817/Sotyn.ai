@@ -1,0 +1,75 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Icon from "../../components/Icon.astro";
+import { SITE } from "../../config/site";
+
+const items = [
+  { slug: "sotyn-vs-rdash", name: "RDash", tag: "Generalist construction platform vs EPC-native depth." },
+  { slug: "sotyn-vs-powerplay", name: "Powerplay", tag: "Site-collaboration app vs full quote-to-cash ERP." },
+  { slug: "sotyn-vs-onsite", name: "Onsite", tag: "SMB site-tracking vs EPC billing, procurement & payroll." },
+  { slug: "sotyn-vs-procore", name: "Procore", tag: "Global enterprise vs India-priced, EPC-native, GST-ready." },
+  { slug: "sotyn-vs-zoho", name: "Zoho", tag: "Horizontal suite you configure vs an ERP that ships EPC-ready." },
+  { slug: "sotyn-vs-odoo", name: "Odoo", tag: "Implementer-dependent open ERP vs done-for-you onboarding." },
+];
+
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Compare", item: `${SITE.url}/compare` },
+  ],
+};
+---
+<BaseLayout
+  title="sotyn.ai vs RDash, Powerplay, Procore & More | Honest Comparisons"
+  description="Comparing construction & EPC software? Honest, side-by-side breakdowns of sotyn.ai versus RDash, Powerplay, Onsite, Procore, Zoho and Odoo — including where each rival is strong."
+  path="/compare"
+  schema={[breadcrumb]}
+>
+  <section class="section cmp-hero">
+    <div class="container text-center">
+      <span class="eyebrow">Honest comparisons</span>
+      <h1>How sotyn.ai stacks up.</h1>
+      <p class="lead" style="margin-inline:auto">We'd rather you choose with eyes open. Each page is fair — including where the other tool is genuinely the better fit — then shows where an EPC-native system pulls ahead.</p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="cmp-grid">
+        {items.map((i) => (
+          <a class="cmp-card" href={`/compare/${i.slug}`}>
+            <span class="cmp-card__vs">sotyn.ai <b>vs {i.name}</b></span>
+            <p>{i.tag}</p>
+            <span class="cmp-card__cta">Read the comparison <Icon name="arrow-right" size={15} /></span>
+          </a>
+        ))}
+      </div>
+      <div class="cmp-guide">
+        <div>
+          <span class="eyebrow">Not sure how to choose?</span>
+          <h2>The 10 questions to ask any EPC ERP vendor.</h2>
+          <p class="lead">A short, honest buyer's guide — the questions that separate a demo that looks good from software that survives a real project.</p>
+        </div>
+        <a href="/#demo" class="btn btn--primary btn--lg">Book a free demo</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cmp-hero h1 { font-size: clamp(2rem, 5vw, 3rem); }
+  .cmp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .cmp-card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px 22px 20px; box-shadow: var(--shadow-sm); transition: .2s; }
+  .cmp-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--brand-100); text-decoration: none; }
+  .cmp-card__vs { font-size: 1.15rem; font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
+  .cmp-card__vs b { color: var(--brand-700); }
+  .cmp-card p { font-size: .93rem; color: var(--body); margin: 8px 0 16px; flex: 1; }
+  .cmp-card__cta { font-weight: 700; color: var(--brand-700); font-size: .9rem; display: inline-flex; align-items: center; gap: 6px; }
+  .cmp-guide { margin-top: 22px; background: var(--brand-50); border: 1px solid var(--brand-100); border-radius: 18px; padding: 28px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  .cmp-guide h2 { margin: 6px 0 8px; font-size: 1.5rem; }
+  .cmp-guide .lead { margin: 0; max-width: 560px; }
+  @media (max-width: 860px) { .cmp-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .cmp-grid { grid-template-columns: 1fr; } }
+</style>
