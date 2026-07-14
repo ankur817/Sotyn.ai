@@ -1,0 +1,121 @@
+---
+// Reusable problem-first landing page body. Wrap in BaseLayout from the page
+// file (which owns <title>, description and JSON-LD schema).
+import Icon from "./Icon.astro";
+import { SITE } from "../config/site";
+export interface Props { data: any }
+const { data } = Astro.props;
+---
+<nav class="crumb" aria-label="Breadcrumb">
+  <div class="container"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/platform">Platform</a> <span aria-hidden="true">/</span> <span>{data.crumbName}</span></div>
+</nav>
+
+<section class="section pp-hero">
+  <div class="container container--narrow text-center">
+    <span class="eyebrow">{data.eyebrow}</span>
+    <h1>{data.h1}</h1>
+    <p class="lead" style="margin-inline:auto">{data.lead}</p>
+    <div class="btn-row" style="justify-content:center;margin-top:26px">
+      <a href="/demo" class="btn btn--primary btn--lg">Book a free demo</a>
+      {data.calcHref && <a href={data.calcHref} class="btn btn--ghost btn--lg">{data.calcLabel}</a>}
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="container container--narrow">
+    <div class="sec-head text-center">
+      <span class="eyebrow">The gap</span>
+      <h2>{data.whyTitle}</h2>
+    </div>
+    <ul class="pp-why">
+      {data.why.map((w) => <li><span class="pp-why__x" aria-hidden="true">✕</span>{w}</li>)}
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="sec-head text-center">
+      <span class="eyebrow">The fix</span>
+      <h2>{data.howTitle}</h2>
+      {data.howLead && <p class="lead" style="margin-inline:auto">{data.howLead}</p>}
+    </div>
+    <div class="pp-steps">
+      {data.steps.map((s) => (
+        <div class="pp-step">
+          <div class="pp-step__ic"><Icon name={s.icon} size={22} /></div>
+          <div><h3>{s.t}</h3><p>{s.d}</p></div>
+        </div>
+      ))}
+    </div>
+    <p class="pp-proof"><Icon name="check" size={16} /> {data.proofText}</p>
+  </div>
+</section>
+
+<section class="section section--narrowfaq">
+  <div class="container container--narrow">
+    <div class="sec-head text-center">
+      <span class="eyebrow">Straight answers</span>
+      <h2>Questions contractors ask</h2>
+    </div>
+    <div class="faqs">
+      {data.faqs.map((f) => (
+        <details class="faq"><summary>{f.q}</summary><p>{f.a}</p></details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section section--dark">
+  <div class="container container--narrow text-center">
+    <span class="eyebrow">See it on your numbers</span>
+    <h2 style="color:#fff">The demo is our real, live company.</h2>
+    <p class="lead" style="margin-inline:auto;color:#cbd5e1">A free 20-minute walkthrough on your own trades and project sizes — no slides, no staged data.</p>
+    <div class="btn-row" style="justify-content:center;margin-top:24px">
+      <a href="/demo" class="btn btn--white btn--lg">Book a free demo</a>
+    </div>
+    {data.related && (
+      <div class="pp-related">
+        <span>Related:</span>
+        {data.related.map((r) => <a href={r.href}>{r.name}</a>)}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .crumb { border-bottom: 1px solid var(--line); background: var(--bg-alt); }
+  .crumb .container { padding-top: 12px; padding-bottom: 12px; font-size: .86rem; color: var(--muted); }
+  .crumb a { color: var(--brand-700); font-weight: 600; }
+  .crumb span[aria-hidden] { margin: 0 8px; color: var(--graphite-300); }
+
+  .pp-hero h1 { margin: 14px 0 16px; }
+
+  .pp-why { list-style: none; margin: 6px auto 0; padding: 0; max-width: 640px; display: grid; gap: 12px; }
+  .pp-why li { display: flex; gap: 13px; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--graphite-700); border-radius: 12px; padding: 16px 18px; font-weight: 600; color: var(--ink); box-shadow: var(--shadow-sm); }
+  .pp-why__x { color: var(--graphite-500); font-weight: 900; flex: none; margin-top: 1px; }
+
+  .pp-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 940px; margin: 0 auto; }
+  .pp-step { display: flex; gap: 15px; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 22px; box-shadow: var(--shadow-sm); }
+  .pp-step__ic { width: 46px; height: 46px; border-radius: 12px; background: var(--brand-50); color: var(--brand-700); display: grid; place-items: center; flex: none; }
+  .pp-step h3 { font-size: 1.05rem; margin-bottom: 5px; }
+  .pp-step p { font-size: .93rem; color: var(--body); margin: 0; }
+  @media (max-width: 640px) { .pp-steps { grid-template-columns: 1fr; } }
+
+  .pp-proof { display: flex; gap: 9px; align-items: center; justify-content: center; max-width: 720px; margin: 30px auto 0; text-align: center; font-weight: 600; color: var(--brand-800); background: var(--brand-50); border: 1px solid var(--brand-100); border-radius: 12px; padding: 14px 20px; font-size: .96rem; }
+  .pp-proof :global(.ico) { color: var(--brand-600); flex: none; }
+
+  .faqs { display: grid; gap: 12px; }
+  .faq { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 4px 20px; }
+  .faq summary { cursor: pointer; font-weight: 700; color: var(--ink); padding: 18px 0; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--brand-600); font-weight: 700; font-size: 1.4rem; line-height: 1; }
+  .faq[open] summary::after { content: "–"; }
+  .faq p { margin: 0 0 18px; color: var(--body); font-size: .98rem; }
+
+  .pp-related { margin-top: 30px; font-size: .92rem; color: #94a3b8; display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center; align-items: center; }
+  .pp-related span { font-weight: 700; }
+  .pp-related a { color: #bfdbfe; font-weight: 600; }
+  .pp-related a:hover { color: #fff; }
+</style>

@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProblemPage from "../components/ProblemPage.astro";
+import { SITE } from "../config/site";
+
+const data = {
+  crumbName: "Material reconciliation",
+  eyebrow: "Material reconciliation",
+  h1: "Know what you consumed vs what you quoted — per line, per site.",
+  lead: "Material is where margin quietly disappears. sotyn.ai tracks what's actually consumed against your BOQ, line by line, so over-consumption and leakage show up the same day — not in a year-end audit.",
+  calcHref: "/tools#material-wastage", calcLabel: "Calculate your material leak",
+  whyTitle: "Why material leaks go unseen",
+  why: [
+    "Purchases and site consumption live in different registers.",
+    "Nobody compares consumed quantity to the BOQ until it's too late.",
+    "Over-consumption, theft and off-market buying blend into 'site cost'.",
+    "By the time you reconcile, the money is already gone.",
+  ],
+  howTitle: "How sotyn.ai stops material leakage",
+  steps: [
+    { icon: "box", t: "BOQ vs consumed, line by line", d: "Per engineer, per site, per BOQ item — rupees consumed against rupees budgeted, live." },
+    { icon: "droplet", t: "Over-consumption flagged early", d: "When a line crosses its BOQ, it surfaces the same day — while you can still act on it." },
+    { icon: "target", t: "Rate-checked procurement", d: "Indents, RFQs and POs against agreed rates, so off-market buying gets caught before it's paid." },
+    { icon: "shield", t: "One register, not five", d: "Purchase, indent, dispatch and consumption in one system — no reconciliation guesswork." },
+  ],
+  proofText: "Verified: BOQ-vs-consumed variance runs live in our own company — tracked per engineer, per site, per line item.",
+  faqs: [
+    { q: "How granular is the BOQ tracking?", a: "Down to the line item: for every engineer, every site and every BOQ item, sotyn.ai shows rupees consumed against rupees budgeted, with completion %." },
+    { q: "Does it cover procurement as well?", a: "Yes — indents, RFQs, purchase orders and dispatch, all rate-checked, so buying above agreed rates is caught early." },
+    { q: "Can I see it working before I commit?", a: "Yes. In the demo we open the real system on our own live projects — no mockups, no staged data." },
+  ],
+  related: [
+    { name: "Reduce project delays", href: "/reduce-project-delays" },
+    { name: "Accelerate RA billing", href: "/ra-billing-software" },
+    { name: "The platform", href: "/platform" },
+  ],
+};
+
+const schema = [
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Platform", item: `${SITE.url}/platform` },
+    { "@type": "ListItem", position: 3, name: data.crumbName, item: `${SITE.url}/material-reconciliation` },
+  ]},
+  { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: data.faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+];
+---
+<BaseLayout
+  title="Material Reconciliation Software — BOQ vs actual consumption | sotyn.ai India"
+  description="Stop material leakage with live BOQ-vs-consumed tracking, per site and per line item, for Indian EPC, MEP & solar contractors. sotyn.ai flags over-consumption the same day. Built inside a live 535+ project company. Book a demo."
+  path="/material-reconciliation"
+  schema={schema}
+>
+  <ProblemPage data={data} />
+</BaseLayout>

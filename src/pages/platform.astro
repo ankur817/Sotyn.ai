@@ -1,0 +1,171 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CTABand from "../components/CTABand.astro";
+import Icon from "../components/Icon.astro";
+import { SITE } from "../config/site";
+
+// Outcomes lead; each maps to a VERIFIED capability (see product audit).
+const outcomes = [
+  { icon: "alert", t: "Reduce project delays", d: "Daily reports from every site roll up live — slippage surfaces the same day, not at month-end.", href: "/reduce-project-delays" },
+  { icon: "trending-up", t: "Protect project margins", d: "Real margin on every quote before you send it, and BOQ-vs-actual as work is booked.", href: "/material-reconciliation" },
+  { icon: "droplet", t: "Stop material & labour leakage", d: "Consumption tracked against the BOQ, rate-checked purchasing and real attendance.", href: "/material-reconciliation" },
+  { icon: "wallet", t: "Accelerate RA billing & cash", d: "Bills are billing-ready the moment a DPR is approved — GST, TDS and retention worked out.", href: "/ra-billing-software" },
+  { icon: "gauge", t: "Get site & project visibility", d: "Every project, rupee and person on one screen — the way a 535+ project company runs itself.", href: "/demo" },
+  { icon: "refresh", t: "Automate reporting & accountability", d: "Reports write themselves and every team is auto-scored weekly — no manual entry.", href: "/demo" },
+];
+
+// The connected chain — one login, not ten apps.
+const chain = ["Leads & CRM", "Estimation & BOQ", "Procurement & POs", "Site execution & DPR", "Billing & RA", "Finance & cash", "People & payroll", "Performance scorecard"];
+
+// Trade lanes (link to existing solution pages).
+const lanes = [
+  { name: "MEP contractors", href: "/solutions/mep-contractors" },
+  { name: "Solar EPC", href: "/solutions/solar-epc" },
+  { name: "Civil contractors", href: "/solutions/civil-contractors" },
+  { name: "Industrial & turnkey", href: "/solutions/industrial-epc" },
+];
+
+const schema = [{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Platform", item: `${SITE.url}/platform` },
+  ],
+}];
+---
+<BaseLayout
+  title="AI Construction Operating System for India — projects, procurement, billing & site intelligence | sotyn.ai"
+  description="sotyn.ai is the AI construction operating system for Indian EPC, MEP & solar companies. Connect projects, procurement, DPR, BOQ, RA billing and finance in one platform — reduce delays, protect margins and get paid faster. Built inside a live 535+ project EPC company."
+  path="/platform"
+  schema={schema}
+>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <div class="container"><a href="/">Home</a> <span aria-hidden="true">/</span> <span>Platform</span></div>
+  </nav>
+
+  <section class="section pf-hero">
+    <div class="container container--narrow text-center">
+      <span class="eyebrow">The AI Construction Operating System</span>
+      <h1>Run the whole build on one system — not ten apps that don't talk.</h1>
+      <p class="lead" style="margin-inline:auto">
+        sotyn.ai connects projects, procurement, site reporting, BOQ, billing, finance and people into
+        one AI-powered platform — so Indian EPC, MEP and solar teams <strong>cut delays, protect margins
+        and get paid faster</strong>. Not another ERP to install. The operating system a contractor already runs on.
+      </p>
+      <div class="btn-row" style="justify-content:center;margin-top:26px">
+        <a href="/demo" class="btn btn--primary btn--lg">Book a free demo</a>
+        <a href="#outcomes" class="btn btn--ghost btn--lg">See the outcomes</a>
+      </div>
+      <div class="pf-stats">
+        {SITE.stats.map((s) => (<div><strong>{s.value}</strong><span>{s.label}</span></div>))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="outcomes">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Outcomes, not modules</span>
+        <h2>What the platform is for.</h2>
+        <p class="lead" style="margin-inline:auto">We don't sell you features. We move six numbers that decide whether a project makes money.</p>
+      </div>
+      <div class="pf-grid">
+        {outcomes.map((o) => (
+          <a class="pf-card" href={o.href}>
+            <div class="pf-card__ic"><Icon name={o.icon} size={22} /></div>
+            <h3>{o.t}</h3>
+            <p>{o.d}</p>
+            <span class="pf-card__cta">Explore <Icon name="arrow-right" size={15} /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow text-center">
+      <span class="eyebrow">One login, one source of truth</span>
+      <h2>Every workflow, connected — end to end.</h2>
+      <p class="lead" style="margin-inline:auto">The moment a lead becomes a project, it flows through the same system all the way to the last rupee collected.</p>
+      <div class="pf-chain">
+        {chain.map((c, i) => (
+          <>
+            <span class="pf-chain__node">{c}</span>
+            {i < chain.length - 1 && <span class="pf-chain__arr" aria-hidden="true">→</span>}
+          </>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container pf-ai">
+      <div>
+        <span class="eyebrow">The AI layer</span>
+        <h2 style="color:#fff">It doesn't just store your data — it tells you what needs you.</h2>
+        <p class="lead" style="color:#cbd5e1">
+          Ask sotyn.ai a question about any project in plain language and get the answer from your own live data.
+          Reports write themselves; performance is scored automatically. Your engineers engineer — the busywork disappears.
+        </p>
+        <ul class="check-list" style="margin-top:8px">
+          <li>Ask-anything project assistant, on your live data</li>
+          <li>Auto-drafted daily reports &amp; weekly performance scores</li>
+          <li>BOQ-vs-actual and delay signals surfaced early</li>
+        </ul>
+        <p class="pf-note">Deeper AI insight features are rolling out — we only ship what runs.</p>
+      </div>
+      <div class="pf-proof">
+        <div class="pf-proof__k">Verified, not vapour</div>
+        <p>This platform runs <strong>{SITE.parentCompany}</strong> today — 30+ live sites, hundreds of daily reports, every RA bill and payment. The demo is our real system.</p>
+        <div class="pf-lanes">
+          {lanes.map((l) => (<a href={l.href} class="pf-lane">{l.name} →</a>))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTABand
+    title="See it on your own projects."
+    text="A free 20-minute walkthrough on your trades and project sizes — real margin, real cash, real site status. Then you decide."
+  />
+</BaseLayout>
+
+<style>
+  .crumb { border-bottom: 1px solid var(--line); background: var(--bg-alt); }
+  .crumb .container { padding-top: 12px; padding-bottom: 12px; font-size: .86rem; color: var(--muted); }
+  .crumb a { color: var(--brand-700); font-weight: 600; }
+  .crumb span[aria-hidden] { margin: 0 8px; color: var(--graphite-300); }
+
+  .pf-hero h1 { margin: 14px 0 16px; }
+  .pf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 40px; border-top: 1px solid var(--line); padding-top: 26px; }
+  .pf-stats strong { display: block; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; color: var(--brand-700); letter-spacing: -.03em; }
+  .pf-stats span { font-size: .8rem; color: var(--muted); }
+  @media (max-width: 620px) { .pf-stats { grid-template-columns: 1fr 1fr; gap: 20px 12px; } }
+
+  .pf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .pf-card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-sm); transition: .2s; }
+  .pf-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--brand-100); text-decoration: none; }
+  .pf-card__ic { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-50); color: var(--brand-700); display: grid; place-items: center; margin-bottom: 14px; }
+  .pf-card h3 { font-size: 1.12rem; margin-bottom: 7px; }
+  .pf-card p { font-size: .94rem; color: var(--body); margin: 0 0 14px; flex: 1; }
+  .pf-card__cta { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--brand-700); font-size: .9rem; }
+  @media (max-width: 860px) { .pf-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .pf-grid { grid-template-columns: 1fr; } }
+
+  .pf-chain { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 6px; margin-top: 26px; }
+  .pf-chain__node { font-weight: 700; font-size: .92rem; color: var(--brand-800); background: var(--brand-50); border: 1px solid var(--brand-100); padding: 9px 15px; border-radius: 999px; }
+  .pf-chain__arr { color: var(--brand-500); font-weight: 900; }
+
+  .pf-ai { display: grid; grid-template-columns: 1.25fr 1fr; gap: 44px; align-items: center; }
+  .pf-ai .check-list li { color: #e2e8f0; }
+  .pf-note { margin-top: 16px; font-size: .88rem; color: #94a3b8; }
+  .pf-proof { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; padding: 28px; }
+  .pf-proof__k { font-family: var(--mono, monospace); font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--brand-400, #93c5fd); margin-bottom: 12px; }
+  .pf-proof p { color: #cbd5e1; font-size: 1rem; margin: 0 0 18px; }
+  .pf-proof p strong { color: #fff; }
+  .pf-lanes { display: flex; flex-direction: column; gap: 9px; }
+  .pf-lane { font-weight: 700; font-size: .92rem; color: #bfdbfe; }
+  .pf-lane:hover { color: #fff; }
+  @media (max-width: 860px) { .pf-ai { grid-template-columns: 1fr; gap: 30px; } }
+</style>

@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProblemPage from "../components/ProblemPage.astro";
+import { SITE } from "../config/site";
+
+const data = {
+  crumbName: "Reduce project delays",
+  eyebrow: "Reduce project delays",
+  h1: "Stop finding out about delays at month-end.",
+  lead: "Most Indian sites don't have a delay problem — they have a visibility problem. sotyn.ai rolls up daily progress from every site so slippage shows the same day, while you can still act.",
+  calcHref: "/tools#delay-cost", calcLabel: "Calculate your delay cost",
+  whyTitle: "Why projects slip before anyone notices",
+  why: [
+    "Progress lives in WhatsApp photos and people's memory — never one number.",
+    "DPRs arrive late, incomplete, or not at all.",
+    "By the time a report reaches the office, the week is already gone.",
+    "Nobody compares work-done against the plan until it's billing time.",
+  ],
+  howTitle: "How sotyn.ai keeps projects on track",
+  steps: [
+    { icon: "hardhat", t: "Daily reports from every site", d: "Mobile-first DPRs your site staff actually file — two taps, from the phone in their pocket." },
+    { icon: "gauge", t: "Every site on one live screen", d: "Active, pending approval, billing-ready — updated as work is logged, not at the next review." },
+    { icon: "alert", t: "Slippage flagged early", d: "Work-done rolls up against the BOQ, so lag and over-consumption surface the same day." },
+    { icon: "lock", t: "Reporting is enforced", d: "No DPR, no payment — if it isn't in sotyn.ai it didn't happen, so the data is always there." },
+  ],
+  proofText: "Verified: 30+ live sites and hundreds of daily reports run through sotyn.ai in our own company today.",
+  faqs: [
+    { q: "How do site engineers actually file reports?", a: "It's mobile-first and in plain language — daily reports take two taps and work on any phone, even low-end. The 10 most-spoken Indian languages are rolling out so staff can report in their own words." },
+    { q: "Does it work across multiple sites at once?", a: "Yes. One login shows every site live — which are active, which DPRs are pending approval, and which are billing-ready — so nothing hides." },
+    { q: "What if my team doesn't fill in reports?", a: "Reporting is enforced: work that isn't logged doesn't move to payment. In our own company, hundreds of DPRs flow through the system every week." },
+  ],
+  related: [
+    { name: "Accelerate RA billing", href: "/ra-billing-software" },
+    { name: "Material reconciliation", href: "/material-reconciliation" },
+    { name: "The platform", href: "/platform" },
+  ],
+};
+
+const schema = [
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Platform", item: `${SITE.url}/platform` },
+    { "@type": "ListItem", position: 3, name: data.crumbName, item: `${SITE.url}/reduce-project-delays` },
+  ]},
+  { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: data.faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+];
+---
+<BaseLayout
+  title="Reduce construction project delays — real-time site & DPR visibility | sotyn.ai India"
+  description="Cut project delays with real-time daily progress reports across every site. sotyn.ai flags slippage the same day for Indian EPC, MEP & solar contractors — built inside a live 535+ project company. Book a free demo."
+  path="/reduce-project-delays"
+  schema={schema}
+>
+  <ProblemPage data={data} />
+</BaseLayout>

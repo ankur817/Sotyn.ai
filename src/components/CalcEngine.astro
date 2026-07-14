@@ -1,0 +1,102 @@
+---
+// Client-side calculator engine. Include once per page that renders <Calculator>.
+// Reads the WhatsApp number from any [data-wa] element on the page.
+---
+<script is:inline>
+  (function () {
+    var waEl = document.querySelector("[data-wa]");
+    var WA = waEl ? waEl.getAttribute("data-wa") : "";
+    function num(s, id) { var el = document.getElementById(s + "__" + id); return el ? (parseFloat(el.value) || 0) : 0; }
+    function raw(s, id) { var el = document.getElementById(s + "__" + id); return el ? el.value : ""; }
+    function set(s, id, v) { var el = document.getElementById(s + "__" + id); if (el) el.textContent = v; }
+    function inr(n) {
+      if (!isFinite(n)) n = 0;
+      var neg = n < 0; n = Math.abs(n); var out;
+      if (n >= 1e7) out = "₹" + (n / 1e7).toFixed(2).replace(/\.?0+$/, "") + " Cr";
+      else if (n >= 1e5) out = "₹" + (n / 1e5).toFixed(2).replace(/\.?0+$/, "") + " L";
+      else out = "₹" + Math.round(n).toLocaleString("en-IN");
+      return (neg ? "−" : "") + out;
+    }
+    var F = {
+      "quote-margin": function (s) {
+        var cost = num(s, "cost"), oh = num(s, "overhead"), mg = num(s, "margin");
+        var base = cost * (1 + oh / 100);
+        var price = mg < 100 ? base / (1 - mg / 100) : base;
+        set(s, "price", inr(price)); set(s, "marginr", inr(price - base));
+        set(s, "markup", cost ? ((price / cost - 1) * 100).toFixed(1) + "%" : "—");
+        return "To hit a " + mg + "% margin on " + inr(cost) + " cost, I must quote at least " + inr(price) + ".";
+      },
+      "profit-leak": function (s) {
+        var a = num(s, "turnover") * 1e7, leak = num(s, "leak"), loss = a * leak / 100;
+        set(s, "year", inr(loss)); set(s, "day", inr(loss / 365));
+        return "At " + leak + "% leakage I'm losing " + inr(loss) + " a year.";
+      },
+      "cash-stuck": function (s) {
+        var a = num(s, "turnover") * 1e7, days = num(s, "days"), ret = num(s, "ret");
+        var recv = a / 365 * days, reten = a * ret / 100;
+        set(s, "recv", inr(recv)); set(s, "reten", inr(reten)); set(s, "total", inr(recv + reten));
+        return inr(recv + reten) + " of my cash is stuck in receivables + retention.";
+      },
+      "material-wastage": function (s) {
+        var sp = num(s, "spend"), w = num(s, "wastage"), loss = sp * w / 100;
+        set(s, "year", inr(loss)); set(s, "month", inr(loss / 12));
+        return "At " + w + "% wastage I'm losing " + inr(loss) + " of material a year.";
+      },
+      "labour-leak": function (s) {
+        var sp = num(s, "spend"), leak = num(s, "leak"), m = sp * leak / 100;
+        set(s, "month", inr(m)); set(s, "year", inr(m * 12));
+        return "Labour leakage is costing me " + inr(m * 12) + " a year.";
+      },
+      "delay-cost": function (s) {
+        var oh = num(s, "overhead"), d = num(s, "days"), perday = oh / 30, total = perday * d;
+        set(s, "perday", inr(perday)); set(s, "total", inr(total));
+        return "A " + d + "-day delay is burning " + inr(total) + " in site overhead.";
+      },
+      "retention": function (s) {
+        var v = num(s, "value"), ret = num(s, "ret"), rate = num(s, "rate"), m = num(s, "months");
+        var held = v * ret / 100, carry = held * (rate / 100) * (m / 12);
+        set(s, "held", inr(held)); set(s, "carry", inr(carry));
+        return inr(held) + " of mine is held as retention (" + inr(carry) + " carrying cost till release).";
+      },
+      "gst": function (s) {
+        var amt = num(s, "amount"), rate = num(s, "rate"), mode = raw(s, "mode");
+        var base, gst, total;
+        if (mode === "remove") { base = amt / (1 + rate / 100); gst = amt - base; total = amt; }
+        else { base = amt; gst = amt * rate / 100; total = amt + gst; }
+        set(s, "base", inr(base)); set(s, "gst", inr(gst)); set(s, "total", inr(total));
+        return "GST " + rate + "% → GST " + inr(gst) + ", total " + inr(total) + ".";
+      },
+      "ra-bill": function (s) {
+        var w = num(s, "work"), ret = num(s, "ret"), gst = num(s, "gst"), tds = num(s, "tds");
+        var retA = w * ret / 100, gstA = w * gst / 100, tdsA = w * tds / 100;
+        var net = w - retA + gstA - tdsA;
+        set(s, "gstamt", inr(gstA)); set(s, "deduct", inr(retA + tdsA)); set(s, "net", inr(net));
+        return "Net payable on this RA bill works out to " + inr(net) + ".";
+      },
+      "erp-roi": function (s) {
+        var a = num(s, "turnover") * 1e7, leak = num(s, "leak"), rec = num(s, "recover"), cost = num(s, "cost");
+        var recoverable = a * (leak / 100) * (rec / 100);
+        var monthly = recoverable / 12, payMonths = cost / (monthly || 1);
+        var payback = payMonths < 1.5 ? Math.max(1, Math.round(payMonths * 4.3)) + " weeks" : payMonths.toFixed(1) + " months";
+        set(s, "recoverable", inr(recoverable));
+        set(s, "payback", isFinite(payMonths) ? payback : "—");
+        set(s, "roi", cost ? (recoverable / cost).toFixed(1) + "×" : "—");
+        return "sotyn.ai could recover ~" + inr(recoverable) + "/yr for me — payback about " + payback + ".";
+      }
+    };
+    function run(s) {
+      if (!F[s]) return;
+      var msg = F[s](s);
+      var link = document.querySelector('[data-wa-for="' + s + '"]');
+      if (link && WA) link.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg + " (via the sotyn.ai calculator) — I'd like a demo on my numbers.");
+    }
+    document.querySelectorAll("[data-calc]").forEach(function (el) {
+      var s = el.getAttribute("data-calc");
+      el.querySelectorAll("input, select").forEach(function (i) {
+        i.addEventListener("input", function () { run(s); });
+        i.addEventListener("change", function () { run(s); });
+      });
+      run(s);
+    });
+  })();
+</script>

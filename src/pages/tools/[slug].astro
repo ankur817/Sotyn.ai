@@ -1,0 +1,102 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Icon from "../../components/Icon.astro";
+import Calculator from "../../components/Calculator.astro";
+import CalcEngine from "../../components/CalcEngine.astro";
+import { calculators } from "../../config/calculators";
+import { SITE } from "../../config/site";
+
+export function getStaticPaths() {
+  return calculators.map((calc) => ({ params: { slug: calc.slug }, props: { calc } }));
+}
+const { calc } = Astro.props;
+const related = calculators.filter((c) => c.slug !== calc.slug);
+
+const schema = [
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Free calculators", item: `${SITE.url}/tools` },
+    { "@type": "ListItem", position: 3, name: calc.name, item: `${SITE.url}/tools/${calc.slug}` },
+  ]},
+  { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: calc.faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+];
+---
+<BaseLayout title={calc.seoTitle} description={calc.seoDescription} path={`/tools/${calc.slug}`} schema={schema}>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <div class="container"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/tools">Free calculators</a> <span aria-hidden="true">/</span> <span>{calc.short}</span></div>
+  </nav>
+
+  <section class="section" style="padding-bottom:16px">
+    <div class="container container--narrow text-center">
+      <span class="eyebrow">Free calculator · no sign-up</span>
+      <h1>{calc.name}</h1>
+      <p class="lead" style="margin-inline:auto">{calc.blurb}</p>
+    </div>
+    <div class="container">
+      <div class="tool-solo" data-wa={SITE.whatsapp}>
+        <Calculator calc={calc} />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <h2>How to use it — and why it matters</h2>
+      <p style="margin-top:12px">{calc.intro}</p>
+
+      <div class="faqs" style="margin-top:32px">
+        {calc.faqs.map((f) => (
+          <details class="faq"><summary>{f.q}</summary><p>{f.a}</p></details>
+        ))}
+      </div>
+
+      <div class="tool-cta">
+        <div>
+          <h3>See it on your real projects</h3>
+          <p>A back-of-envelope number is a start. In a free 20-minute demo we open sotyn.ai on your own trades and project sizes — no slides, no staged data.</p>
+        </div>
+        <a href="/demo" class="btn btn--primary btn--lg">Book a free demo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:32px">
+    <div class="container container--narrow">
+      <h2 style="font-size:1.25rem">More free calculators</h2>
+      <div class="rel">
+        {related.map((c) => <a class="rel__chip" href={`/tools/${c.slug}`}><Icon name={c.icon} size={15} /> {c.short}</a>)}
+        <a class="rel__chip rel__chip--all" href="/tools">All 10 on one page →</a>
+      </div>
+    </div>
+  </section>
+
+  <CalcEngine />
+</BaseLayout>
+
+<style>
+  .crumb { border-bottom: 1px solid var(--line); background: var(--bg-alt); }
+  .crumb .container { padding-top: 12px; padding-bottom: 12px; font-size: .86rem; color: var(--muted); }
+  .crumb a { color: var(--brand-700); font-weight: 600; }
+  .crumb span[aria-hidden] { margin: 0 8px; color: var(--graphite-300); }
+
+  .tool-solo { max-width: 640px; margin: 26px auto 0; }
+
+  .faqs { display: grid; gap: 12px; }
+  .faq { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 4px 20px; }
+  .faq summary { cursor: pointer; font-weight: 700; color: var(--ink); padding: 18px 0; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--brand-600); font-weight: 700; font-size: 1.4rem; line-height: 1; }
+  .faq[open] summary::after { content: "–"; }
+  .faq p { margin: 0 0 18px; color: var(--body); font-size: .98rem; }
+
+  .tool-cta { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; margin-top: 34px; padding: 26px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+  .tool-cta h3 { margin: 0 0 6px; }
+  .tool-cta p { margin: 0; font-size: .95rem; color: var(--body); max-width: 46ch; }
+
+  .rel { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+  .rel__chip { display: inline-flex; align-items: center; gap: 6px; font-size: .86rem; font-weight: 600; color: var(--brand-700); background: var(--brand-50); border: 1px solid var(--brand-100); padding: 8px 13px; border-radius: 999px; }
+  .rel__chip:hover { background: var(--brand-100); text-decoration: none; }
+  .rel__chip :global(.ico) { color: var(--brand-600); }
+  .rel__chip--all { background: var(--brand-600); color: #fff; border-color: var(--brand-600); }
+  .rel__chip--all:hover { background: var(--brand-700); }
+</style>

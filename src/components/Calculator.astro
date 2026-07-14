@@ -1,0 +1,57 @@
+---
+import Icon from "./Icon.astro";
+import type { Calc } from "../config/calculators";
+export interface Props { calc: Calc; detailLink?: string; }
+const { calc, detailLink } = Astro.props;
+---
+<article class="tool" id={calc.slug} data-calc={calc.slug}>
+  <div class="tool__head"><span class="tool__ic"><Icon name={calc.icon} size={22} /></span><h2>{calc.name}</h2></div>
+  <p class="muted">{calc.blurb}</p>
+  <div class="tool__grid">
+    {calc.inputs.map((i) => (
+      i.type === "select" ? (
+        <label>{i.label}
+          <select id={`${calc.slug}__${i.id}`}>{i.options!.map((o) => <option value={o.v}>{o.t}</option>)}</select>
+        </label>
+      ) : (
+        <label>{i.label}<input type="number" inputmode="decimal" id={`${calc.slug}__${i.id}`} value={i.val} min="0" /></label>
+      )
+    ))}
+  </div>
+  <div class="tool__out">
+    {calc.outputs.map((o) => (
+      <div class={o.hl ? "tool__out--hl" : ""}><span>{o.label}</span><b id={`${calc.slug}__${o.id}`}>—</b></div>
+    ))}
+  </div>
+  <p class="tool__note" set:html={calc.cta}></p>
+  <div class="tool__actions">
+    <a href="/demo" class="btn btn--primary tool__btn">Book a demo on your numbers</a>
+    <a href="#" class="tool__wa" data-wa-for={calc.slug} target="_blank" rel="nofollow noopener"><Icon name="whatsapp" size={16} /> WhatsApp my result</a>
+    {detailLink && <a class="tool__more" href={detailLink}>Full calculator &amp; guide →</a>}
+  </div>
+</article>
+
+<style>
+  .tool { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow-sm); scroll-margin-top: 96px; }
+  .tool__head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .tool__ic { width: 44px; height: 44px; border-radius: 11px; background: var(--brand-50); color: var(--brand-700); display: grid; place-items: center; flex: none; }
+  .tool__head h2 { font-size: 1.22rem; margin: 0; letter-spacing: -.02em; }
+  .tool .muted { font-size: .93rem; margin: 0; }
+  .tool__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 13px; margin: 18px 0; }
+  .tool label { display: grid; gap: 6px; font-weight: 600; font-size: .82rem; color: var(--ink); }
+  .tool input, .tool select { font-family: inherit; font-size: 1rem; padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); width: 100%; -webkit-appearance: none; appearance: none; }
+  .tool select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7890' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+  .tool input:focus, .tool select:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 3px rgba(41,151,255,.18); }
+  .tool__out { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; background: var(--bg-alt); border: 1px solid var(--line); border-radius: 12px; padding: 15px; }
+  .tool__out > div { display: flex; flex-direction: column; gap: 3px; }
+  .tool__out span { font-size: .74rem; color: var(--muted); font-weight: 600; }
+  .tool__out b { font-size: 1.34rem; font-weight: 900; color: var(--ink); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .tool__out--hl b { color: var(--brand-700); }
+  .tool__note { margin: 15px 0 0; font-size: .9rem; color: var(--body); line-height: 1.5; }
+  .tool__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: auto; padding-top: 16px; }
+  .tool__btn { padding: 11px 18px; font-size: .92rem; }
+  .tool__wa { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .9rem; color: #128c4a; }
+  .tool__wa :global(.ico) { color: #25d366; }
+  .tool__wa:hover { text-decoration: underline; }
+  .tool__more { font-weight: 700; font-size: .9rem; color: var(--brand-700); }
+</style>

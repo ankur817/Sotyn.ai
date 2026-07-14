@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProblemPage from "../components/ProblemPage.astro";
+import { SITE } from "../config/site";
+
+const data = {
+  crumbName: "RA billing",
+  eyebrow: "RA billing & cash flow",
+  h1: "Raise RA bills the day work is approved — not weeks later.",
+  lead: "Running Account billing is where cash gets stuck. sotyn.ai makes every bill billing-ready the moment a DPR is approved — GST, TDS and retention worked out — so you invoice faster and collect sooner.",
+  calcHref: "/tools#ra-bill", calcLabel: "Calculate RA bill net-payable",
+  whyTitle: "Why RA billing bleeds cash",
+  why: [
+    "Bills wait on progress data that lives in someone's head.",
+    "Retention, GST and TDS get recalculated by hand every cycle.",
+    "By the time the bill goes out, you've financed the client for weeks.",
+    "Nobody tracks what's actually collectible right now.",
+  ],
+  howTitle: "How sotyn.ai accelerates RA billing",
+  steps: [
+    { icon: "check", t: "Billing-ready on DPR approval", d: "The moment a daily report is approved, the work is ready to bill — no chasing progress across sites." },
+    { icon: "layers", t: "GST, TDS & retention, automatic", d: "Every RA bill computes deductions correctly, across bill types — Sales, RA, MB, Installation and T&C." },
+    { icon: "wallet", t: "See what's collectible today", d: "AR/AP and cash-flow views show exactly what to invoice and which payments to chase now." },
+    { icon: "gauge", t: "Every rupee tracked to collection", d: "From bill raised to payment received — no receivable slips through the cracks." },
+  ],
+  proofText: "Verified: a live billing-ready pipeline runs in our own company — RA bills flow straight from approved DPRs.",
+  faqs: [
+    { q: "Does it handle GST, TDS and retention?", a: "Yes — every RA bill computes GST, TDS and retention automatically, so what you invoice and what lands in the bank are both clear." },
+    { q: "Which bill types are supported?", a: "EPC-native billing: Sales, RA (Running Account), MB (Measurement Book), Installation and T&C — all with GST." },
+    { q: "We use Tally. Do we start over?", a: "No. We migrate your existing masters, projects and vendors at setup, so you start on your real data — not a blank slate." },
+  ],
+  related: [
+    { name: "Reduce project delays", href: "/reduce-project-delays" },
+    { name: "Material reconciliation", href: "/material-reconciliation" },
+    { name: "The platform", href: "/platform" },
+  ],
+};
+
+const schema = [
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Platform", item: `${SITE.url}/platform` },
+    { "@type": "ListItem", position: 3, name: data.crumbName, item: `${SITE.url}/ra-billing-software` },
+  ]},
+  { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: data.faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+];
+---
+<BaseLayout
+  title="RA Billing Software for Contractors — bill faster, collect sooner | sotyn.ai India"
+  description="Speed up Running Account (RA) billing for Indian construction & EPC contractors. sotyn.ai makes bills billing-ready on DPR approval with GST, TDS & retention computed automatically. Built inside a live 535+ project company. Book a demo."
+  path="/ra-billing-software"
+  schema={schema}
+>
+  <ProblemPage data={data} />
+</BaseLayout>
