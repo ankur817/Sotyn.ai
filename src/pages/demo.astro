@@ -1,0 +1,156 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DemoForm from "../components/DemoForm.astro";
+import Icon from "../components/Icon.astro";
+import { SITE, waLink } from "../config/site";
+
+// What a prospect actually sees — every item verified live in the running system.
+const sees = [
+  { icon: "gauge", t: "Your live control tower", d: "Every project, its margin, cash and site status on one screen — the way it runs our own company." },
+  { icon: "hardhat", t: "DPR → BOQ, line by line", d: "Daily reports rolling up against the BOQ, so over-consumption and slippage show the same day, not at month-end." },
+  { icon: "wallet", t: "Billing-ready the moment a DPR is approved", d: "RA bills with GST, TDS and retention worked out for you — cash chased automatically." },
+  { icon: "users", t: "The accountability scorecard", d: "Every team auto-scored weekly from live work — no manual entry, no politics." },
+];
+
+const outcomes = [
+  "Reduce project delays — problems surface the same day",
+  "Protect margins — real margin before you send the quote",
+  "Stop material & labour leakage against your BOQ",
+  "Get paid faster — billing-ready RA bills, cash chased",
+  "See every site & rupee on one login",
+];
+
+const faqs = [
+  { q: "How long is the demo, and what does it cost?", a: "About 20 minutes, and it's free. We walk sotyn.ai on your own trades and project sizes — no slides, no obligation." },
+  { q: "Is it a real product or a mockup?", a: "It's our own live company. We open the real system — real projects, real POs, real reports — running Secured Engineers Pvt. Ltd. today. No staged data." },
+  { q: "We use Tally and Excel. Do we start from scratch?", a: "No. We migrate your existing masters, live projects, BOQs and vendors, so you start on your real data. English is live today; the 10 most-spoken Indian languages are rolling out." },
+];
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+      { "@type": "ListItem", position: 2, name: "Book a demo", item: `${SITE.url}/demo` },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  },
+];
+---
+<BaseLayout
+  title="Book a free demo — see sotyn.ai on your own numbers | AI construction platform, India"
+  description="Book a free 20-minute demo of sotyn.ai — the AI construction operating system for Indian EPC, MEP & solar contractors. See your real margin, cash, DPR, BOQ and RA billing on your own projects. No slides, no obligation."
+  path="/demo"
+  schema={schema}
+>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <div class="container">
+      <a href="/">Home</a> <span aria-hidden="true">/</span> <span>Book a demo</span>
+    </div>
+  </nav>
+
+  <section class="section demo-hero" id="demo">
+    <div class="container demo-grid">
+      <div class="demo-copy">
+        <span class="eyebrow">Free demo · 20 minutes · on your numbers</span>
+        <h1>See exactly where your projects leak time and money.</h1>
+        <p class="lead">
+          Not a slideshow — a live walkthrough of sotyn.ai on your own trades and project sizes.
+          In 20 minutes you'll see your real margin, cash, sites and reports the way a
+          535+ project EPC company runs its own business.
+        </p>
+        <ul class="check-list" style="margin-top:8px">
+          {outcomes.map((o) => <li>{o}</li>)}
+        </ul>
+        <p class="demo-alt">
+          Prefer to talk now? <a href={waLink()} rel="nofollow">WhatsApp us</a>
+          or call <a href={`tel:${SITE.phoneHref}`}>{SITE.phone}</a>.
+        </p>
+      </div>
+      <div class="demo-formwrap">
+        <DemoForm />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="sec-head text-center">
+        <span class="eyebrow">What you'll see</span>
+        <h2>Real screens. Real projects. Your kind of work.</h2>
+        <p class="lead" style="margin-inline:auto">Every one of these is live in our own company today — ask for any screen and we'll open it.</p>
+      </div>
+      <div class="sees">
+        {sees.map((s) => (
+          <div class="see">
+            <div class="see__ic"><Icon name={s.icon} size={22} /></div>
+            <div><h3>{s.t}</h3><p>{s.d}</p></div>
+          </div>
+        ))}
+      </div>
+      <div class="trust2">
+        {SITE.trust.certs.map((c) => (<span class="cert2"><Icon name="check" size={15} /> {c}</span>))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Before you book</span>
+        <h2>Straight answers</h2>
+      </div>
+      <div class="faqs">
+        {faqs.map((f) => (
+          <details class="faq">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+      <div class="text-center" style="margin-top:30px">
+        <a href="#demo" class="btn btn--primary btn--lg">Book my free demo</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .crumb { border-bottom: 1px solid var(--line); background: var(--bg-alt); }
+  .crumb .container { padding-top: 12px; padding-bottom: 12px; font-size: .86rem; color: var(--muted); }
+  .crumb a { color: var(--brand-700); font-weight: 600; }
+  .crumb span[aria-hidden] { margin: 0 8px; color: var(--graphite-300); }
+
+  .demo-hero { padding-top: clamp(36px, 6vw, 64px); }
+  .demo-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 52px; align-items: start; }
+  .demo-copy h1 { margin: 14px 0 16px; }
+  .demo-copy .lead { margin-bottom: 4px; }
+  .demo-alt { margin-top: 22px; font-size: .95rem; color: var(--body); }
+  .demo-alt a { font-weight: 700; }
+  .demo-formwrap { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow-lg); position: sticky; top: 96px; }
+  @media (max-width: 900px) { .demo-grid { grid-template-columns: 1fr; gap: 34px; } .demo-formwrap { position: static; } }
+
+  .sees { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 940px; margin: 0 auto; }
+  .see { display: flex; gap: 15px; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 22px; box-shadow: var(--shadow-sm); }
+  .see__ic { width: 46px; height: 46px; border-radius: 12px; background: var(--brand-50); color: var(--brand-700); display: grid; place-items: center; flex: none; }
+  .see h3 { font-size: 1.05rem; margin-bottom: 5px; }
+  .see p { font-size: .93rem; color: var(--body); margin: 0; }
+  @media (max-width: 640px) { .sees { grid-template-columns: 1fr; } }
+
+  .trust2 { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 30px; }
+  .cert2 { display: inline-flex; align-items: center; gap: 7px; font-size: .9rem; font-weight: 600; color: var(--graphite-700); background: var(--graphite-100); border: 1px solid var(--line); padding: 8px 14px; border-radius: 999px; }
+  .cert2 :global(.ico) { color: var(--brand-600); }
+
+  .faqs { display: grid; gap: 12px; }
+  .faq { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 4px 20px; }
+  .faq summary { cursor: pointer; font-weight: 700; color: var(--ink); padding: 18px 0; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--brand-600); font-weight: 700; font-size: 1.4rem; line-height: 1; }
+  .faq[open] summary::after { content: "–"; }
+  .faq p { margin: 0 0 18px; color: var(--body); font-size: .98rem; }
+</style>

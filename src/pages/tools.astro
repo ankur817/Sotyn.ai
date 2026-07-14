@@ -2,138 +2,279 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CTABand from "../components/CTABand.astro";
 import Icon from "../components/Icon.astro";
+import { SITE } from "../config/site";
+
+// 10 live calculators. Static metadata here; formulas live client-side (keyed by slug).
+const calcs = [
+  {
+    slug: "quote-margin", icon: "trending-up", name: "Quote Margin Calculator",
+    blurb: "The real price you must quote to hit your target margin — after overhead. (Markup ≠ margin.)",
+    inputs: [
+      { id: "cost", label: "Direct cost (₹)", val: 1000000 },
+      { id: "overhead", label: "Site overhead %", val: 8 },
+      { id: "margin", label: "Target net margin %", val: 15 },
+    ],
+    outputs: [{ id: "price", label: "Quote at least", hl: true }, { id: "marginr", label: "Your margin (₹)" }, { id: "markup", label: "= effective markup" }],
+    cta: "sotyn.ai shows real margin on <strong>every line of every quote</strong>, before you send it.",
+  },
+  {
+    slug: "profit-leak", icon: "droplet", name: "Profit Leak Calculator",
+    blurb: "The 2–3% that quietly disappears between quote, site and collection — in rupees, on your turnover.",
+    inputs: [{ id: "turnover", label: "Annual turnover (₹ Cr)", val: 25 }, { id: "leak", label: "Estimated leakage %", val: 2.5 }],
+    outputs: [{ id: "year", label: "Leaking per year", hl: true }, { id: "day", label: "Per day" }],
+    cta: "Most contractors leak 2–3% and find out at year-end. sotyn.ai surfaces it the same day.",
+  },
+  {
+    slug: "cash-stuck", icon: "wallet", name: "Cash-Stuck Calculator",
+    blurb: "How much of your money is locked in receivables and retention right now — financing your clients for free.",
+    inputs: [{ id: "turnover", label: "Annual turnover (₹ Cr)", val: 25 }, { id: "days", label: "Avg payment delay (days)", val: 75 }, { id: "ret", label: "Retention held (%)", val: 5 }],
+    outputs: [{ id: "recv", label: "Stuck in receivables" }, { id: "reten", label: "Held as retention" }, { id: "total", label: "Total cash locked", hl: true }],
+    cta: "That's your working capital, sitting idle. sotyn.ai chases every rupee automatically.",
+  },
+  {
+    slug: "material-wastage", icon: "box", name: "Material Wastage Calculator",
+    blurb: "Over-consumption, theft and off-market buying against your BOQ — the classic procurement leak.",
+    inputs: [{ id: "spend", label: "Annual material spend (₹)", val: 30000000 }, { id: "wastage", label: "Wastage / leakage %", val: 5 }],
+    outputs: [{ id: "year", label: "Lost per year", hl: true }, { id: "month", label: "Per month" }],
+    cta: "sotyn.ai tracks BOQ vs actually-consumed, per line — over-consumption shows up instantly.",
+  },
+  {
+    slug: "labour-leak", icon: "users", name: "Labour Leak Calculator",
+    blurb: "Ghost labour on muster rolls and inflated sub-contractor bills add up fast.",
+    inputs: [{ id: "spend", label: "Monthly labour spend (₹)", val: 2000000 }, { id: "leak", label: "Estimated leak %", val: 6 }],
+    outputs: [{ id: "month", label: "Lost per month" }, { id: "year", label: "Lost per year", hl: true }],
+    cta: "Real attendance + rate-checked sub-con bills plug this leak on day one.",
+  },
+  {
+    slug: "delay-cost", icon: "alert", name: "Project Delay Cost Calculator",
+    blurb: "Every extra day a site runs burns overhead — supervision, rentals, establishment.",
+    inputs: [{ id: "overhead", label: "Monthly site running cost (₹)", val: 900000 }, { id: "days", label: "Delay (days)", val: 30 }],
+    outputs: [{ id: "perday", label: "Burn per day" }, { id: "total", label: "Cost of the delay", hl: true }],
+    cta: "Problems surface the same day in sotyn.ai — so delays get fixed before they compound.",
+  },
+  {
+    slug: "retention", icon: "lock", name: "Retention Money Calculator",
+    blurb: "How much is held back as retention — and what that locked money costs you until release.",
+    inputs: [{ id: "value", label: "Contract / billed value (₹)", val: 10000000 }, { id: "ret", label: "Retention %", val: 5 }, { id: "rate", label: "Cost of capital % / yr", val: 12 }, { id: "months", label: "Released after (months)", val: 12 }],
+    outputs: [{ id: "held", label: "Retention held", hl: true }, { id: "carry", label: "Carrying cost till release" }],
+    cta: "Track every retention due-date so you claim it back the day it's release-eligible.",
+  },
+  {
+    slug: "gst", icon: "layers", name: "Construction GST Calculator",
+    blurb: "Add or strip GST on works-contract billing at the right rate — no more manual back-calculation.",
+    inputs: [
+      { id: "amount", label: "Amount (₹)", val: 1000000 },
+      { id: "rate", label: "GST rate", type: "select", options: [{ v: 18, t: "18% (works contract)" }, { v: 12, t: "12%" }, { v: 5, t: "5%" }] },
+      { id: "mode", label: "Mode", type: "select", options: [{ v: "add", t: "Add GST (exclusive)" }, { v: "remove", t: "Remove GST (inclusive)" }] },
+    ],
+    outputs: [{ id: "base", label: "Base value" }, { id: "gst", label: "GST amount" }, { id: "total", label: "Total (incl. GST)", hl: true }],
+    cta: "sotyn.ai auto-applies the right GST on every bill type — Sales, RA, MB, T&C.",
+  },
+  {
+    slug: "ra-bill", icon: "book", name: "RA Bill Net-Payable Calculator",
+    blurb: "What actually lands in the bank this Running Account bill — after retention, GST and TDS.",
+    inputs: [{ id: "work", label: "Work done this bill (₹)", val: 2000000 }, { id: "ret", label: "Retention %", val: 5 }, { id: "gst", label: "GST %", val: 18 }, { id: "tds", label: "TDS %", val: 2 }],
+    outputs: [{ id: "gstamt", label: "GST added" }, { id: "deduct", label: "Retention + TDS" }, { id: "net", label: "Net payable", hl: true }],
+    cta: "sotyn.ai builds the RA bill and its deductions automatically — billing-ready the moment a DPR is approved.",
+  },
+  {
+    slug: "erp-roi", icon: "check", name: "Sotyn ROI & Payback Calculator",
+    blurb: "What plugging even part of your leak is worth — and how fast sotyn.ai pays for itself.",
+    inputs: [{ id: "turnover", label: "Annual turnover (₹ Cr)", val: 25 }, { id: "leak", label: "Current leakage %", val: 2.5 }, { id: "recover", label: "Realistically recover %", val: 60 }, { id: "cost", label: "sotyn.ai cost / yr (₹)", val: 150000 }],
+    outputs: [{ id: "recoverable", label: "Recoverable per year", hl: true }, { id: "payback", label: "Payback" }, { id: "roi", label: "Return" }],
+    cta: "See it on your real numbers in a 20-minute demo — no slides, just your margin, cash and sites.",
+  },
+];
 ---
 <BaseLayout
-  title="Free tools for EPC contractors — margin, cash & labour calculators | sotyn.ai"
-  description="Free calculators for EPC contractors: quote margin, cash stuck in receivables, and labour leakage. No sign-up to use. Built by sotyn.ai — India's first AI ERP for EPC contractors."
+  title="10 Free Calculators for Construction & EPC Contractors — margin, cash, BOQ, GST, RA bill | sotyn.ai"
+  description="10 free calculators for Indian construction & EPC contractors: quote margin, profit leak, cash stuck, material wastage, labour leak, delay cost, retention, GST, RA bill net-payable and ERP ROI. No sign-up — instant answers on your own numbers."
   path="/tools"
 >
-  <section class="section" style="padding-bottom:18px">
+  <section class="section" style="padding-bottom:14px">
     <div class="container container--narrow text-center">
-      <span class="eyebrow">Free tools · no sign-up</span>
-      <h1>Free calculators for EPC contractors.</h1>
+      <span class="eyebrow">10 free calculators · no sign-up</span>
+      <h1>Find your money leaks in 30 seconds.</h1>
       <p class="lead" style="margin-inline:auto">
-        Quick maths on the three places EPC money hides — margin, cash and labour. Use them free.
-        When you want the full picture on your own numbers, take the 2-minute Leak Scorecard.
+        Ten free calculators for Indian EPC &amp; construction contractors — margin, cash, material,
+        labour, delays, retention, GST, RA bills and ROI. Punch in your numbers, get the answer instantly,
+        and WhatsApp yourself the result.
       </p>
-      <div class="btn-row" style="justify-content:center;margin-top:24px">
-        <a href="/scorecard" class="btn btn--primary btn--lg">Take the Leak Scorecard</a>
-        <a href="#tools" class="btn btn--ghost btn--lg">Try the calculators</a>
-      </div>
+    </div>
+    <div class="container">
+      <nav class="jump" aria-label="Jump to a calculator">
+        {calcs.map((c) => <a href={`#${c.slug}`} class="jump__pill"><Icon name={c.icon} size={15} /> {c.name.replace(/ Calculator| Calculator$/, "")}</a>)}
+      </nav>
     </div>
   </section>
 
-  <section class="section" id="tools" style="padding-top:24px">
-    <div class="container tools">
-
-      <!-- Tool 1: Quote margin -->
-      <div class="tool">
-        <div class="tool__head"><span class="tool__ic"><Icon name="trending-up" size={22} /></span><h2>Quote Margin Calculator</h2></div>
-        <p class="muted">See your real selling price and margin before you send the quote.</p>
-        <div class="tool__grid">
-          <label>Your cost (₹)<input type="number" id="m_cost" value="1000000" min="0" /></label>
-          <label>Markup %<input type="number" id="m_markup" value="15" min="0" /></label>
-        </div>
-        <div class="tool__out">
-          <div><span>Selling price</span><b id="m_price">—</b></div>
-          <div><span>Margin (₹)</span><b id="m_margin">—</b></div>
-          <div><span>Margin %</span><b id="m_marginpct">—</b></div>
-        </div>
-        <p class="tool__cta">sotyn.ai shows this on <strong>every line of every quote</strong>, automatically. <a href="/#demo">See how →</a></p>
-      </div>
-
-      <!-- Tool 2: Cash stuck -->
-      <div class="tool">
-        <div class="tool__head"><span class="tool__ic"><Icon name="wallet" size={22} /></span><h2>Cash-Stuck Calculator</h2></div>
-        <p class="muted">How much of your money is locked in receivables and retention right now.</p>
-        <div class="tool__grid">
-          <label>Annual turnover (₹ Cr)<input type="number" id="c_turn" value="25" min="0" /></label>
-          <label>Avg payment delay (days)<input type="number" id="c_days" value="75" min="0" /></label>
-          <label>Retention held (%)<input type="number" id="c_ret" value="5" min="0" /></label>
-        </div>
-        <div class="tool__out">
-          <div><span>Stuck in receivables</span><b id="c_recv">—</b></div>
-          <div><span>Held as retention</span><b id="c_reten">—</b></div>
-          <div class="tool__out--hl"><span>Total cash locked</span><b id="c_total">—</b></div>
-        </div>
-        <p class="tool__cta">That's your money, financing your clients. sotyn.ai chases every rupee. <a href="/#demo">See how →</a></p>
-      </div>
-
-      <!-- Tool 3: Labour leak -->
-      <div class="tool">
-        <div class="tool__head"><span class="tool__ic"><Icon name="users" size={22} /></span><h2>Labour Leak Calculator</h2></div>
-        <p class="muted">Ghost labour and inflated sub-contractor bills add up fast.</p>
-        <div class="tool__grid">
-          <label>Monthly labour spend (₹)<input type="number" id="l_spend" value="2000000" min="0" /></label>
-          <label>Estimated leak (%)<input type="number" id="l_leak" value="6" min="0" /></label>
-        </div>
-        <div class="tool__out">
-          <div><span>Lost per month</span><b id="l_month">—</b></div>
-          <div class="tool__out--hl"><span>Lost per year</span><b id="l_year">—</b></div>
-        </div>
-        <p class="tool__cta">Verified attendance + rate-checked sub-con bills plug this. <a href="/#demo">See how →</a></p>
-      </div>
-
+  <section class="section" id="tools" style="padding-top:6px">
+    <div class="container tools" data-wa={SITE.whatsapp}>
+      {calcs.map((c) => (
+        <article class="tool" id={c.slug} data-calc={c.slug}>
+          <div class="tool__head"><span class="tool__ic"><Icon name={c.icon} size={22} /></span><h2>{c.name}</h2></div>
+          <p class="muted">{c.blurb}</p>
+          <div class="tool__grid">
+            {c.inputs.map((i) => (
+              i.type === "select" ? (
+                <label>{i.label}
+                  <select id={`${c.slug}__${i.id}`}>
+                    {i.options.map((o) => <option value={o.v}>{o.t}</option>)}
+                  </select>
+                </label>
+              ) : (
+                <label>{i.label}<input type="number" inputmode="decimal" id={`${c.slug}__${i.id}`} value={i.val} min="0" /></label>
+              )
+            ))}
+          </div>
+          <div class="tool__out">
+            {c.outputs.map((o) => (
+              <div class={o.hl ? "tool__out--hl" : ""}><span>{o.label}</span><b id={`${c.slug}__${o.id}`}>—</b></div>
+            ))}
+          </div>
+          <p class="tool__note" set:html={c.cta}></p>
+          <div class="tool__actions">
+            <a href="/#demo" class="btn btn--primary tool__btn">Book a demo on your numbers</a>
+            <a href="#" class="tool__wa" data-wa-for={c.slug} target="_blank" rel="nofollow noopener"><Icon name="whatsapp" size={16} /> WhatsApp my result</a>
+          </div>
+        </article>
+      ))}
     </div>
   </section>
 
   <CTABand
-    title="Want this on your actual numbers?"
-    text="The 2-minute Leak Scorecard estimates exactly where — and how much — your EPC business is leaking, and emails you the full breakdown."
+    title="Want this on your actual numbers, live?"
+    text="These are back-of-envelope estimates. In a 20-minute demo we open sotyn.ai on your own trades and project sizes — real margin, real cash, real site status — and show you exactly where the money is going."
   />
 </BaseLayout>
 
 <style>
-  .tools { display: grid; gap: 22px; max-width: 820px; margin-inline: auto; }
-  .tool { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-sm); }
+  /* Jump nav */
+  .jump { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; max-width: 960px; margin: 26px auto 0; }
+  .jump__pill { display: inline-flex; align-items: center; gap: 6px; font-size: .84rem; font-weight: 600; color: var(--brand-700);
+    background: var(--brand-50); border: 1px solid var(--brand-100); padding: 7px 13px; border-radius: 999px; transition: .18s; }
+  .jump__pill:hover { background: var(--brand-100); text-decoration: none; transform: translateY(-1px); }
+  .jump__pill :global(.ico) { color: var(--brand-600); }
+
+  /* Calculator grid */
+  .tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(370px, 1fr)); gap: 20px; max-width: 1000px; margin-inline: auto; }
+  @media (max-width: 520px) { .tools { grid-template-columns: 1fr; } }
+  .tool { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 26px; box-shadow: var(--shadow-sm); scroll-margin-top: 96px; }
   .tool__head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
   .tool__ic { width: 44px; height: 44px; border-radius: 11px; background: var(--brand-50); color: var(--brand-700); display: grid; place-items: center; flex: none; }
-  .tool__head h2 { font-size: 1.35rem; margin: 0; }
-  .tool__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin: 18px 0; }
-  .tool label { display: grid; gap: 6px; font-weight: 600; font-size: .85rem; color: var(--ink); }
-  .tool input { font-family: inherit; font-size: 1rem; padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); width: 100%; }
-  .tool input:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
-  .tool__out { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; background: var(--bg-alt); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
-  .tool__out > div { display: flex; flex-direction: column; gap: 2px; }
-  .tool__out span { font-size: .78rem; color: var(--muted); font-weight: 600; }
-  .tool__out b { font-size: 1.4rem; font-weight: 900; color: var(--ink); letter-spacing: -.02em; }
+  .tool__head h2 { font-size: 1.22rem; margin: 0; letter-spacing: -.02em; }
+  .tool .muted { font-size: .93rem; margin: 0; }
+  .tool__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 13px; margin: 18px 0; }
+  .tool label { display: grid; gap: 6px; font-weight: 600; font-size: .82rem; color: var(--ink); }
+  .tool input, .tool select { font-family: inherit; font-size: 1rem; padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); width: 100%; -webkit-appearance: none; appearance: none; }
+  .tool select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7890' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+  .tool input:focus, .tool select:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 3px rgba(41,151,255,.18); }
+  .tool__out { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; background: var(--bg-alt); border: 1px solid var(--line); border-radius: 12px; padding: 15px; }
+  .tool__out > div { display: flex; flex-direction: column; gap: 3px; }
+  .tool__out span { font-size: .74rem; color: var(--muted); font-weight: 600; }
+  .tool__out b { font-size: 1.34rem; font-weight: 900; color: var(--ink); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
   .tool__out--hl b { color: var(--brand-700); }
-  .tool__cta { margin: 16px 0 0; font-size: .95rem; color: var(--body); }
-  .tool__cta a { font-weight: 700; }
+  .tool__note { margin: 15px 0 0; font-size: .9rem; color: var(--body); line-height: 1.5; }
+  .tool__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: auto; padding-top: 16px; }
+  .tool__btn { padding: 11px 18px; font-size: .92rem; }
+  .tool__wa { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .9rem; color: #128c4a; }
+  .tool__wa :global(.ico) { color: #25d366; }
+  .tool__wa:hover { text-decoration: underline; }
 </style>
 
 <script is:inline>
-  const $ = (id) => document.getElementById(id);
-  const inr = (n) => {
-    if (!isFinite(n)) n = 0;
-    if (n >= 1e7) return "₹" + (n / 1e7).toFixed(2).replace(/\.?0+$/, "") + " Cr";
-    if (n >= 1e5) return "₹" + (n / 1e5).toFixed(2).replace(/\.?0+$/, "") + " L";
-    return "₹" + Math.round(n).toLocaleString("en-IN");
-  };
-  function margin() {
-    const cost = +$("m_cost").value || 0, mk = +$("m_markup").value || 0;
-    const price = cost * (1 + mk / 100), m = price - cost;
-    $("m_price").textContent = inr(price);
-    $("m_margin").textContent = inr(m);
-    $("m_marginpct").textContent = price ? ((m / price) * 100).toFixed(1) + "%" : "—";
-  }
-  function cash() {
-    const cr = +$("c_turn").value || 0, days = +$("c_days").value || 0, ret = +$("c_ret").value || 0;
-    const annual = cr * 1e7;
-    const recv = (annual / 365) * days;
-    const reten = annual * (ret / 100);
-    $("c_recv").textContent = inr(recv);
-    $("c_reten").textContent = inr(reten);
-    $("c_total").textContent = inr(recv + reten);
-  }
-  function labour() {
-    const spend = +$("l_spend").value || 0, leak = +$("l_leak").value || 0;
-    const m = spend * (leak / 100);
-    $("l_month").textContent = inr(m);
-    $("l_year").textContent = inr(m * 12);
-  }
-  ["m_cost", "m_markup"].forEach((id) => $(id).addEventListener("input", margin));
-  ["c_turn", "c_days", "c_ret"].forEach((id) => $(id).addEventListener("input", cash));
-  ["l_spend", "l_leak"].forEach((id) => $(id).addEventListener("input", labour));
-  margin(); cash(); labour();
+  (function () {
+    var WA = (document.querySelector(".tools") || {}).dataset ? document.querySelector(".tools").dataset.wa : "";
+    function num(s, id) { var el = document.getElementById(s + "__" + id); return el ? (parseFloat(el.value) || 0) : 0; }
+    function raw(s, id) { var el = document.getElementById(s + "__" + id); return el ? el.value : ""; }
+    function set(s, id, v) { var el = document.getElementById(s + "__" + id); if (el) el.textContent = v; }
+    function inr(n) {
+      if (!isFinite(n)) n = 0;
+      var neg = n < 0; n = Math.abs(n); var out;
+      if (n >= 1e7) out = "₹" + (n / 1e7).toFixed(2).replace(/\.?0+$/, "") + " Cr";
+      else if (n >= 1e5) out = "₹" + (n / 1e5).toFixed(2).replace(/\.?0+$/, "") + " L";
+      else out = "₹" + Math.round(n).toLocaleString("en-IN");
+      return (neg ? "−" : "") + out;
+    }
+
+    var F = {
+      "quote-margin": function (s) {
+        var cost = num(s, "cost"), oh = num(s, "overhead"), mg = num(s, "margin");
+        var base = cost * (1 + oh / 100);
+        var price = mg < 100 ? base / (1 - mg / 100) : base;
+        set(s, "price", inr(price)); set(s, "marginr", inr(price - base));
+        set(s, "markup", cost ? ((price / cost - 1) * 100).toFixed(1) + "%" : "—");
+        return "To hit a " + mg + "% margin on " + inr(cost) + " cost, I must quote at least " + inr(price) + ".";
+      },
+      "profit-leak": function (s) {
+        var a = num(s, "turnover") * 1e7, leak = num(s, "leak"), loss = a * leak / 100;
+        set(s, "year", inr(loss)); set(s, "day", inr(loss / 365));
+        return "At " + leak + "% leakage I'm losing " + inr(loss) + " a year.";
+      },
+      "cash-stuck": function (s) {
+        var a = num(s, "turnover") * 1e7, days = num(s, "days"), ret = num(s, "ret");
+        var recv = a / 365 * days, reten = a * ret / 100;
+        set(s, "recv", inr(recv)); set(s, "reten", inr(reten)); set(s, "total", inr(recv + reten));
+        return inr(recv + reten) + " of my cash is stuck in receivables + retention.";
+      },
+      "material-wastage": function (s) {
+        var sp = num(s, "spend"), w = num(s, "wastage"), loss = sp * w / 100;
+        set(s, "year", inr(loss)); set(s, "month", inr(loss / 12));
+        return "At " + w + "% wastage I'm losing " + inr(loss) + " of material a year.";
+      },
+      "labour-leak": function (s) {
+        var sp = num(s, "spend"), leak = num(s, "leak"), m = sp * leak / 100;
+        set(s, "month", inr(m)); set(s, "year", inr(m * 12));
+        return "Labour leakage is costing me " + inr(m * 12) + " a year.";
+      },
+      "delay-cost": function (s) {
+        var oh = num(s, "overhead"), d = num(s, "days"), perday = oh / 30, total = perday * d;
+        set(s, "perday", inr(perday)); set(s, "total", inr(total));
+        return "A " + d + "-day delay is burning " + inr(total) + " in site overhead.";
+      },
+      "retention": function (s) {
+        var v = num(s, "value"), ret = num(s, "ret"), rate = num(s, "rate"), m = num(s, "months");
+        var held = v * ret / 100, carry = held * (rate / 100) * (m / 12);
+        set(s, "held", inr(held)); set(s, "carry", inr(carry));
+        return inr(held) + " of mine is held as retention (" + inr(carry) + " carrying cost till release).";
+      },
+      "gst": function (s) {
+        var amt = num(s, "amount"), rate = num(s, "rate"), mode = raw(s, "mode");
+        var base, gst, total;
+        if (mode === "remove") { base = amt / (1 + rate / 100); gst = amt - base; total = amt; }
+        else { base = amt; gst = amt * rate / 100; total = amt + gst; }
+        set(s, "base", inr(base)); set(s, "gst", inr(gst)); set(s, "total", inr(total));
+        return "GST " + rate + "% → GST " + inr(gst) + ", total " + inr(total) + ".";
+      },
+      "ra-bill": function (s) {
+        var w = num(s, "work"), ret = num(s, "ret"), gst = num(s, "gst"), tds = num(s, "tds");
+        var retA = w * ret / 100, gstA = w * gst / 100, tdsA = w * tds / 100;
+        var net = w - retA + gstA - tdsA;
+        set(s, "gstamt", inr(gstA)); set(s, "deduct", inr(retA + tdsA)); set(s, "net", inr(net));
+        return "Net payable on this RA bill works out to " + inr(net) + ".";
+      },
+      "erp-roi": function (s) {
+        var a = num(s, "turnover") * 1e7, leak = num(s, "leak"), rec = num(s, "recover"), cost = num(s, "cost");
+        var recoverable = a * (leak / 100) * (rec / 100);
+        var monthly = recoverable / 12, payMonths = cost / (monthly || 1);
+        var payback = payMonths < 1.5 ? Math.max(1, Math.round(payMonths * 4.3)) + " weeks" : payMonths.toFixed(1) + " months";
+        set(s, "recoverable", inr(recoverable));
+        set(s, "payback", isFinite(payMonths) ? payback : "—");
+        set(s, "roi", cost ? (recoverable / cost).toFixed(1) + "×" : "—");
+        return "sotyn.ai could recover ~" + inr(recoverable) + "/yr for me — payback about " + payback + ".";
+      }
+    };
+
+    function run(s) {
+      var msg = F[s] ? F[s](s) : "";
+      var link = document.querySelector('[data-wa-for="' + s + '"]');
+      if (link && WA) link.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg + " (via the sotyn.ai calculator) — I'd like a demo on my numbers.");
+    }
+    document.querySelectorAll("[data-calc]").forEach(function (el) {
+      var s = el.getAttribute("data-calc");
+      el.querySelectorAll("input, select").forEach(function (i) { i.addEventListener("input", function () { run(s); }); i.addEventListener("change", function () { run(s); }); });
+      run(s);
+    });
+  })();
 </script>

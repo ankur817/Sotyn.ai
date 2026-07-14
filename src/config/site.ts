@@ -72,8 +72,8 @@ export const SITE = {
     certs: ["ISO 9001:2015 certified", "MSME registered", "14 years in business", "GST-registered company"],
   },
 
-  // Testimonials — ⚠️ REPLACE the placeholder entries with REAL client quotes.
-  // Never publish fabricated testimonials. Cards render in this order.
+  // Proof cards — REAL, verifiable statements only. No fabricated third-party
+  // quotes. When real client quotes are collected, add them here (with consent).
   testimonials: [
     {
       quote: "We run 535+ projects across 18 states on sotyn.ai — quote, site, labour and money, all in one place. It's our single source of truth.",
@@ -81,14 +81,14 @@ export const SITE = {
       role: "Founder, Secured Engineers — customer #1",
     },
     {
-      quote: "⚠️ REPLACE with a real client quote — e.g. “sotyn.ai cut our quoting time from 3 days to 2 hours.”",
-      name: "Add client name",
-      role: "Designation, Company",
+      quote: "The demo is our own live company. Right now — 30+ active sites, hundreds of daily reports in approval, every RA bill and payment — all running through sotyn.ai. No mockups, no staged data.",
+      name: "Secured Engineers Pvt. Ltd.",
+      role: "sotyn.ai customer #1 — we built it, we run on it",
     },
     {
-      quote: "⚠️ REPLACE with a real client quote — e.g. “We found ₹40 lakh of leakage in the first month.”",
-      name: "Add client name",
-      role: "Designation, Company",
+      quote: "14 years, ISO 9001:2015, 535+ projects across 18 states — delivered for names like V-Guard, Luminous, Sonalika and Hero Homes. That operating discipline is what sotyn.ai encodes.",
+      name: "The track record behind it",
+      role: "MEPF · EPC · Solar · India",
     },
   ],
 

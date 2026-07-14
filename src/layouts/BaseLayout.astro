@@ -29,28 +29,69 @@ const {
 const canonical = new URL(path, SITE.url).href.replace(/\/$/, "") || SITE.url;
 const ogImageUrl = new URL(ogImage, SITE.url).href;
 
-// ── SoftwareApplication structured data (sitewide) — Google + AI engines read this ──
+// ── Organization structured data (sitewide) — powers Google Knowledge + AI search ──
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: SITE.parentCompany,
+  alternateName: SITE.name,
+  url: SITE.url,
+  logo: new URL("/images/sotyn_logo_v2.png", SITE.url).href,
+  foundingDate: "2011",
+  founder: { "@type": "Person", name: "Er. Ankur Kaplesh" },
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: SITE.address.street,
+    addressLocality: SITE.address.city,
+    addressRegion: SITE.address.region,
+    postalCode: SITE.address.postalCode,
+    addressCountry: SITE.address.country,
+  },
+  areaServed: { "@type": "Country", name: "India" },
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: `+${SITE.phoneHref}`,
+    contactType: "sales",
+    areaServed: "IN",
+    availableLanguage: ["en", "hi"],
+  },
+  sameAs: [SITE.social.linkedin, SITE.social.instagram, SITE.social.twitter, SITE.social.youtube].filter(Boolean),
+};
+
+// ── SoftwareApplication — positioned as an AI construction platform, not "ERP" ──
 const appSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   name: SITE.name,
   applicationCategory: "BusinessApplication",
-  applicationSubCategory: "ERP",
+  applicationSubCategory: "Construction Management Software",
   operatingSystem: "Web, Android, iOS (PWA)",
   description:
-    "sotyn.ai is the AI-powered ERP built only for EPC contractors in India — from engineering and quotation to procurement, site execution, billing and collections. Built and run by a live EPC company.",
+    "sotyn.ai is an AI construction operating system for Indian EPC, MEP and solar contractors. It connects projects, procurement, site reporting (DPR), BOQ tracking, billing and finance in one platform — so teams reduce delays, protect margins and get paid faster. Built and run inside a live 535+ project EPC company.",
   url: SITE.url,
+  inLanguage: "en-IN",
   author: { "@type": "Organization", name: SITE.parentCompany },
+  publisher: { "@type": "Organization", name: SITE.parentCompany },
+  featureList: [
+    "AI project & site intelligence",
+    "Daily Progress Reports (DPR)",
+    "BOQ vs actual consumption tracking",
+    "Procurement, indents & purchase orders",
+    "RA billing with GST, TDS & retention",
+    "Attendance, payroll & compliance",
+    "Weekly performance scorecard",
+    "Dedicated Solar EPC division",
+  ],
   offers: {
     "@type": "Offer",
     priceCurrency: "INR",
     price: "0",
     description: "Book a free demo. Pricing tailored to your team size.",
   },
-  areaServed: "IN",
+  areaServed: { "@type": "Country", name: "India" },
 };
 
-const allSchema = [appSchema, ...schema];
+const allSchema = [orgSchema, appSchema, ...schema];
 
 // Meta (Facebook) Pixel — built here as a plain string, injected via set:html.
 const fbPixel = SITE.metaPixelId

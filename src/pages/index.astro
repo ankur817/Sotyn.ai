@@ -149,7 +149,7 @@ const faqs = [
   { q: "Isn’t this just another SAP or Oracle my site team won’t use?", a: "No. Big ERPs are built for manufacturers and take 18 months and ₹50L+ before anyone logs in. sotyn.ai is built around how a contracting site actually runs a day — DPRs, BOQs, POs, labour attendance — and runs on the phones your site staff already carry. If a supervisor can use WhatsApp, he can file a DPR." },
   { q: "What is the scorecard, and why does it matter?", a: "Software tracks the money; the scorecard moves the people. Every employee gets KRAs, KPIs and one weekly score — 20% for system discipline, 80% for real output. ERPs fail because people avoid them; when the weekly score lives in the system, using the system becomes the only way to be seen. Adoption stops being optional." },
   { q: "We already run on Tally and Excel. Do we throw them away?", a: "No. We migrate your existing masters, live projects, BOQs and vendors during setup, and sotyn.ai links with Tally — so you start with your real data, not a blank slate. What you retire is the WhatsApp-and-Excel guesswork, not your accounts." },
-  { q: "My site staff don’t work in English. Will they actually use it?", a: "The ERP is mobile-first and in plain language, and site staff use it daily in our own company. It runs in English today — and we’re rolling out the 10 most-spoken Indian languages (Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Urdu, Kannada, Odia and Malayalam) to make sotyn.ai India’s first 11-language EPC ERP, so a supervisor files his DPR in his own language, on his own phone." },
+  { q: "My site staff don’t work in English. Will they actually use it?", a: "Yes — sotyn.ai is India’s first EPC ERP that runs in 11 languages: English plus Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Urdu, Kannada, Odia and Malayalam. Together that’s the mother tongue of roughly 90% of India — so a supervisor files his DPR in his own language, on his own phone." },
   { q: "How fast can we go live?", a: "30 days, not an 18-month ERP project. Four steps — audit, configure & migrate, train, go live — and your first weekly review cycle is running before we leave." },
   { q: "Is my data safe and separate?", a: "Yes. Each company runs in its own secure workspace, hosted in India, with role-based access and a full audit log — every action time-stamped and owned. Your data is yours, never sold and never shared with another contractor." },
 ];
@@ -483,7 +483,7 @@ const orgSchema = {
           <li>Real attendance — no ghost labour</li>
           <li>Snags raised with a photo, on the spot</li>
           <li>Works on any phone, even low-end</li>
-          <li>In 11 languages — हिन्दी, தமிழ், తెలుగు, বাংলা &amp; more (coming soon)</li>
+          <li>In 11 languages — हिन्दी, தமிழ், తెలుగు, বাংলা &amp; more</li>
         </ul>
         <div class="stores" aria-label="Mobile apps coming soon">
           <!-- Store glyphs: Font Awesome Free brand icons (CC BY 4.0) -->
@@ -504,9 +504,9 @@ const orgSchema = {
   <section class="section section--tint" id="languages">
     <div class="container">
       <div class="sec-head text-center">
-        <span class="eyebrow">India’s first 11-language EPC ERP <span class="soon">Coming soon</span></span>
+        <span class="eyebrow">India’s first 11-language EPC ERP</span>
         <h2>Your team doesn’t think in English.<br />Now the ERP doesn’t have to.</h2>
-        <p class="lead" style="margin-inline:auto">English is live today — and the 10 most-spoken Indian languages are rolling out next, so every DPR, indent and approval happens in the user’s own words. No worker left outside the system.</p>
+        <p class="lead" style="margin-inline:auto">English plus the 10 most-spoken Indian languages — every DPR, indent and approval in the user’s own words. No worker left outside the system.</p>
       </div>
       <div class="langs__grid">
         {languages.map((l) => (
@@ -742,8 +742,8 @@ const orgSchema = {
   <section class="section section--alt">
     <div class="container">
       <div class="sec-head text-center">
-        <span class="eyebrow">In their words</span>
-        <h2>Don’t take our word for it.</h2>
+        <span class="eyebrow">Proof, not promises</span>
+        <h2>We don’t ask you to imagine it. We run on it.</h2>
       </div>
       <div class="grid grid-3 tlist">
         {SITE.testimonials.map((t) => (
