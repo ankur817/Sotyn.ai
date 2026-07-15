@@ -1,0 +1,79 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/CTABand.astro";
+import Icon from "../../components/Icon.astro";
+import { SITE } from "../../config/site";
+
+const resources = [
+  { icon: "droplet", tag: "Interactive checklist", t: "EPC Margin Leakage Checklist", d: "24 India-specific controls across quoting, procurement, labour, site, billing and cash. Score where you're exposed.", href: "/resources/epc-margin-leakage-checklist" },
+  { icon: "wallet", tag: "Interactive template", t: "Cash-Flow Control Template", d: "Model a typical month and see your net cash flow, runway and the month you run short.", href: "/resources/cash-flow-control-template" },
+  { icon: "target", tag: "Framework + analyzer", t: "Tender Rate Analysis Framework", d: "Judge any tender rate — healthy, thin or loss-making — with a six-step method and a live analyzer.", href: "/resources/tender-rate-analysis" },
+  { icon: "gauge", tag: "2-minute quiz", t: "EPC Profit Leak Scorecard", d: "Answer 7 questions and get your leak score plus an estimate of what you're losing a year.", href: "/scorecard" },
+  { icon: "trending-up", tag: "10 calculators", t: "Free EPC Calculators", d: "Margin, cash, material, labour, delays, retention, GST, RA bill and ROI — instant answers on your numbers.", href: "/tools" },
+  { icon: "book", tag: "PDF · from the book", t: "11-Point Project Savings Checklist", d: "The exact checks our engineers run on every project, from 15+ years and 31,000+ on-site hours.", href: "/#checklist" },
+];
+
+const schema = [{
+  "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Resources", item: `${SITE.url}/resources` },
+  ],
+}];
+---
+<BaseLayout
+  title="Free Resources for EPC & Construction Contractors — checklists, templates, calculators | sotyn.ai"
+  description="Free, practical resources for Indian EPC, MEP & solar contractors: the margin leakage checklist, cash-flow control template, tender rate analysis framework, profit-leak scorecard and 10 calculators. No sign-up to use."
+  path="/resources"
+  schema={schema}
+>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <div class="container"><a href="/">Home</a> <span aria-hidden="true">/</span> <span>Resources</span></div>
+  </nav>
+
+  <section class="section" style="padding-bottom:20px">
+    <div class="container container--narrow text-center">
+      <span class="eyebrow">Free resources · no sign-up to use</span>
+      <h1>Practical tools for contractors who want to keep their margin.</h1>
+      <p class="lead" style="margin-inline:auto">Checklists, templates, calculators and frameworks built from running a live 535+ project EPC company — the same discipline sotyn.ai encodes. Use them free; the full versions come by WhatsApp.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="rgrid">
+        {resources.map((r) => (
+          <a class="rcard" href={r.href}>
+            <div class="rcard__ic"><Icon name={r.icon} size={22} /></div>
+            <span class="rcard__tag">{r.tag}</span>
+            <h2>{r.t}</h2>
+            <p>{r.d}</p>
+            <span class="rcard__cta">Open <Icon name="arrow-right" size={15} /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTABand
+    title="Want these on your own live numbers?"
+    text="A free 20-minute demo opens sotyn.ai on your trades and project sizes — real margin, real cash, real site status. Then you decide."
+  />
+</BaseLayout>
+
+<style>
+  .crumb { border-bottom: 1px solid var(--line); background: var(--bg-alt); }
+  .crumb .container { padding: 12px 22px; font-size: .86rem; color: var(--muted); }
+  .crumb a { color: var(--brand-700); font-weight: 600; }
+  .crumb span[aria-hidden] { margin: 0 8px; color: var(--graphite-300); }
+
+  .rgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; max-width: 1040px; margin-inline: auto; }
+  .rcard { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-sm); transition: .2s; }
+  .rcard:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--brand-100); text-decoration: none; }
+  .rcard__ic { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-50); color: var(--brand-700); display: grid; place-items: center; margin-bottom: 14px; }
+  .rcard__tag { font-family: var(--mono, monospace); font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand-600); }
+  .rcard h2 { font-size: 1.12rem; margin: 6px 0 7px; }
+  .rcard p { font-size: .93rem; color: var(--body); margin: 0 0 16px; flex: 1; }
+  .rcard__cta { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--brand-700); font-size: .9rem; }
+  @media (max-width: 860px) { .rgrid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .rgrid { grid-template-columns: 1fr; } }
+</style>

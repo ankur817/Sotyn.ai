@@ -1,0 +1,203 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LeadCapture from "../../components/LeadCapture.astro";
+import Icon from "../../components/Icon.astro";
+import { SITE } from "../../config/site";
+
+const groups = [
+  { name: "Quoting & estimation", icon: "trending-up", items: [
+    "Every quote is priced on true margin (not markup), with site overhead loaded in.",
+    "Rates come from a live rate master — not last year's Excel.",
+    "Price-escalation / GST-variation clauses are built into the contract.",
+    "Each BOQ line shows its own margin before the quote goes out.",
+  ]},
+  { name: "Procurement & material", icon: "box", items: [
+    "No material is bought without a raised PO — no undocumented cash purchases.",
+    "Vendor rates are compared (L1/L2) before every major PO.",
+    "Material consumed is reconciled against the BOQ, per item.",
+    "Scrap, returns and surplus are tracked back to stock.",
+  ]},
+  { name: "Labour & sub-contractors", icon: "users", items: [
+    "Site attendance is verified — not copied from a paper muster roll.",
+    "Sub-contractor bills are checked against agreed rates and measured work.",
+    "PF / ESI and statutory labour compliance is tracked per site.",
+    "Labour productivity (output vs man-days) is reviewed, not assumed.",
+  ]},
+  { name: "Site execution", icon: "hardhat", items: [
+    "A DPR is filed from every active site, every day.",
+    "Snags and rework are logged and closed — not carried in memory.",
+    "Plan-vs-actual progress is reviewed at least weekly.",
+    "Photos and measurements back every progress claim.",
+  ]},
+  { name: "Billing (RA / MB)", icon: "book", items: [
+    "RA bills are raised within days of the milestone, not weeks.",
+    "Retention and TDS are tracked on every bill.",
+    "The correct bill type (Sales / RA / MB / T&C) is used, with GST.",
+    "GST returns are reconciled to bills raised, on time.",
+  ]},
+  { name: "Cash & receivables", icon: "wallet", items: [
+    "Receivables are aged and actively chased every week.",
+    "Every retention release date is tracked and claimed on time.",
+    "Cash flow is projected monthly — not run off the bank balance.",
+    "Advances and mobilisation recoveries are tracked to closure.",
+  ]},
+];
+const total = groups.reduce((n, g) => n + g.items.length, 0);
+
+const schema = [{
+  "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Resources", item: `${SITE.url}/resources` },
+    { "@type": "ListItem", position: 3, name: "EPC Margin Leakage Checklist", item: `${SITE.url}/resources/epc-margin-leakage-checklist` },
+  ],
+}];
+---
+<BaseLayout
+  title="EPC Margin Leakage Checklist (India) — 24 checks | sotyn.ai"
+  description="A free, India-specific checklist of 24 controls that stop EPC margin leaking across quoting, procurement, labour, execution, billing and cash. Score your business live, then get the full checklist. No sign-up to use."
+  path="/resources/epc-margin-leakage-checklist"
+  schema={schema}
+>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <div class="container"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/resources">Resources</a> <span aria-hidden="true">/</span> <span>Margin Leakage Checklist</span></div>
+  </nav>
+
+  <section class="section" style="padding-bottom:14px">
+    <div class="container container--narrow text-center">
+      <span class="eyebrow">Free interactive checklist · India-specific</span>
+      <h1>The EPC Margin Leakage Checklist.</h1>
+      <p class="lead" style="margin-inline:auto">24 controls that decide whether an EPC project keeps its margin — across quoting, procurement, labour, site, billing and cash. Tick what you already do; see exactly where you're exposed.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:8px" id="tool">
+    <div class="container ck">
+      <!-- Live score -->
+      <aside class="ck__score" aria-live="polite">
+        <div class="ck__ring" id="ckRing"><span id="ckPct">0%</span></div>
+        <div class="ck__band" id="ckBand">Start ticking</div>
+        <p class="ck__count"><b id="ckDone">0</b> of {total} controls in place</p>
+        <div class="ck__cats" id="ckCats"></div>
+        <div class="ck__actions">
+          <button type="button" class="btn btn--ghost" id="ckPrint"><Icon name="download" size={17} /> Save my results (PDF)</button>
+          <a class="btn btn--primary" href="/tools/profit-leak">Put a ₹ figure on it →</a>
+        </div>
+      </aside>
+
+      <!-- Checklist -->
+      <div class="ck__list">
+        {groups.map((g, gi) => (
+          <div class="ck__group" data-group={gi} data-name={g.name}>
+            <div class="ck__ghead"><span class="ck__gic"><Icon name={g.icon} size={20} /></span><h2>{g.name}</h2><span class="ck__gcount" data-gcount={gi}>0/{g.items.length}</span></div>
+            {g.items.map((it) => (
+              <label class="ck__item"><input type="checkbox" data-check /> <span>{it}</span></label>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <div class="two-col">
+        <div>
+          <span class="eyebrow">Why this matters</span>
+          <h2>You can't fix a leak you can't see.</h2>
+          <p>Every unticked box above is a place margin quietly escapes — and most EPC firms only discover it at year-end. The controls here are the same discipline a live 535+ project company runs on: rates checked before the quote, POs before purchase, DPRs from every site, RA bills the day work is approved, and retention claimed on time.</p>
+          <p>sotyn.ai turns each control from "someone should remember to" into "the system won't let it slip." Want it on your own numbers? <a href="/demo">Book a free demo →</a></p>
+          <p style="margin-top:14px"><a href="/tools/profit-leak">Estimate your annual leak in ₹ →</a> · <a href="/reduce-project-delays">Reduce project delays →</a></p>
+        </div>
+        <div>
+          <LeadCapture
+            source="margin-leakage-checklist"
+            magnet="EPC Margin Leakage Checklist"
+            heading="Get the full checklist + a scoring guide"
+            sub="We'll send the complete India-specific checklist and show you how sotyn.ai closes each leak."
+            cta="Send me the checklist"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .crumb { border-bottom: 1px solid var(--line); background: var(--bg-alt); }
+  .crumb .container { padding: 12px 22px; font-size: .86rem; color: var(--muted); }
+  .crumb a { color: var(--brand-700); font-weight: 600; }
+  .crumb span[aria-hidden] { margin: 0 8px; color: var(--graphite-300); }
+
+  .ck { display: grid; grid-template-columns: 300px 1fr; gap: 26px; align-items: start; }
+  .ck__score { position: sticky; top: 92px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 24px; box-shadow: var(--shadow-sm); text-align: center; }
+  .ck__ring { width: 128px; height: 128px; border-radius: 50%; margin: 0 auto 14px; display: grid; place-items: center; background: conic-gradient(var(--brand-600) 0deg, var(--bg-alt) 0deg); transition: background .3s; }
+  .ck__ring span { width: 100px; height: 100px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 1.7rem; font-weight: 900; color: var(--brand-700); letter-spacing: -.03em; }
+  .ck__band { font-weight: 800; font-size: 1.05rem; color: var(--ink); }
+  .ck__count { font-size: .9rem; color: var(--muted); margin: 4px 0 16px; }
+  .ck__count b { color: var(--ink); }
+  .ck__cats { display: grid; gap: 8px; text-align: left; margin-bottom: 18px; }
+  .ck__cat { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: .82rem; }
+  .ck__cat span { color: var(--body); font-weight: 600; }
+  .ck__bar { flex: none; width: 74px; height: 7px; border-radius: 4px; background: var(--bg-alt); overflow: hidden; }
+  .ck__bar i { display: block; height: 100%; background: var(--brand-500); width: 0; transition: width .3s; }
+  .ck__actions { display: grid; gap: 9px; }
+  .ck__actions .btn { width: 100%; }
+
+  .ck__group { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; box-shadow: var(--shadow-sm); margin-bottom: 16px; }
+  .ck__ghead { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .ck__gic { width: 40px; height: 40px; border-radius: 10px; background: var(--brand-50); color: var(--brand-700); display: grid; place-items: center; flex: none; }
+  .ck__ghead h2 { font-size: 1.12rem; margin: 0; flex: 1; }
+  .ck__gcount { font-family: var(--mono, monospace); font-size: .8rem; font-weight: 700; color: var(--muted); }
+  .ck__item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; border-top: 1px solid var(--line-2, #eef2f7); cursor: pointer; font-size: .96rem; color: var(--body); }
+  .ck__item input { width: 20px; height: 20px; margin-top: 1px; flex: none; accent-color: var(--brand-600); cursor: pointer; }
+  .ck__item:has(input:checked) span { color: var(--ink); text-decoration: line-through; text-decoration-color: var(--brand-300, #9fd0ff); }
+
+  .two-col { display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: start; }
+  .two-col h2 { margin: 12px 0 12px; }
+  @media (max-width: 900px) { .ck { grid-template-columns: 1fr; } .ck__score { position: static; } .two-col { grid-template-columns: 1fr; gap: 30px; } }
+
+  @media print {
+    :global(header), :global(footer), :global(.announce), :global(.crumb), .ck__actions, :global(.lc), .section--alt .two-col > div:last-child { display: none !important; }
+    .ck { grid-template-columns: 1fr; }
+    .ck__score { position: static; page-break-inside: avoid; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var groups = Array.prototype.slice.call(document.querySelectorAll(".ck__group"));
+    var boxes = Array.prototype.slice.call(document.querySelectorAll("[data-check]"));
+    var total = boxes.length;
+    var ring = document.getElementById("ckRing"), pct = document.getElementById("ckPct");
+    var band = document.getElementById("ckBand"), doneEl = document.getElementById("ckDone");
+    var catsEl = document.getElementById("ckCats"), ctx = document.getElementById("leadContext");
+
+    // build per-category rows
+    groups.forEach(function (g, i) {
+      var row = document.createElement("div"); row.className = "ck__cat";
+      row.innerHTML = '<span>' + g.dataset.name + '</span><span class="ck__bar"><i data-bar="' + i + '"></i></span>';
+      catsEl.appendChild(row);
+    });
+
+    function update() {
+      var done = boxes.filter(function (b) { return b.checked; }).length;
+      var p = Math.round((done / total) * 100);
+      pct.textContent = p + "%";
+      doneEl.textContent = done;
+      ring.style.background = "conic-gradient(var(--brand-600) " + (p * 3.6) + "deg, var(--bg-alt) 0deg)";
+      var b = p >= 90 ? "Well protected" : p >= 70 ? "Fairly tight" : p >= 40 ? "Leaking margin" : "Highly exposed";
+      band.textContent = done === 0 ? "Start ticking" : b;
+      groups.forEach(function (g, i) {
+        var gb = Array.prototype.slice.call(g.querySelectorAll("[data-check]"));
+        var gd = gb.filter(function (x) { return x.checked; }).length;
+        g.querySelector('[data-gcount="' + i + '"]').textContent = gd + "/" + gb.length;
+        var bar = document.querySelector('[data-bar="' + i + '"]');
+        if (bar) bar.style.width = Math.round((gd / gb.length) * 100) + "%";
+      });
+      if (ctx) ctx.value = "Margin-leak score " + p + "% (" + done + "/" + total + " controls, " + band.textContent + ")";
+    }
+    boxes.forEach(function (b) { b.addEventListener("change", update); });
+    document.getElementById("ckPrint").addEventListener("click", function () { window.print(); });
+    update();
+  })();
+</script>

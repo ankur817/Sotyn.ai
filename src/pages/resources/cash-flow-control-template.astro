@@ -1,0 +1,191 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LeadCapture from "../../components/LeadCapture.astro";
+import Icon from "../../components/Icon.astro";
+import { SITE } from "../../config/site";
+
+const inflows = [
+  { id: "collections", label: "Expected collections", val: 5000000 },
+  { id: "retention", label: "Retention releases", val: 500000 },
+  { id: "advances", label: "Advances / mobilisation", val: 0 },
+];
+const outflows = [
+  { id: "vendors", label: "Vendor & material payments", val: 4000000 },
+  { id: "labour", label: "Salaries & labour", val: 1500000 },
+  { id: "overheads", label: "Site & office overheads", val: 800000 },
+  { id: "emi", label: "Loan EMIs / interest", val: 400000 },
+];
+
+const schema = [{
+  "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Resources", item: `${SITE.url}/resources` },
+    { "@type": "ListItem", position: 3, name: "Cash-Flow Control Template", item: `${SITE.url}/resources/cash-flow-control-template` },
+  ],
+}];
+---
+<BaseLayout
+  title="Cash-Flow Control Template for Contractors (Free) | sotyn.ai India"
+  description="A free, interactive cash-flow control template for Indian construction & EPC contractors. Model monthly inflows, outflows, retention and EMIs, and see your runway and cash gaps live. No sign-up to use."
+  path="/resources/cash-flow-control-template"
+  schema={schema}
+>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <div class="container"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/resources">Resources</a> <span aria-hidden="true">/</span> <span>Cash-Flow Control Template</span></div>
+  </nav>
+
+  <section class="section" style="padding-bottom:14px">
+    <div class="container container--narrow text-center">
+      <span class="eyebrow">Free interactive template · for contractors</span>
+      <h1>Cash-Flow Control Template.</h1>
+      <p class="lead" style="margin-inline:auto">Most contractors run cash off the bank balance and get surprised. Fill in a typical month below — collections, retention, vendors, labour, EMIs — and see your net cash flow, your runway, and the month you run short.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:8px" id="tool">
+    <div class="container cf">
+      <div class="cf__inputs">
+        <div class="cf__opening">
+          <label>Cash in bank now (₹)<input type="number" id="cf_open" value="2000000" min="0" /></label>
+        </div>
+        <div class="cf__col">
+          <h2 class="cf__h cf__h--in">Monthly inflows</h2>
+          {inflows.map((r) => (<label>{r.label} (₹)<input type="number" class="cf_in" id={`cf_${r.id}`} value={r.val} min="0" /></label>))}
+        </div>
+        <div class="cf__col">
+          <h2 class="cf__h cf__h--out">Monthly outflows</h2>
+          {outflows.map((r) => (<label>{r.label} (₹)<input type="number" class="cf_out" id={`cf_${r.id}`} value={r.val} min="0" /></label>))}
+        </div>
+      </div>
+
+      <aside class="cf__result" aria-live="polite">
+        <div class="cf__net" id="cfNetBox">
+          <span>Net monthly cash flow</span>
+          <b id="cf_net">—</b>
+        </div>
+        <div class="cf__runway"><span>Runway at this rate</span><b id="cf_runway">—</b></div>
+        <div class="cf__rag" id="cf_rag">—</div>
+        <table class="cf__proj">
+          <thead><tr><th>Month</th><th class="num">Closing cash</th></tr></thead>
+          <tbody id="cf_rows"></tbody>
+        </table>
+        <div class="cf__actions">
+          <button type="button" class="btn btn--ghost" id="cfPrint"><Icon name="download" size={17} /> Save my plan (PDF)</button>
+          <a class="btn btn--primary" href="/tools/cash-stuck">See cash stuck in receivables →</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <div class="two-col">
+        <div>
+          <span class="eyebrow">How to use it</span>
+          <h2>Control cash before it controls you.</h2>
+          <p>Enter one representative month. The template projects your closing cash three months out, assuming the pattern holds, and flags the month you'd run short — so you can act now: chase receivables, stage vendor payments, or claim overdue retention.</p>
+          <p>In sotyn.ai this isn't a monthly spreadsheet chore — receivables age themselves, retention release dates are tracked, and bills go billing-ready the day work is approved, so cash comes in faster. <a href="/ra-billing-software">See how billing speeds up cash →</a></p>
+          <p style="margin-top:14px"><a href="/tools/cash-stuck">Cash-stuck calculator →</a> · <a href="/tools/retention">Retention calculator →</a></p>
+        </div>
+        <div>
+          <LeadCapture
+            source="cash-flow-template"
+            magnet="Cash-Flow Control Template"
+            heading="Get the template + a cash-flow playbook"
+            sub="We'll send the template and the exact receivables-and-retention routine our own finance team runs."
+            cta="Send me the template"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .crumb { border-bottom: 1px solid var(--line); background: var(--bg-alt); }
+  .crumb .container { padding: 12px 22px; font-size: .86rem; color: var(--muted); }
+  .crumb a { color: var(--brand-700); font-weight: 600; }
+  .crumb span[aria-hidden] { margin: 0 8px; color: var(--graphite-300); }
+
+  .cf { display: grid; grid-template-columns: 1.3fr 1fr; gap: 26px; align-items: start; max-width: 1000px; margin-inline: auto; }
+  .cf__inputs { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 24px; box-shadow: var(--shadow-sm); display: grid; gap: 18px; }
+  .cf__opening { border-bottom: 1px solid var(--line-2, #eef2f7); padding-bottom: 16px; }
+  .cf__col { display: grid; gap: 12px; }
+  .cf__h { font-size: .82rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; margin: 0; }
+  .cf__h--in { color: var(--ok, #1a8f52); }
+  .cf__h--out { color: var(--graphite-700); }
+  .cf label { display: grid; gap: 6px; font-weight: 600; font-size: .84rem; color: var(--ink); }
+  .cf input { font-family: inherit; font-size: 1rem; padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); width: 100%; font-variant-numeric: tabular-nums; }
+  .cf input:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 3px rgba(41,151,255,.18); }
+
+  .cf__result { position: sticky; top: 92px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 24px; box-shadow: var(--shadow-sm); }
+  .cf__net { display: flex; flex-direction: column; gap: 3px; padding: 16px; border-radius: 12px; background: var(--bg-alt); }
+  .cf__net span { font-size: .78rem; color: var(--muted); font-weight: 600; }
+  .cf__net b { font-size: 1.7rem; font-weight: 900; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .cf__net.pos b { color: var(--ok, #1a8f52); } .cf__net.neg b { color: var(--crit, #c23a4b); }
+  .cf__runway { display: flex; justify-content: space-between; align-items: baseline; margin: 14px 2px; font-size: .9rem; color: var(--muted); }
+  .cf__runway b { color: var(--ink); font-size: 1.05rem; font-weight: 800; }
+  .cf__rag { text-align: center; font-weight: 800; font-size: .9rem; padding: 9px; border-radius: 10px; margin-bottom: 14px; }
+  .cf__rag.g { background: var(--ok-bg, #e6f5ec); color: var(--ok, #1a8f52); }
+  .cf__rag.a { background: var(--warn-bg, #fbf1de); color: var(--warn, #b9791a); }
+  .cf__rag.r { background: var(--crit-bg, #fbe8eb); color: var(--crit, #c23a4b); }
+  .cf__proj { width: 100%; border-collapse: collapse; font-size: .9rem; margin-bottom: 16px; }
+  .cf__proj th, .cf__proj td { padding: 9px 6px; border-bottom: 1px solid var(--line-2, #eef2f7); text-align: left; }
+  .cf__proj .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .cf__proj td.neg { color: var(--crit, #c23a4b); }
+  .cf__actions { display: grid; gap: 9px; }
+  .cf__actions .btn { width: 100%; }
+
+  .two-col { display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: start; }
+  .two-col h2 { margin: 12px 0 12px; }
+  @media (max-width: 900px) { .cf { grid-template-columns: 1fr; } .cf__result { position: static; } .two-col { grid-template-columns: 1fr; gap: 30px; } }
+  @media print { :global(header), :global(footer), :global(.announce), :global(.crumb), .cf__actions, :global(.lc), .section--alt .two-col > div:last-child { display: none !important; } .cf { grid-template-columns: 1fr; } .cf__result { position: static; } }
+</style>
+
+<script is:inline>
+  (function () {
+    var ids = ["cf_open", "cf_collections", "cf_retention", "cf_advances", "cf_vendors", "cf_labour", "cf_overheads", "cf_emi"];
+    function g(id) { var el = document.getElementById(id); return el ? (parseFloat(el.value) || 0) : 0; }
+    function inr(n) {
+      var neg = n < 0; n = Math.abs(n); var o;
+      if (n >= 1e7) o = "₹" + (n / 1e7).toFixed(2).replace(/\.?0+$/, "") + " Cr";
+      else if (n >= 1e5) o = "₹" + (n / 1e5).toFixed(2).replace(/\.?0+$/, "") + " L";
+      else o = "₹" + Math.round(n).toLocaleString("en-IN");
+      return (neg ? "−" : "") + o;
+    }
+    var netBox = document.getElementById("cfNetBox"), rag = document.getElementById("cf_rag");
+    var rows = document.getElementById("cf_rows"), ctx = document.getElementById("leadContext");
+    function update() {
+      var open = g("cf_open");
+      var inflow = g("cf_collections") + g("cf_retention") + g("cf_advances");
+      var outflow = g("cf_vendors") + g("cf_labour") + g("cf_overheads") + g("cf_emi");
+      var net = inflow - outflow;
+      document.getElementById("cf_net").textContent = (net >= 0 ? "+" : "") + inr(net);
+      netBox.className = "cf__net " + (net >= 0 ? "pos" : "neg");
+      // runway
+      var runwayTxt, status;
+      if (net >= 0) { runwayTxt = "Cash-positive"; status = "g"; }
+      else {
+        var months = open / -net;
+        runwayTxt = months >= 24 ? "24+ months" : months.toFixed(1) + " months";
+        status = months <= 2 ? "r" : months <= 6 ? "a" : "g";
+      }
+      document.getElementById("cf_runway").textContent = runwayTxt;
+      rag.className = "cf__rag " + status;
+      rag.textContent = status === "g" ? "● Healthy — cash covers commitments" : status === "a" ? "● Watch — tighten collections now" : "● At risk — you run short soon";
+      // 3-month projection
+      rows.innerHTML = "";
+      var bal = open;
+      for (var m = 1; m <= 3; m++) {
+        bal += net;
+        var tr = document.createElement("tr");
+        tr.innerHTML = "<td>Month " + m + "</td><td class='num" + (bal < 0 ? " neg" : "") + "'>" + inr(bal) + "</td>";
+        rows.appendChild(tr);
+      }
+      if (ctx) ctx.value = "Net monthly cash flow " + (net >= 0 ? "+" : "") + inr(net) + ", runway " + runwayTxt;
+    }
+    ids.forEach(function (id) { var el = document.getElementById(id); if (el) el.addEventListener("input", update); });
+    document.getElementById("cfPrint").addEventListener("click", function () { window.print(); });
+    update();
+  })();
+</script>

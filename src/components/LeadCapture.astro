@@ -1,0 +1,103 @@
+---
+// Generic lead-capture. Reuses the demo/CRM webhook with a WhatsApp fallback so
+// no lead is ever lost. A page tool may set #leadContext (hidden) to attach the
+// visitor's computed result to the lead. One instance per page.
+import { SITE } from "../config/site";
+import Icon from "./Icon.astro";
+const {
+  source = "resource",
+  magnet = "resource",
+  heading = "Want the full version, plus guidance?",
+  sub = "Tell us where to send it. We'll also share how sotyn.ai automates this end-to-end.",
+  cta = "Send it to me",
+} = Astro.props;
+---
+<div class="lc" data-magnet={magnet} data-source={source} data-wa={SITE.whatsapp}>
+  <form class="lc__form" id="leadForm" novalidate>
+    <h3 class="lc__h">{heading}</h3>
+    <p class="lc__sub">{sub}</p>
+    <div class="lc__grid">
+      <div class="field"><label for="lc-name">Name<span aria-hidden="true">*</span></label>
+        <input id="lc-name" name="name" type="text" required autocomplete="name" placeholder="Your full name" /></div>
+      <div class="field"><label for="lc-phone">Phone / WhatsApp<span aria-hidden="true">*</span></label>
+        <input id="lc-phone" name="phone" type="tel" required autocomplete="tel" placeholder="10-digit mobile" pattern="[0-9+ ]{8,15}" /></div>
+      <div class="field field--full"><label for="lc-company">Company &amp; trade <span class="opt">(optional)</span></label>
+        <input id="lc-company" name="company" type="text" autocomplete="organization" placeholder="e.g. ABC MEP Contractors, Ludhiana" /></div>
+    </div>
+    <input type="hidden" id="leadContext" name="context" value="" />
+    <input type="text" name="website_hp" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+    <button type="submit" class="btn btn--primary btn--lg" id="lc-submit"><Icon name="download" size={19} /> {cta}</button>
+    <p class="lc__note"><Icon name="lock" size={14} /> No spam — just practical EPC guides, occasionally. Your data stays in India.</p>
+    <p class="lc__status" id="lc-status" role="status" aria-live="polite"></p>
+  </form>
+  <div class="lc__done" id="leadDone" hidden>
+    <div class="lc__check" aria-hidden="true"><Icon name="check" size={28} /></div>
+    <h3>You're all set.</h3>
+    <p class="muted">Thanks! We'll be in touch on WhatsApp with the full version. Prefer to talk now?</p>
+    <a class="btn btn--primary" href="/demo">Book a free demo</a>
+  </div>
+</div>
+
+<style>
+  .lc { background: var(--bg-elevated, #fff); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-md, var(--shadow)); }
+  .lc__h { margin: 0 0 6px; font-size: 1.2rem; }
+  .lc__sub { margin: 0 0 18px; font-size: .94rem; color: var(--muted); }
+  .lc__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field--full { grid-column: 1 / -1; }
+  .field label { font-size: .85rem; font-weight: 600; color: var(--ink); }
+  .field label .opt { font-weight: 400; color: var(--muted); }
+  .field input { font-family: inherit; font-size: 1rem; padding: 13px 15px; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: var(--bg); color: var(--ink); width: 100%; transition: .2s; }
+  .field input::placeholder { color: #9ca3af; }
+  .field input:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 4px rgba(41,151,255,.12); }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .lc .btn--lg { width: 100%; }
+  .lc__note { display: flex; align-items: center; gap: 7px; font-size: .8rem; color: var(--muted); margin: 12px 0 0; }
+  .lc__note :global(.ico) { flex: none; }
+  .lc__status { margin: 10px 0 0; font-weight: 600; font-size: .92rem; min-height: 1.1em; }
+  .lc__status[data-state="err"] { color: var(--crit, #c23a4b); }
+  #lc-submit[disabled] { opacity: .6; cursor: progress; }
+  .lc__done { text-align: center; padding: 10px 4px; }
+  .lc__check { width: 60px; height: 60px; border-radius: 50%; background: var(--brand-50); color: var(--brand-600); display: grid; place-items: center; margin: 0 auto 12px; }
+  .lc__done h3 { margin: 6px 0 4px; }
+  @media (max-width: 560px) { .lc__grid { grid-template-columns: 1fr; } }
+</style>
+
+<script is:inline define:vars={{ WEBHOOK: SITE.leadWebhookUrl, WA: SITE.whatsapp }}>
+  (function () {
+    var box = document.querySelector(".lc");
+    var form = document.getElementById("leadForm");
+    var statusEl = document.getElementById("lc-status");
+    var btn = document.getElementById("lc-submit");
+    var done = document.getElementById("leadDone");
+    if (!form) return;
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (form.website_hp.value) return;
+      var data = Object.fromEntries(new FormData(form).entries());
+      delete data.website_hp;
+      data.source = box.dataset.source;
+      data.magnet = box.dataset.magnet;
+      data.page = location.pathname;
+      data.submittedAt = new Date().toISOString();
+      if (!data.name || !data.phone) {
+        statusEl.textContent = "Please add your name and phone."; statusEl.dataset.state = "err"; return;
+      }
+      btn.disabled = true; statusEl.dataset.state = ""; statusEl.textContent = "Sending…";
+      if (window.fbq) window.fbq("track", "Lead");
+      var delivered = false;
+      if (WEBHOOK) {
+        try { var r = await fetch(WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); delivered = r.ok; }
+        catch (_) { delivered = false; }
+      }
+      if (!delivered) {
+        var msg = box.dataset.magnet + " request%0A" +
+          "Name: " + data.name + "%0APhone: " + data.phone + "%0A" +
+          (data.company ? "Company: " + data.company + "%0A" : "") +
+          (data.context ? "Context: " + data.context + "%0A" : "");
+        window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg).replace(/%2520/g, "%20"), "_blank");
+      }
+      form.hidden = true; done.hidden = false;
+    });
+  })();
+</script>
