@@ -252,7 +252,7 @@ export const SITE = {
   // Demo, checklist and webinar forms POST JSON here. While empty, they fall
   // back to WhatsApp + email so no lead is ever lost. Each payload carries a
   // `source` so you can tell demo vs checklist vs webinar leads apart.
-  leadWebhookUrl: "", // ⚠️ PLUG your ERP/CRM lead webhook URL HERE when ready
+    leadWebhookUrl: "https://securederp.in/api/public/sotyn-lead", // ⚠️ PLUG your ERP/CRM lead webhook URL HERE when ready
 
   // ── Social ───────────────────────────────────────────────────────────────
   social: {
