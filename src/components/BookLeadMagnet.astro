@@ -5,7 +5,7 @@ const PDF = "/downloads/11-point-project-savings-checklist.pdf";
 const { source = "book-checklist" } = Astro.props;
 ---
 <div class="magnet">
-  <form class="magnet__form" id="magnetForm" data-source={source} novalidate data-webhook={SITE.leadWebhookUrl} data-wa={SITE.whatsapp} data-pdf={PDF}>
+  <form class="magnet__form" id="magnetForm" data-source={source} novalidate data-webhook={SITE.leadEndpoint} data-fallback={SITE.leadWebhookUrl} data-wa={SITE.whatsapp} data-pdf={PDF}>
     <div class="magnet__grid">
       <div class="field">
         <label for="mg-name">Name<span aria-hidden="true">*</span></label>
@@ -101,6 +101,7 @@ const { source = "book-checklist" } = Astro.props;
 
   if (form) {
     const endpoint = form.dataset.webhook || "";
+    const fallbackEndpoint = form.dataset.fallback || "";
     const wa = form.dataset.wa;
     const pdf = form.dataset.pdf;
     let requestId = newRequestId();
@@ -151,7 +152,7 @@ const { source = "book-checklist" } = Astro.props;
           landingSearch: location.search || "",
           submittedAt: new Date().toISOString(),
         },
-        { requestId }
+        { requestId, fallbackEndpoint }
       );
 
       sending = false;

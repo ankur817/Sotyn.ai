@@ -12,7 +12,7 @@ const {
   cta = "Send it to me",
 } = Astro.props;
 ---
-<div class="lc" data-magnet={magnet} data-source={source} data-wa={SITE.whatsapp} data-webhook={SITE.leadWebhookUrl}>
+<div class="lc" data-magnet={magnet} data-source={source} data-wa={SITE.whatsapp} data-webhook={SITE.leadEndpoint} data-fallback={SITE.leadWebhookUrl}>
   <form class="lc__form" id="leadForm" novalidate>
     <h3 class="lc__h">{heading}</h3>
     <p class="lc__sub">{sub}</p>
@@ -90,6 +90,7 @@ const {
 
   if (form && box) {
     const endpoint = box.dataset.webhook || "";
+    const fallbackEndpoint = box.dataset.fallback || "";
     const wa = box.dataset.wa;
     // One id per submission attempt — kept across retries so a lead that was
     // in fact stored on a timed-out attempt is not duplicated.
@@ -125,7 +126,7 @@ const {
       statusEl.dataset.state = "";
       statusEl.textContent = "Sending…";
 
-      const result = await submitLead(endpoint, payload, { requestId });
+      const result = await submitLead(endpoint, payload, { requestId, fallbackEndpoint });
       sending = false;
       btn.disabled = false;
 
