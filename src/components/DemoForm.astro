@@ -96,6 +96,7 @@ import { SITE, waLink, telLink } from "../config/site";
 
 <script>
   import { submitLead, waLink, newRequestId, trackAcceptedLead } from "../lib/lead-client.js";
+  import { intentPayload } from "../lib/lead-intents.js";
 
   const form = document.getElementById("demoForm");
   const status = document.getElementById("dfStatus");
@@ -136,7 +137,7 @@ import { SITE, waLink, telLink } from "../config/site";
         endpoint,
         {
           ...data,
-          source: "demo-form",
+          ...intentPayload({ intent: "demo_request", placement: form.dataset.placement || "demo-form", source: "demo-form" }),
           page: location.pathname,
           referrer: document.referrer || "",
           landingSearch: location.search || "",
@@ -149,7 +150,7 @@ import { SITE, waLink, telLink } from "../config/site";
       btn.disabled = false;
 
       if (result.accepted) {
-        trackAcceptedLead({ source: "demo-form", page: location.pathname, leadId: result.leadId });
+        trackAcceptedLead({ source: "demo-form", intent: "demo_request", page: location.pathname, leadId: result.leadId });
         window.location.href = "/thank-you";
         return;
       }

@@ -90,6 +90,7 @@ const { source = "book-checklist" } = Astro.props;
 
 <script>
   import { submitLead, waLink, newRequestId, trackAcceptedLead } from "../lib/lead-client.js";
+  import { intentPayload } from "../lib/lead-intents.js";
 
   const form = document.getElementById("magnetForm");
   const statusEl = document.getElementById("mg-status");
@@ -143,7 +144,7 @@ const { source = "book-checklist" } = Astro.props;
         endpoint,
         {
           ...data,
-          source,
+          ...intentPayload({ intent: "resource_request", placement: source, source }),
           magnet: "11-point-project-savings-checklist",
           page: location.pathname,
           referrer: document.referrer || "",
@@ -160,7 +161,7 @@ const { source = "book-checklist" } = Astro.props;
       triggerDownload();
 
       if (result.accepted) {
-        trackAcceptedLead({ source, page: location.pathname, leadId: result.leadId });
+        trackAcceptedLead({ source, intent: "resource_request", page: location.pathname, leadId: result.leadId });
         statusEl.textContent = "";
         form.hidden = true;
         done.hidden = false;

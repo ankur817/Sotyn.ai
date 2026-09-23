@@ -82,7 +82,7 @@ const total = questions.length + 1; // + turnover step
         <div class="sc__gaps" id="scGaps"></div>
         <div class="sc__form">
           <p class="sc__formlbl">Get your full breakdown + a free 1-on-1 leak audit:</p>
-          <RegisterForm source="scorecard" />
+          <RegisterForm source="scorecard" intent="diagnostic_request" placement="scorecard-result" />
         </div>
       </div>
     </div>
@@ -200,7 +200,16 @@ const total = questions.length + 1; // + turnover step
         gaps.map((f) => `<div class="sc__gap"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6c3 3.9 5.5 6.8 5.5 9.6a5.5 5.5 0 0 1-11 0c0-2.8 2.5-5.7 5.5-9.6Z"/></svg><span>Fixed by <b>${f}</b></span></div>`).join("")
       : "<div class='sc__gap'><span>Impressive — few obvious leaks. sotyn.ai keeps it that way as you scale.</span></div>";
 
-    if (window.fbq) window.fbq("track", "Lead");
+    // Completing the scorecard is an INTERACTION, not an enquiry — no lead or
+    // conversion event fires here. The lead event belongs to the form below,
+    // and only once delivery is confirmed.
+    try {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: "scorecard_completed", lead_page: location.pathname, leak_level: level });
+    } catch (_) {}
+    // Carry the result with the lead (not to analytics) so sales can answer it.
+    var ctx = document.querySelector("#regForm [name=context]");
+    if (ctx) ctx.value = "Leak score " + score + "/100 · " + level + " risk · est. " + inr(money) + "/yr" + (gaps.length ? " · gaps: " + gaps.join(", ") : "");
     progress.style.display = "none";
     stepsWrap.style.display = "none";
     $("scCard").hidden = false;

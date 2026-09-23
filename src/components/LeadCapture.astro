@@ -78,6 +78,7 @@ const {
 
 <script>
   import { submitLead, waLink, newRequestId, trackAcceptedLead } from "../lib/lead-client.js";
+  import { intentPayload } from "../lib/lead-intents.js";
 
   const box = document.querySelector(".lc");
   const form = document.getElementById("leadForm");
@@ -110,7 +111,7 @@ const {
 
       const payload = {
         ...data,
-        source: box.dataset.source,
+        ...intentPayload({ intent: "resource_request", placement: box.dataset.source, source: box.dataset.source, context: data.context }),
         magnet: box.dataset.magnet,
         page: location.pathname,
         referrer: document.referrer || "",
@@ -130,7 +131,7 @@ const {
 
       if (result.accepted) {
         // Only now is the lead really ours — track once, then confirm.
-        trackAcceptedLead({ source: box.dataset.source, page: location.pathname, leadId: result.leadId });
+        trackAcceptedLead({ source: box.dataset.source, intent: "resource_request", page: location.pathname, leadId: result.leadId });
         statusEl.textContent = "";
         form.hidden = true;
         done.hidden = false;

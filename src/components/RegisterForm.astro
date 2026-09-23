@@ -1,9 +1,19 @@
 ---
 import { SITE, waLink, telLink } from "../config/site";
 import Icon from "./Icon.astro";
-const { source = "webinar-registration" } = Astro.props;
+import { getIntent } from "../lib/lead-intents";
+// `intent` is what the visitor is asking for; `placement` is where this form
+// sits. Copy and payload both follow the intent, so a diagnostic request can
+// never be labelled — or recorded — as a masterclass seat.
+const {
+  source = "webinar-registration",
+  intent = "webinar_registration",
+  placement = source,
+  event = "",
+} = Astro.props;
+const copy = getIntent(intent);
 ---
-<form class="rf" id="regForm" data-source={source} novalidate data-webhook={SITE.leadWebhookUrl} data-wa={SITE.whatsapp}>
+<form class="rf" id="regForm" data-source={source} data-intent={intent} data-placement={placement} data-event={copy.carriesEvent ? event : ""} data-wa-intro={copy.waIntro} data-pending={copy.pending} novalidate data-webhook={SITE.leadWebhookUrl} data-wa={SITE.whatsapp}>
   <div class="rf__row">
     <label>Your name<input type="text" name="name" required autocomplete="name" placeholder="Full name" /></label>
     <label>Phone / WhatsApp<input type="tel" name="phone" required inputmode="tel" autocomplete="tel" placeholder="10-digit mobile" /></label>
@@ -19,23 +29,24 @@ const { source = "webinar-registration" } = Astro.props;
       <option>₹100 Cr+</option>
     </select>
   </label>
+  <input type="hidden" name="context" value="" />
   <input type="text" name="website_hp" tabindex="-1" autocomplete="off" class="rf__hp" aria-hidden="true" />
-  <button type="submit" class="btn btn--primary btn--lg rf__submit">Reserve my free seat</button>
+  <button type="submit" class="btn btn--primary btn--lg rf__submit">{copy.submit}</button>
   <p class="rf__status" id="rfStatus" role="status" aria-live="polite"></p>
   <div class="rf__recover" id="rfRecover" hidden>
     <p class="rf__recover-h">Nothing was lost — your details are still in the form.</p>
     <div class="rf__recover-acts">
       <button type="submit" class="btn btn--primary btn--sm">Try again</button>
       <a class="btn btn--ghost btn--sm" href={telLink}>Call {SITE.phone}</a>
-      <a class="btn btn--ghost btn--sm" id="rfWa" href={waLink()} target="_blank" rel="noopener">Register on WhatsApp instead</a>
+      <a class="btn btn--ghost btn--sm" id="rfWa" href={waLink()} target="_blank" rel="noopener">Send on WhatsApp instead</a>
     </div>
   </div>
-  <p class="rf__note"><Icon name="lock" size={14} /> Free. We’ll WhatsApp you the joining link &amp; a reminder.</p>
+  <p class="rf__note"><Icon name="lock" size={14} /> {copy.note}</p>
 
   <div class="rf__done" id="rfDone" hidden>
     <div class="rf__check" aria-hidden="true"><Icon name="check" size={30} /></div>
-    <h3>Your seat is reserved 🎟️</h3>
-    <p class="muted">We’ll WhatsApp you the joining link and a reminder before it starts. See you there!</p>
+    <h3>{copy.doneTitle}</h3>
+    <p class="muted">{copy.doneBody}</p>
   </div>
 </form>
 
@@ -66,6 +77,7 @@ const { source = "webinar-registration" } = Astro.props;
 
 <script>
   import { submitLead, waLink, newRequestId, trackAcceptedLead } from "../lib/lead-client.js";
+  import { intentPayload } from "../lib/lead-intents.js";
 
   const form = document.getElementById("regForm");
   const statusEl = document.getElementById("rfStatus");
@@ -85,6 +97,7 @@ const { source = "webinar-registration" } = Astro.props;
       if (form.website_hp.value) return; // honeypot
       const data = Object.fromEntries(new FormData(form).entries());
       delete data.website_hp;
+      delete data.context; // carried via intentPayload, not duplicated
       if (!data.name || !data.phone) {
         statusEl.dataset.state = "err";
         statusEl.textContent = "Please add your name and phone.";
@@ -92,19 +105,22 @@ const { source = "webinar-registration" } = Astro.props;
       }
 
       const source = form.dataset.source || "webinar-registration";
+      const intent = form.dataset.intent || "webinar_registration";
+      const placement = form.dataset.placement || source;
+      const eventName = form.dataset.event || "";
+      const context = form.querySelector("[name=context]")?.value || "";
       const btn = form.querySelector("button[type=submit]");
       sending = true;
       btn.disabled = true;
       recover.hidden = true;
       statusEl.dataset.state = "";
-      statusEl.textContent = "Sending your registration…";
+      statusEl.textContent = form.dataset.pending || "Sending…";
 
       const result = await submitLead(
         endpoint,
         {
           ...data,
-          source,
-          event: "Contractor's Profit Masterclass",
+          ...intentPayload({ intent, placement, source, event: eventName, context }),
           page: location.pathname,
           referrer: document.referrer || "",
           landingSearch: location.search || "",
@@ -117,24 +133,25 @@ const { source = "webinar-registration" } = Astro.props;
       btn.disabled = false;
 
       if (result.accepted) {
-        trackAcceptedLead({ source, page: location.pathname, leadId: result.leadId });
+        trackAcceptedLead({ source, intent, page: location.pathname, leadId: result.leadId });
         form.querySelectorAll(".rf__row, label, .rf__submit, .rf__note, .rf__status").forEach((el) => el.setAttribute("hidden", ""));
         done.hidden = false;
         return;
       }
 
-      // The seat was NOT reserved — never pretend otherwise.
+      // NOT accepted — never show the confirmation for something that did not happen.
       requestId = newRequestId();
       statusEl.dataset.state = "err";
-      statusEl.textContent = "We couldn't register you just now. Your details are still here — try again, or use an option below.";
+      statusEl.textContent = "We couldn't send that just now. Your details are still here — try again, or use an option below.";
       if (waBtn) {
         waBtn.href = waLink(wa, [
-          "Webinar registration",
+          form.dataset.waIntro || "Enquiry",
           `Name: ${data.name}`,
           `Phone: ${data.phone}`,
           data.company ? `Company: ${data.company}` : "",
           data.turnover ? `Turnover: ${data.turnover}` : "",
-          "Event: Contractor's Profit Masterclass",
+          eventName ? `Event: ${eventName}` : "",
+          context ? `Context: ${context}` : "",
         ]);
       }
       recover.hidden = false;

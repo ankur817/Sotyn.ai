@@ -86,7 +86,7 @@ export async function submitLead(endpoint, payload, { requestId, timeoutMs = 120
  * Fire conversion events once per accepted lead. PII never leaves the page:
  * only the source, the page path and an opaque lead id are passed on.
  */
-export function trackAcceptedLead({ source, page, leadId }) {
+export function trackAcceptedLead({ source, intent, page, leadId }) {
   const key = `lead_tracked_${leadId || source}`;
   try {
     if (window.__sotynTracked && window.__sotynTracked[key]) return false;
@@ -97,12 +97,12 @@ export function trackAcceptedLead({ source, page, leadId }) {
   }
   try {
     window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: "generate_lead", lead_source: source, lead_page: page, lead_id: leadId || undefined });
+    window.dataLayer.push({ event: "generate_lead", lead_source: source, lead_intent: intent || undefined, lead_page: page, lead_id: leadId || undefined });
   } catch {
     /* ignore */
   }
   try {
-    if (window.fbq) window.fbq("track", "Lead", { content_name: source });
+    if (window.fbq) window.fbq("track", "Lead", { content_name: intent || source });
   } catch {
     /* ignore */
   }
