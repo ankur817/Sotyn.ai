@@ -66,7 +66,7 @@ async function appendToSheet(env, payload) {
   for (let attempt = 0; attempt < 3; attempt++) {
     if (attempt > 0) {
       // Did the ambiguous attempt actually land?
-      const check = await call("check", { leadId: payload.leadId });
+      const check = await call("check", { leadId: payload.leadId, submissionId: payload.submissionId });
       if (check.ok && check.json && check.json.exists) return { state: "ok", reconciled: true };
       await new Promise((r) => setTimeout(r, 400 * attempt));
     }

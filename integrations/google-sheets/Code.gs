@@ -72,7 +72,7 @@ function doPost(e) {
   lock.waitLock(20000); // serialise appends so two submissions cannot collide
   try {
     if (body.action === "check") {
-      return out({ ok: true, exists: findLeadRow_(ss, body.leadId) > 0 });
+      return out({ ok: true, exists: findRow_(ss, body.leadId, body.submissionId) > 0 });
     }
     if (body.action !== "append") return out({ ok: false, error: "unknown_action" });
 
@@ -82,8 +82,10 @@ function doPost(e) {
       return out({ ok: true });
     }
 
-    // Idempotency: one row per Lead ID, whatever the network did.
-    var existing = findLeadRow_(ss, body.leadId);
+    // Idempotency: one row per submission. The Lead ID covers a retry of the
+    // same server request; the Submission ID covers a double-click or a browser
+    // retry, which arrive as two requests carrying one submission.
+    var existing = findRow_(ss, body.leadId, body.submissionId);
     if (existing > 0) return out({ ok: true, row: existing, duplicate: true });
 
     var sh = ensureSheet_(ss, "Leads", LEAD_COLUMNS);
@@ -98,12 +100,16 @@ function doPost(e) {
   }
 }
 
-function findLeadRow_(ss, leadId) {
-  if (!leadId) return 0;
+function findRow_(ss, leadId, submissionId) {
   var sh = ss.getSheetByName("Leads");
   if (!sh || sh.getLastRow() < 2) return 0;
-  var ids = sh.getRange(2, 1, sh.getLastRow() - 1, 1).getValues();
-  for (var i = 0; i < ids.length; i++) if (ids[i][0] === leadId) return i + 2;
+  var n = sh.getLastRow() - 1;
+  var ids = sh.getRange(2, 1, n, 1).getValues();                       // Lead ID
+  var subs = sh.getRange(2, LEAD_COLUMNS.length, n, 1).getValues();    // Submission ID
+  for (var i = 0; i < n; i++) {
+    if (leadId && ids[i][0] === leadId) return i + 2;
+    if (submissionId && subs[i][0] && subs[i][0] === submissionId) return i + 2;
+  }
   return 0;
 }
 
