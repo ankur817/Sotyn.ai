@@ -4,14 +4,26 @@
 **Scope:** 19 live production URLs, JSON-LD only.
 **Evidence labels:** every finding is marked **LIVE-OBSERVED (2026-09-23)** when it comes from
 production HTML fetched with `curl` on that date, or **SOURCE-OBSERVED** when it comes from the
-repository at `main` (commit `9e35784`).
+repository on `main` (audit started at commit `9e35784`; `src/` line numbers below are current as of
+commit `8eb6413` — see the note under *Sources of truth*).
 
 **Sources of truth**
 
 - `src/layouts/BaseLayout.astro` lines 32–103 — sitewide `Organization` + `SoftwareApplication`,
-  injected at line 163 (`<script type="application/ld+json" set:html={JSON.stringify(s)} />`).
+  assembled at line 117 (`const allSchema = [orgSchema, siteSchema, appSchema, ...schema]`) and
+  injected at lines 191–192 (`<script type="application/ld+json" set:html={JSON.stringify(s)} />`).
 - Per-page `schema={...}` props in `src/pages/**`.
 - `src/config/site.ts` — the values those blocks read (phone, address, pricing).
+
+> **Source moved during this audit.** While the audit was running, `src/layouts/BaseLayout.astro`
+> gained a third sitewide entity — `WebSite` (`@id .../#website`, `publisher` → `#organization`,
+> `inLanguage: "en-IN"`) at lines 105–115, now included in `allSchema` at line 117. **That entity is
+> not yet on production:** none of the 19 live pages fetched on 2026-09-23 emitted a `WebSite` node,
+> so it appears in no table below. It is correctly built (it references the Organization by `@id`
+> rather than copying it, and deliberately omits `SearchAction`, per the comment at lines 105–106 —
+> which matches §7 of this report). Re-validate after it deploys. All `src/` line numbers in this
+> report are as of that post-change state; line numbers for the live behaviour described are the
+> lines that produced it.
 
 ---
 
@@ -112,7 +124,7 @@ of `CreativeWork`, so `SoftwareApplication` does not inherit it. The value is si
 - **Emitted at:** `src/layouts/BaseLayout.astro` line 102 — `areaServed: { "@type": "Country", name: "India" },`
   (inside `appSchema`).
 - **The information is not lost by removing it.** The same statement is already made validly at
-  `src/layouts/BaseLayout.astro` line 52 (`orgSchema.areaServed`) and line 58 (`contactPoint.areaServed: "IN"`).
+  `src/layouts/BaseLayout.astro` line 51 (`orgSchema.areaServed`) and line 58 (`contactPoint.areaServed: "IN"`).
 - **Fix:** delete line 102. If the geographic scope of the *product* matters, move it onto the
   `AggregateOffer` (lines 91–101) as `eligibleRegion` / `areaServed`, where it is valid.
 
@@ -151,7 +163,7 @@ Evidence — `grep -io 'aria-label="Breadcrumb"'` against the live HTML:
 are missing, copying the pattern already used at `src/pages/tools/[slug].astro` line 25. Keep the
 markup. Do not resolve this by keeping invisible markup.
 
-**Secondary issue on the same three (SOURCE-OBSERVED).** `src/pages/solutions/[slug].astro` line 79
+**Secondary issue on the same three (SOURCE-OBSERVED).** `src/pages/solutions/[slug].astro` line 78
 points breadcrumb position 2 at `${SITE.url}/#solutions` — a fragment on the homepage, not a page.
 A breadcrumb item should be a real, crawlable URL. Either create `/solutions` or drop the middle
 crumb to `["Home", v.name]`.
@@ -173,7 +185,7 @@ There is no `startDate`, no `endDate` and no `offers`. `startDate` is required b
 The Schema Markup Validator returned **0 errors / 0 warnings for the Event node**, because it does
 not enforce Google's required-property set; a clean result there is not evidence of eligibility.
 
-The visible page has no concrete date either. `src/config/site.ts` line 262 reads
+The visible page has no concrete date either. `src/config/site.ts` line 274 reads
 `when: "Every Saturday · 7:00 PM IST", // ⚠️ set your real schedule` — a standing weekly slot, not a
 scheduled instance. `eventStatus: "EventScheduled"` therefore asserts something the page does not
 support.
@@ -217,21 +229,21 @@ Two of these are defensible; one is not.
 the product actually ships (`["en-IN","hi","bn","mr","te","ta","gu","ur","kn","or","ml"]`, per the
 languages named on the homepage), and add matching `availableLanguage` on the `SoftwareApplication`.
 Add the list to `src/config/site.ts` so the page copy and the markup read the same array and cannot
-drift — the same discipline already applied to pricing at `src/config/site.ts` lines 127–133.
+drift — the same discipline already applied to pricing at `src/config/site.ts` lines 143–145.
 
 ### 4.4 `/404` carries full product and offer markup
 
 **Finding (LIVE-OBSERVED, 2026-09-23).** A request for a genuinely missing URL
 (`/this-page-does-not-exist-xyz123`) correctly returns HTTP 404 — the status handling is right. But
 the error page still emits the full sitewide `Organization` + `SoftwareApplication` + `AggregateOffer`,
-because `BaseLayout.astro` line 105 (`const allSchema = [orgSchema, appSchema, ...schema]`) attaches
+because `BaseLayout.astro` line 117 (`const allSchema = [orgSchema, siteSchema, appSchema, ...schema]`) attaches
 them unconditionally and `src/pages/404.astro` passes no `schema` prop of its own.
 
 Low severity — Google discards structured data on 404s — but an error page asserting a priced,
 in-stock product is noise, and the `AggregateOffer` is the part that least belongs there.
 
 **Fix:** add an opt-out to `src/layouts/BaseLayout.astro` (e.g. a `noEntitySchema` prop consulted at
-line 105) and set it on `src/pages/404.astro`. Optional; fix the items above first.
+line 117) and set it on `src/pages/404.astro`. Optional; fix the items above first.
 
 ---
 
@@ -250,7 +262,7 @@ Visible on `/pricing`: **"₹72,000 billed yearly"** (Starter) and **"₹3,00,00
 cards are visible — Starter, Growth, Enterprise — matching `offerCount: 3`.
 
 **SOURCE-OBSERVED.** `src/layouts/BaseLayout.astro` lines 93–95 read `SITE.pricing.currencyCode`,
-`SITE.pricing.annualLowInr` and `SITE.pricing.annualHighInr` from `src/config/site.ts` lines 131–133,
+`SITE.pricing.annualLowInr` and `SITE.pricing.annualHighInr` from `src/config/site.ts` lines 143–145,
 and `offerCount` from `SITE.pricing.plans.length`. `tests/pricing.test.mjs` asserts the machine
 figures against the display strings. The markup cannot drift from the page without failing a test.
 
@@ -352,7 +364,7 @@ canonical entity, so the second node adds nothing.
   `organizer: { "@type": "Organization", name: SITE.name, url: SITE.url },`
 - **Fix:** replace with a reference — `organizer: { "@id": `${SITE.url}/#organization` },`.
   This is the same one-line change already applied to `author` and `publisher` at
-  `src/layouts/BaseLayout.astro` lines 77–78.
+  `src/layouts/BaseLayout.astro` lines 78–79.
 
 **Also on `/webinar`:** `performer: { "@type": "Person", name: "Er. Ankur Kaplesh" }`
 (`src/pages/webinar.astro` line 16) duplicates the `Person` already declared as
@@ -421,14 +433,14 @@ are not rendered.
 
 | # | Finding | Pages | Fix at |
 |---|---|---|---|
-| 1 | `Event` has no `startDate`; `eventStatus: EventScheduled` unsupported by the page | `/webinar` | `src/pages/webinar.astro` lines 8–17; date in `src/config/site.ts` line 262 |
+| 1 | `Event` has no `startDate`; `eventStatus: EventScheduled` unsupported by the page | `/webinar` | `src/pages/webinar.astro` lines 8–17; date in `src/config/site.ts` line 274 |
 | 2 | Second, unlinked `Organization` (name conflict) | `/webinar` | `src/pages/webinar.astro` line 15 |
 | 3 | `BreadcrumbList` with no visible breadcrumb | `/epc-erp-software`, `/solutions/mep-contractors`, `/compare/sotyn-vs-onsite` | `src/pages/epc-erp-software.astro` 21–28; `src/pages/solutions/[slug].astro` 73–81; `src/pages/compare/[slug].astro` 93–101 |
 | 4 | `SoftwareApplication.inLanguage` says 1 language, the page says 11 | sitewide | `src/layouts/BaseLayout.astro` line 76 (+ `src/config/site.ts`) |
 | 5 | `SoftwareApplication.areaServed` invalid — the only validator warning | all 19 | `src/layouts/BaseLayout.astro` line 102 |
 | 6 | Breadcrumb crumb 2 points at a `#solutions` fragment | `/solutions/*` | `src/pages/solutions/[slug].astro` line 79 |
 | 7 | Duplicate unlinked `Person` (founder vs performer) | `/webinar` | `src/pages/webinar.astro` line 16; `src/layouts/BaseLayout.astro` line 42 |
-| 8 | Product + offer markup on the error page | `/404` | `src/layouts/BaseLayout.astro` line 105; `src/pages/404.astro` |
+| 8 | Product + offer markup on the error page | `/404` | `src/layouts/BaseLayout.astro` line 117; `src/pages/404.astro` |
 
 Items 1–3 are content-accuracy issues and matter most. Item 5 is the only one the validator flags,
 and it is a one-line deletion.

@@ -98,8 +98,8 @@ const appSchema = {
     availability: "https://schema.org/InStock",
     description:
       "Annual subscription, billed yearly. One-time onboarding is charged separately. A demo is free.",
+    eligibleRegion: { "@type": "Country", name: "India" },
   },
-  areaServed: { "@type": "Country", name: "India" },
 };
 
 // The site entity. No SearchAction: there is no site search, and declaring one
@@ -114,7 +114,9 @@ const siteSchema = {
   inLanguage: "en-IN",
 };
 
-const allSchema = [orgSchema, siteSchema, appSchema, ...schema];
+// A "page not found" is not a product page: no SoftwareApplication or offer is
+// emitted on noindex utility pages.
+const allSchema = noindex ? [orgSchema, ...schema] : [orgSchema, siteSchema, appSchema, ...schema];
 
 // ── Analytics ── one stack only (docs/lead-and-analytics-spec.md §2).
 const ga4 = SITE.analytics.ga4MeasurementId;

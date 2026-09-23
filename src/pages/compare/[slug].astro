@@ -101,6 +101,9 @@ const breadcrumb = {
 };
 ---
 <BaseLayout title={r.metaTitle} description={r.metaDesc} path={`/compare/${slug}`} schema={[breadcrumb]}>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <div class="container"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/compare">Compare</a> <span aria-hidden="true">/</span> <span>vs {r.name}</span></div>
+  </nav>
   <section class="section cmp-hero">
     <div class="container text-center">
       <span class="eyebrow">Honest comparison · 2026</span>
