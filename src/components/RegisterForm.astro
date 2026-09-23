@@ -13,7 +13,7 @@ const {
 } = Astro.props;
 const copy = getIntent(intent);
 ---
-<form class="rf" id="regForm" data-source={source} data-intent={intent} data-placement={placement} data-event={copy.carriesEvent ? event : ""} data-wa-intro={copy.waIntro} data-pending={copy.pending} novalidate data-webhook={SITE.leadWebhookUrl} data-wa={SITE.whatsapp}>
+<form class="rf" id="regForm" data-source={source} data-intent={intent} data-placement={placement} data-event={copy.carriesEvent ? event : ""} data-wa-intro={copy.waIntro} data-pending={copy.pending} novalidate data-webhook={SITE.leadEndpoint} data-fallback={SITE.leadWebhookUrl} data-wa={SITE.whatsapp}>
   <div class="rf__row">
     <label>Your name<input type="text" name="name" required autocomplete="name" placeholder="Full name" /></label>
     <label>Phone / WhatsApp<input type="tel" name="phone" required inputmode="tel" autocomplete="tel" placeholder="10-digit mobile" /></label>
@@ -87,6 +87,7 @@ const copy = getIntent(intent);
 
   if (form) {
     const endpoint = form.dataset.webhook || "";
+    const fallbackEndpoint = form.dataset.fallback || "";
     const wa = form.dataset.wa;
     let requestId = newRequestId();
     let sending = false;
@@ -126,7 +127,7 @@ const copy = getIntent(intent);
           landingSearch: location.search || "",
           submittedAt: new Date().toISOString(),
         },
-        { requestId }
+        { requestId, fallbackEndpoint }
       );
 
       sending = false;

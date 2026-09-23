@@ -44,6 +44,9 @@ export function readAcceptance(res, rawBody) {
   return { accepted: true, leadId: leadId ? String(leadId) : null, reason: "accepted" };
 }
 
+/** Reasons that mean "this endpoint isn't there", not "this lead was refused". */
+const SHOULD_FALL_BACK = new Set(["http_404", "http_405", "http_501", "non_json_response"]);
+
 /** Random idempotency key so a retry cannot create a second lead. */
 export function newRequestId() {
   try {
@@ -58,7 +61,7 @@ export function newRequestId() {
  * POST a lead. Never throws. Resolves { accepted, leadId, reason }.
  * `requestId` must stay the same across retries of the same submission.
  */
-export async function submitLead(endpoint, payload, { requestId, timeoutMs = 12000, fetchImpl } = {}) {
+export async function submitLead(endpoint, payload, { requestId, timeoutMs = 12000, fetchImpl, fallbackEndpoint } = {}) {
   if (!endpoint) return { accepted: false, leadId: null, reason: "no_endpoint" };
   const doFetch = fetchImpl || (typeof fetch !== "undefined" ? fetch : null);
   if (!doFetch) return { accepted: false, leadId: null, reason: "no_fetch" };
@@ -77,9 +80,18 @@ export async function submitLead(endpoint, payload, { requestId, timeoutMs = 120
       signal: controller ? controller.signal : undefined,
     });
     const raw = await res.text().catch(() => "");
-    return readAcceptance(res, raw);
+    const result = readAcceptance(res, raw);
+    // If the same-origin intake is missing (not deployed yet) fall back to the
+    // ERP endpoint once, so capture can never be worse than before it existed.
+    if (!result.accepted && fallbackEndpoint && SHOULD_FALL_BACK.has(result.reason)) {
+      return submitLead(fallbackEndpoint, payload, { requestId, timeoutMs, fetchImpl });
+    }
+    return result;
   } catch (err) {
     const aborted = err && (err.name === "AbortError" || err.name === "TimeoutError");
+    if (!aborted && fallbackEndpoint) {
+      return submitLead(fallbackEndpoint, payload, { requestId, timeoutMs, fetchImpl });
+    }
     return { accepted: false, leadId: null, reason: aborted ? "timeout" : "network_error" };
   } finally {
     if (timer) clearTimeout(timer);

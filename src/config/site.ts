@@ -267,10 +267,14 @@ export const SITE = {
   },
 
   // ── LEAD ROUTING ─────────────────────────────────────────────────────────
-  // Demo, checklist and webinar forms POST JSON here. While empty, they fall
-  // back to WhatsApp + email so no lead is ever lost. Each payload carries a
-  // `source` so you can tell demo vs checklist vs webinar leads apart.
-    leadWebhookUrl: "https://securederp.in/api/public/sotyn-lead", // ⚠️ PLUG your ERP/CRM lead webhook URL HERE when ready
+  // Every form posts to `leadEndpoint` (same origin). That function validates
+  // server-side, assigns a Lead ID, writes the "SOTYN Website Leads" sheet and
+  // forwards to the ERP below, which stays the fallback if it is unavailable.
+  leadWebhookUrl: "https://securederp.in/api/public/sotyn-lead",
+  // Same-origin intake (api/lead.js): validates server-side, assigns a Lead ID,
+  // writes the Google Sheet register and forwards to the ERP. Forms post here;
+  // leadWebhookUrl above is the fallback if this is ever unavailable.
+  leadEndpoint: "/api/lead",
 
   // ── Social ───────────────────────────────────────────────────────────────
   social: {

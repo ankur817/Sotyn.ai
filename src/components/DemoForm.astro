@@ -1,7 +1,7 @@
 ---
 import { SITE, waLink, telLink } from "../config/site";
 ---
-<form class="df" id="demoForm" novalidate data-webhook={SITE.leadWebhookUrl} data-wa={SITE.whatsapp}>
+<form class="df" id="demoForm" novalidate data-webhook={SITE.leadEndpoint} data-fallback={SITE.leadWebhookUrl} data-wa={SITE.whatsapp}>
   <div class="df__row">
     <label>Your name
       <input type="text" name="name" required autocomplete="name" placeholder="e.g. Ankur Kaplesh" />
@@ -105,6 +105,7 @@ import { SITE, waLink, telLink } from "../config/site";
 
   if (form) {
     const endpoint = form.dataset.webhook || "";
+    const fallbackEndpoint = form.dataset.fallback || "";
     const wa = form.dataset.wa;
     let requestId = newRequestId();
     let sending = false;
@@ -143,7 +144,7 @@ import { SITE, waLink, telLink } from "../config/site";
           landingSearch: location.search || "",
           submittedAt: new Date().toISOString(),
         },
-        { requestId }
+        { requestId, fallbackEndpoint }
       );
 
       sending = false;
