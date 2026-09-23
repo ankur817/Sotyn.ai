@@ -25,6 +25,7 @@ import {
   utmFrom,
   toSheetRow,
 } from "../src/lib/lead-server.js";
+import { lookupLocation } from "../src/data/locations/lookup.js";
 
 const ERP_DEFAULT = "https://securederp.in/api/public/sotyn-lead";
 
@@ -106,12 +107,20 @@ export default async function handler(req, res) {
   const receivedAt = istTimestamp();
   const utm = utmFrom(lead.landingSearch);
 
+  // The location PAGE the visitor came from, resolved against the district
+  // registry. A district name supplied in a query string is never trusted or
+  // stored as text — only a registry hit is recorded, and it describes the page
+  // viewed, not the visitor's own location (the form asks for that separately).
+  const pageLocation = lookupLocation(body.page_state, body.page_district);
+
   // 1) ERP first — it is the system sales already works in.
   const erp = await postJson(env.ERP_LEAD_URL || ERP_DEFAULT, {
     ...lead,
     leadId,
     receivedAt,
     ...utm,
+    pageDistrictCode: pageLocation ? pageLocation.district_code : "",
+    pageStateCode: pageLocation ? pageLocation.state_code : "",
     submittedAt: new Date().toISOString(),
   });
   const erpAccepted = erp.ok && erp.json && erp.json.ok !== false;
@@ -128,6 +137,7 @@ export default async function handler(req, res) {
       erpRef,
       erpSync: erpAccepted ? "ok" : "failed",
       owner: env.LEAD_OWNER || "",
+      pageLocation,
     }),
     isTest: lead.isTest,
     submissionId: lead.requestId || leadId,

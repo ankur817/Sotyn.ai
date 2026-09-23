@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import DistrictPage from "../../../components/DistrictPage.astro";
+import { SITE } from "../../../config/site";
+import { publishedDistricts } from "../../../lib/locations.js";
+
+// Routes come from the publication gate, never from the registry. A district
+// with verified geography but no approved evidence record has no URL here.
+export function getStaticPaths() {
+  return publishedDistricts().map((d) => ({
+    params: { state: d.state_slug, district: d.district_slug },
+    props: { district: d },
+  }));
+}
+const { district } = Astro.props;
+const path = `/locations/${district.state_slug}/${district.district_slug}`;
+const schema = [
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Coverage", item: `${SITE.url}/locations` },
+    { "@type": "ListItem", position: 3, name: district.state_name, item: `${SITE.url}/locations/${district.state_slug}` },
+    { "@type": "ListItem", position: 4, name: district.district_name, item: `${SITE.url}${path}` },
+  ]},
+  // Describes the page's subject area. Deliberately NOT LocalBusiness: there is
+  // no office, phone or geo pin for this district, and inventing one would be
+  // a false local-presence claim.
+  { "@context": "https://schema.org", "@type": "WebPage",
+    "@id": `${SITE.url}${path}`,
+    url: `${SITE.url}${path}`,
+    name: `Construction ERP for contractors in ${district.district_name}`,
+    isPartOf: { "@id": `${SITE.url}/#website` },
+    about: { "@id": `${SITE.url}/#software` },
+    inLanguage: "en-IN" },
+];
+---
+<BaseLayout
+  title={`Construction ERP for Contractors in ${district.district_name} | sotyn.ai`}
+  description={`Contractor ERP software for EPC, MEPF, solar and civil firms operating from ${district.district_name}, ${district.state_name}: the workflows worth seeing, what onboarding involves here, and what it costs. Book a demo on your own projects.`}
+  path={path}
+  schema={schema}
+>
+  <DistrictPage district={district} />
+</BaseLayout>

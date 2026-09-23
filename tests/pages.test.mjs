@@ -90,7 +90,7 @@ test("workflow pages send visitors to a demo that knows where they came from", (
 
 test("the demo form accepts only a short slug as context", () => {
   const src = readFileSync(new URL("../src/components/DemoForm.astro", import.meta.url), "utf8");
-  assert.match(src, /\^\[a-z0-9-\]\{1,40\}\$/, "the ?from= value must be validated");
+  assert.match(src, /\^\[a-z0-9-\]\{1,60\}\$/, "the ?from= and location values must be validated as slugs");
   assert.match(src, /FROM_LABELS/);
 });
 

@@ -29,10 +29,20 @@ var LEAD_COLUMNS = [
   "Enquiry type", "Requirement", "Landing page", "Submission page", "Form ID", "Acquisition source",
   "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "Calculator/resource context",
   "Status", "Assigned owner", "Next follow-up", "Demo status", "Qualification", "ERP reference",
-  "ERP sync", "Sheet sync", "Consent", "Is test", "Submission ID"
+  "ERP sync", "Sheet sync", "Consent", "Is test", "Submission ID",
+  "Location page state", "Location page district", "Location page district code"
 ];
 
 var ERROR_COLUMNS = ["Time (IST)", "Lead ID", "Destination", "Error", "Recovery status"];
+
+// Columns are located by header NAME, never by position, so appending a column
+// (e.g. the location fields added 2026-09-23) cannot break de-duplication or
+// anything the sales team has added to the right of the sheet.
+function columnIndex_(sh, header) {
+  var row = sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), 1)).getValues()[0];
+  for (var i = 0; i < row.length; i++) if (row[i] === header) return i + 1;
+  return 0;
+}
 
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -48,9 +58,14 @@ function setup() {
 function ensureSheet_(ss, name, columns) {
   var sh = ss.getSheetByName(name);
   if (!sh) sh = ss.insertSheet(name);
-  var first = sh.getRange(1, 1, 1, columns.length).getValues()[0];
-  if (first.join("") !== columns.join("")) {
-    sh.getRange(1, 1, 1, columns.length).setValues([columns]).setFontWeight("bold");
+  // Only ever ADD headers. An existing header is left exactly as it is, so a
+  // sheet the sales team has customised is never overwritten by a redeploy.
+  var width = Math.max(sh.getLastColumn(), columns.length);
+  var first = sh.getRange(1, 1, 1, width).getValues()[0];
+  for (var c = 0; c < columns.length; c++) {
+    if (first[c] !== columns[c] && !first[c]) {
+      sh.getRange(1, c + 1).setValue(columns[c]).setFontWeight("bold");
+    }
   }
   return sh;
 }
@@ -105,10 +120,11 @@ function findRow_(ss, leadId, submissionId) {
   if (!sh || sh.getLastRow() < 2) return 0;
   var n = sh.getLastRow() - 1;
   var ids = sh.getRange(2, 1, n, 1).getValues();                       // Lead ID
-  var subs = sh.getRange(2, LEAD_COLUMNS.length, n, 1).getValues();    // Submission ID
+  var subCol = columnIndex_(sh, "Submission ID");
+  var subs = subCol ? sh.getRange(2, subCol, n, 1).getValues() : [];
   for (var i = 0; i < n; i++) {
     if (leadId && ids[i][0] === leadId) return i + 2;
-    if (submissionId && subs[i][0] && subs[i][0] === submissionId) return i + 2;
+    if (submissionId && subs.length && subs[i][0] && subs[i][0] === submissionId) return i + 2;
   }
   return 0;
 }

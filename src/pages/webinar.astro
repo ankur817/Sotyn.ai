@@ -5,21 +5,31 @@ import Icon from "../components/Icon.astro";
 import { SITE } from "../config/site";
 const w = SITE.webinar;
 
-const eventSchema = [{
-  "@context": "https://schema.org",
-  "@type": "Event",
-  name: w.title,
-  description: w.subtitle,
-  eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
-  eventStatus: "https://schema.org/EventScheduled",
-  organizer: { "@type": "Organization", name: SITE.name, url: SITE.url },
-  performer: { "@type": "Person", name: w.host },
-  location: { "@type": "VirtualLocation", url: SITE.url + "/webinar" },
-}];
+// Event markup is emitted ONLY when a real dated instance exists. The schedule
+// is currently a recurring string ("Every Saturday · 7:00 PM IST"), and an Event
+// without a startDate is invalid — and claiming eventStatus: EventScheduled for
+// a session with no date would be asserting something we cannot support.
+// Set SITE.webinar.startDate to an ISO datetime and the markup returns.
+const eventSchema = w.startDate
+  ? [{
+      "@context": "https://schema.org",
+      "@type": "Event",
+      name: w.title,
+      description: w.subtitle,
+      startDate: w.startDate,
+      eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
+      eventStatus: "https://schema.org/EventScheduled",
+      // Reference the one Organization entity rather than declaring a second,
+      // differently-named copy of the same company.
+      organizer: { "@id": `${SITE.url}/#organization` },
+      performer: { "@type": "Person", name: w.host },
+      location: { "@type": "VirtualLocation", url: SITE.url + "/webinar" },
+    }]
+  : [];
 ---
 <BaseLayout
-  title={`${w.title} — free masterclass for contractors | sotyn.ai`}
-  description={`${w.subtitle} A free live masterclass by ${w.host}. ${w.seats}. Register now.`}
+  title={`${w.title} | sotyn.ai`}
+  description={`${w.subtitle} Free live masterclass by ${w.host}.`}
   path="/webinar"
   schema={eventSchema}
 >

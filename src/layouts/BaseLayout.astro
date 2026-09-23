@@ -98,11 +98,42 @@ const appSchema = {
     availability: "https://schema.org/InStock",
     description:
       "Annual subscription, billed yearly. One-time onboarding is charged separately. A demo is free.",
+    eligibleRegion: { "@type": "Country", name: "India" },
   },
-  areaServed: { "@type": "Country", name: "India" },
 };
 
-const allSchema = [orgSchema, appSchema, ...schema];
+// The site entity. No SearchAction: there is no site search, and declaring one
+// that does not exist would be a false claim.
+const siteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE.url}/#website`,
+  url: SITE.url,
+  name: SITE.name,
+  publisher: { "@id": `${SITE.url}/#organization` },
+  inLanguage: "en-IN",
+};
+
+// A "page not found" is not a product page: no SoftwareApplication or offer is
+// emitted on noindex utility pages.
+const allSchema = noindex ? [orgSchema, ...schema] : [orgSchema, siteSchema, appSchema, ...schema];
+
+// ── Analytics ── one stack only (docs/lead-and-analytics-spec.md §2).
+const ga4 = SITE.analytics.ga4MeasurementId;
+const gtm = SITE.analytics.gtmContainerId;
+if (ga4 && gtm) {
+  throw new Error(
+    "SITE.analytics: set ga4MeasurementId OR gtmContainerId, never both — " +
+      "two tags double-count every pageview. See docs/lead-and-analytics-spec.md §2."
+  );
+}
+// gtag.js. anonymize_ip on; no PII is ever passed (spec §2 forbids it).
+const gaInline = ga4
+  ? `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${ga4}',{anonymize_ip:true});`
+  : "";
+const gtmInline = gtm
+  ? `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`
+  : "";
 
 // Meta (Facebook) Pixel — built here as a plain string, injected via set:html.
 const fbPixel = SITE.metaPixelId
@@ -139,6 +170,11 @@ const fbNoscript = SITE.metaPixelId
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
 
+    <!-- Google Search Console ownership (set SITE.googleSiteVerification) -->
+    {SITE.googleSiteVerification && (
+      <meta name="google-site-verification" content={SITE.googleSiteVerification} />
+    )}
+
     <!-- Brand / perf -->
     <meta name="theme-color" content="#163a72" />
     <meta name="author" content={SITE.parentCompany} />
@@ -158,11 +194,21 @@ const fbNoscript = SITE.metaPixelId
       <script type="application/ld+json" set:html={JSON.stringify(s)} />
     ))}
 
+    <!-- Analytics — exactly one of these can be active (see SITE.analytics) -->
+    {ga4 && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga4}`} />}
+    {gaInline && <script is:inline set:html={gaInline} />}
+    {gtmInline && <script is:inline set:html={gtmInline} />}
+
     <!-- Meta (Facebook) Pixel — for ad → webinar → buy tracking. Set SITE.metaPixelId. -->
     {fbPixel && <script is:inline set:html={fbPixel} />}
     {fbNoscript && <noscript set:html={fbNoscript} />}
   </head>
   <body>
+    {gtm && (
+      <noscript
+        set:html={`<iframe src="https://www.googletagmanager.com/ns.html?id=${gtm}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`}
+      />
+    )}
     <a href="#main" class="sr-only">Skip to content</a>
     <Header />
     <main id="main">

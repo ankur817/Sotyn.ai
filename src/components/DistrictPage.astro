@@ -1,0 +1,208 @@
+---
+/**
+ * District page body. Rendered only for districts that passed the publication
+ * gate in src/data/locations/publication.json, so every local statement here
+ * comes from an approved evidence record rather than from a template variable.
+ *
+ * The page must stand up without its district name: if removing the name makes
+ * it identical to the national page, it should not have been approved.
+ */
+import Icon from "./Icon.astro";
+import { SITE } from "../config/site";
+export interface Props { district: any }
+const { district } = Astro.props;
+const p = district.publication;
+const WORKFLOW_LABELS = {
+  "/construction-procurement-software": { t: "Procurement & purchase approvals", d: "Site indent → vendor rate comparison → L1/L2 approval → PO → receiving → debit note." },
+  "/subcontractor-billing-software": { t: "Subcontractor bill checking", d: "Measured quantity against the agreed rate master, with advances, retention and TDS applied by rule." },
+  "/ra-billing-software": { t: "RA billing to your client", d: "Bills ready the day a daily report is approved, with GST, TDS and retention computed." },
+  "/material-reconciliation": { t: "BOQ vs actual consumption", d: "What you quoted against what the site consumed, per line and per site." },
+  "/reduce-project-delays": { t: "Daily progress reporting", d: "Site progress filed daily from a phone, so slippage shows up the same day." },
+  "/construction-erp-implementation": { t: "Implementation & migration", d: "Masters, live projects, BOQs and opening balances moved off Excel." },
+};
+const DELIVERY = {
+  remote: "Onboarding and support for this district are delivered online.",
+  "remote+visits": "Onboarding is online, with on-site visits by arrangement for this district.",
+  "on-site team": "This district is served by our own team on the ground as well as online.",
+};
+---
+<nav class="crumb" aria-label="Breadcrumb">
+  <div class="container">
+    <a href="/">Home</a> <span aria-hidden="true">/</span>
+    <a href="/locations">Coverage</a> <span aria-hidden="true">/</span>
+    <a href={`/locations/${district.state_slug}`}>{district.state_name}</a> <span aria-hidden="true">/</span>
+    <span>{district.district_name}</span>
+  </div>
+</nav>
+
+<!-- A. BUYER FIT -->
+<section class="section">
+  <div class="container container--narrow text-center">
+    <span class="eyebrow">{district.district_name}, {district.state_name}</span>
+    <h1>Construction ERP for EPC and MEP contractors in {district.district_name}</h1>
+    <p class="lead" style="margin-inline:auto">
+      sotyn.ai is software that a contracting company runs its own business on — projects, procurement,
+      site reporting, billing and collections in one system. It is not a service that builds anything,
+      and it is not a list of contractors to hire. If you run EPC, MEPF, solar, civil or industrial
+      contracts from {district.district_name}, this page explains what implementation here actually involves.
+    </p>
+    <div class="btn-row" style="justify-content:center;margin-top:26px">
+      <a href={`/demo?from=district&state=${district.state_slug}&district=${district.district_slug}`} class="btn btn--primary btn--lg">Book a contractor-software demo</a>
+      <a href="/construction-erp-implementation" class="btn btn--ghost btn--lg">How implementation works</a>
+    </div>
+  </div>
+</section>
+
+<!-- B. LOCAL CONTEXT — approved evidence only -->
+<section class="section section--alt">
+  <div class="container container--narrow">
+    <div class="sec-head text-center">
+      <span class="eyebrow">Why this page exists</span>
+      <h2>What is different about {district.district_name}</h2>
+    </div>
+    <p class="dp-reason">{p.reason_page_exists}</p>
+    <ul class="dp-evidence">
+      {p.evidence.map((e) => <li><Icon name="check" size={17} /> <span>{e}</span></li>)}
+    </ul>
+    <p class="dp-delivery"><Icon name="alert" size={16} /> {DELIVERY[p.delivery_mode] || DELIVERY.remote}{p.support_note ? " " + p.support_note : ""} Anything beyond that is agreed in writing before you commit — we do not claim a local team, site visits or local-language support we do not have.</p>
+  </div>
+</section>
+
+<!-- C. RELEVANT WORKFLOWS -->
+<section class="section">
+  <div class="container container--narrow">
+    <div class="sec-head text-center">
+      <span class="eyebrow">Where contractors here lose money</span>
+      <h2>The workflows worth seeing first</h2>
+    </div>
+    <div class="dp-flows">
+      {p.workflows.map((href) => {
+        const w = WORKFLOW_LABELS[href];
+        return w ? (
+          <a class="dp-flow" href={href}>
+            <h3>{w.t}</h3>
+            <p>{w.d}</p>
+            <span class="dp-flow__go">See the workflow <Icon name="arrow-right" size={15} /></span>
+          </a>
+        ) : null;
+      })}
+    </div>
+    <p class="dp-note">Each of these is a national page with the full workflow, a worked example on labelled sample data, and what the software does <em>not</em> do. Nothing about them changes by district.</p>
+  </div>
+</section>
+
+<!-- D + E. EVIDENCE AND IMPLEMENTATION -->
+<section class="section section--alt">
+  <div class="container container--narrow">
+    <div class="sec-head text-center">
+      <span class="eyebrow">What onboarding takes</span>
+      <h2>What we do, and what your team has to do</h2>
+    </div>
+    <ul class="dp-impl">
+      <li><strong>You provide:</strong> exports of your item, vendor and rate masters, your live projects with BOQs, and outstanding balances. Someone on your side has to be able to say which of three rates is the right one.</li>
+      <li><strong>We do:</strong> migration and de-duplication of those masters, project and BOQ setup, opening balances, and two training sessions split by role — site staff and office staff separately, on your own data.</li>
+      <li><strong>Go-live:</strong> agreed acceptance criteria in writing — which workflows must run in the system, who signs each off, and the date the spreadsheets stop.</li>
+      <li><strong>Typical duration:</strong> about four weeks for a mid-sized contractor. Larger or multi-company groups take longer, and we say so before you commit.</li>
+    </ul>
+    <p class="dp-note">
+      Product screens shown in a demo are our own live company's data, shown with permission.
+      We do not present sample dashboards as another contractor's results, and there is no
+      customer case study for {district.district_name} unless one is published with that customer's consent.
+    </p>
+  </div>
+</section>
+
+<!-- F + G. COMMERCIALS AND A USEFUL RESOURCE -->
+<section class="section">
+  <div class="container container--narrow">
+    <div class="dp-two">
+      <div class="dp-card">
+        <h3>What it costs</h3>
+        <p>
+          The same everywhere in India: from {SITE.pricing.currency}{SITE.pricing.plans[0].price}{SITE.pricing.plans[0].per} per company
+          with unlimited site users, plus a one-time onboarding fee from {SITE.pricing.currency}{SITE.pricing.setup.bands[0].fee}.
+          There is no district pricing and no local discount.
+        </p>
+        <a class="btn btn--ghost" href="/pricing">See full pricing</a>
+      </div>
+      <div class="dp-card">
+        <h3>Work out your own numbers first</h3>
+        <p>
+          Before you talk to anyone, put your figures through the calculators: what a delayed project costs
+          per day, what is locked in retention, and what an RA bill actually nets after GST, TDS and retention.
+        </p>
+        <a class="btn btn--ghost" href="/tools">Open the calculators</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- H. BUYER QUESTIONS -->
+<section class="section section--alt">
+  <div class="container container--narrow">
+    <div class="sec-head text-center">
+      <span class="eyebrow">Questions contractors here ask</span>
+      <h2>Straight answers</h2>
+    </div>
+    <div class="dp-faq">
+      <details><summary>Do you have an office in {district.district_name}?</summary>
+        <p>{p.office_here
+          ? `Yes — our office is at ${SITE.address.street}, ${SITE.address.city} ${SITE.address.postalCode}, and the team that built sotyn.ai runs its own contracting business from here. Support and onboarding are still delivered online, the same as everywhere else; we are not offering site visits as part of the subscription.`
+          : `No. Our office is in ${SITE.address.city}, ${SITE.address.region}. Onboarding and support for ${district.district_name} are delivered online, and we would rather say that plainly than imply a local branch.`}</p>
+      </details>
+      <details><summary>Can my site staff use it on their phones?</summary>
+        <p>Yes — through the browser, on any phone, and site users are not charged per seat. Native Android and iOS apps are not released yet.</p>
+      </details>
+      <details><summary>We run on Tally and Excel. Do we start over?</summary>
+        <p>No. Your masters, live projects, BOQs, vendors and opening balances are migrated at setup. Accounting stays where your accountant wants it; projects, procurement and billing move here.</p>
+      </details>
+      <details><summary>Is support available in my language?</summary>
+        <p>Support is in English today. Other Indian languages are being rolled out, and we will not promise support in one before it is real.</p>
+      </details>
+      <details><summary>What if it does not suit us?</summary>
+        <p>{SITE.pricing.guarantee}. {SITE.pricing.guaranteeNote}</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- I. CONVERSION -->
+<section class="section section--dark">
+  <div class="container container--narrow text-center">
+    <h2 style="color:#fff">See it on your own projects.</h2>
+    <p class="lead" style="margin-inline:auto;color:#cbd5e1">
+      Twenty minutes on your trades, your project sizes and your billing. Nothing is booked until you
+      confirm a time that suits you.
+    </p>
+    <div class="btn-row" style="justify-content:center">
+      <a href={`/demo?from=district&state=${district.state_slug}&district=${district.district_slug}`} class="btn btn--primary btn--lg">Book a demo</a>
+      <a href={`/locations/${district.state_slug}`} class="btn btn--ghost btn--lg">Coverage in {district.state_name}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .dp-reason { font-size: 1.05rem; line-height: 1.7; margin: 0 0 18px; }
+  .dp-evidence { list-style: none; padding: 0; margin: 0 0 18px; display: grid; gap: 11px; }
+  .dp-evidence li { display: flex; gap: 11px; align-items: flex-start; line-height: 1.6; }
+  .dp-evidence :global(.ico) { flex: none; margin-top: 4px; color: var(--brand-600); }
+  .dp-delivery { display: flex; gap: 10px; align-items: flex-start; font-size: .94rem; color: var(--muted); border-left: 3px solid var(--brand-500); padding-left: 13px; margin: 0; }
+  .dp-flows { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .dp-flow { display: block; padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-elevated, #fff); text-decoration: none; color: inherit; transition: .2s; }
+  .dp-flow:hover { border-color: var(--brand-500); transform: translateY(-2px); }
+  .dp-flow h3 { margin: 0 0 8px; font-size: 1.05rem; }
+  .dp-flow p { margin: 0 0 12px; font-size: .92rem; color: var(--muted); line-height: 1.55; }
+  .dp-flow__go { font-size: .87rem; font-weight: 700; color: var(--brand-700); display: inline-flex; gap: 5px; align-items: center; }
+  .dp-note { font-size: .88rem; color: var(--muted); margin: 18px 0 0; line-height: 1.6; }
+  .dp-impl { list-style: none; padding: 0; margin: 0; display: grid; gap: 13px; }
+  .dp-impl li { line-height: 1.65; padding-left: 15px; border-left: 2px solid var(--line); }
+  .dp-two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .dp-card { padding: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-elevated, #fff); }
+  .dp-card h3 { margin: 0 0 10px; }
+  .dp-card p { color: var(--muted); line-height: 1.6; margin: 0 0 16px; }
+  .dp-faq details { border-bottom: 1px solid var(--line); padding: 14px 0; }
+  .dp-faq summary { cursor: pointer; font-weight: 600; }
+  .dp-faq summary:focus-visible { outline: 3px solid var(--brand-500); outline-offset: 3px; }
+  .dp-faq p { margin: 10px 0 0; color: var(--muted); line-height: 1.65; }
+  @media (max-width: 720px) { .dp-two { grid-template-columns: 1fr; } }
+</style>
