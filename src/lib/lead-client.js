@@ -68,7 +68,11 @@ export async function submitLead(endpoint, payload, { requestId, timeoutMs = 120
   try {
     const res = await doFetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-Request-Id": requestId },
+      // Only simple headers. The lead endpoint's CORS allow-list is
+      // `Content-Type` alone, so any custom header (an X-Request-Id, say) makes
+      // the preflight fail and every browser submission is blocked before it is
+      // sent. Idempotency therefore travels in the body as `requestId`.
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...payload, requestId }),
       signal: controller ? controller.signal : undefined,
     });
