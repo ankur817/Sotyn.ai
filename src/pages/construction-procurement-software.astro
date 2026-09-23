@@ -1,0 +1,90 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProblemPage from "../components/ProblemPage.astro";
+import { SITE } from "../config/site";
+
+// Cluster C (procurement & inventory) — see docs/keyword-map.md.
+// Every capability below is one the product already ships: RFQ Queue,
+// Vendors & Item Master, Indent → Dispatch, Inventory, PO pipeline with
+// L1/L2 approvals, debit notes, receiving. Nothing here is roadmap.
+const data = {
+  crumbName: "Procurement",
+  eyebrow: "Procurement & purchase control",
+  h1: "Construction procurement software — indent to purchase order to receipt.",
+  lead: "Site raises an indent, the office compares vendor rates, the right person approves it, and the PO, the delivery and the bill all trace back to that one request. For Indian EPC, MEP, solar and civil contractors buying across several sites at once.",
+  ctaLabel: "See procurement approvals",
+  ctaHref: "/demo?from=procurement",
+  calcHref: "/tools/material-wastage",
+  calcLabel: "Cost your material leakage",
+  whyTitle: "Why buying leaks margin on site",
+  why: [
+    "Site phones the office; the office phones a vendor. Nothing is written down until the bill arrives.",
+    "Rates are agreed verbally, so nobody can check what was quoted against what was charged.",
+    "Two sites buy the same item in the same week, at two different prices.",
+    "Material arrives without anyone matching it to a purchase order — or to the BOQ it was meant for.",
+    "Approvals happen over WhatsApp, so when a purchase is questioned there is no trail.",
+  ],
+  howTitle: "What the system actually does",
+  howLead: "One chain of custody from the request to the payment, with the approval recorded at each step.",
+  steps: [
+    { icon: "box", t: "Indent from the site, on a phone", d: "The site raises what it needs against a project. The request carries who asked, for which site and against which BOQ line — before anyone calls a vendor." },
+    { icon: "layers", t: "RFQ queue: compare before you commit", d: "Send the same requirement to several vendors and compare their rates side by side in one view, instead of three separate WhatsApp threads." },
+    { icon: "check", t: "L1 / L2 approval, recorded", d: "Value-based approval levels. The approver sees the comparison they are approving, and the decision is stamped with a name and a time in the audit log." },
+    { icon: "wallet", t: "PO → dispatch → receiving → debit note", d: "The purchase order, the dispatch, what actually arrived and any short supply or rejection all hang off the original indent. Debit notes close the loop with the vendor." },
+    { icon: "gauge", t: "Stock that reflects the site, not a guess", d: "Inventory updates on receipt, so the next indent starts from what you already have — including tools and rented kit sitting idle." },
+  ],
+  workedExample: {
+    title: "One purchase, end to end",
+    intro: "Sample data, not a customer record — this is the shape of the trail the system keeps.",
+    rows: [
+      { step: "1. Indent", who: "Site engineer, Project A", in: "120 m of 4-core 16 sq mm cable, needed Thursday, against BOQ line 4.2", out: "Indent IND-118, linked to the project and the BOQ line" },
+      { step: "2. RFQ", who: "Purchase desk", in: "IND-118 sent to three approved vendors from the vendor master", out: "Three rates against one specification, compared in a single view" },
+      { step: "3. Approval", who: "Approver at the value band", in: "Lowest compliant rate, with the comparison attached", out: "Approved with a name, a time and a reason — visible in the audit log" },
+      { step: "4. Purchase order", who: "Purchase desk", in: "Approved vendor and rate", out: "PO-0442 issued against IND-118, with delivery date and site" },
+      { step: "5. Receiving", who: "Store at site", in: "112 m delivered against 120 m ordered", out: "Short receipt recorded; stock rises by 112 m; the gap stays open on the PO" },
+      { step: "6. Settlement", who: "Accounts", in: "Vendor bill for 120 m", out: "Bill checked against receipt, debit note raised for the 8 m difference" },
+    ],
+    note: "Every row above is a step the product supports today. The figures are illustrative.",
+  },
+  limits: {
+    title: "What this does not do",
+    items: [
+      "It does not read quantities off drawings. Procurement starts from a BOQ or an indent you raise, not from a DWG or a BIM model.",
+      "It does not connect to vendor portals or e-tender platforms. RFQs go to your own approved vendor list.",
+      "Approval levels are configured during onboarding to match how your company already signs off. That is setup work, not a switch you flip on day one.",
+      "Rate contracts, GST rates and vendor masters are only as good as the data imported at setup — budget time for cleaning them.",
+      "Mobile use is through the web app on any phone. Native Android and iOS apps are not released yet.",
+    ],
+  },
+  proofText: "Verified: this is the procurement chain Secured Engineers runs its own multi-site EPC buying on — the company that built sotyn.ai and is its first customer.",
+  faqs: [
+    { q: "Can site staff raise an indent without a login to the whole system?", a: "Site users get their own role-limited access — they raise indents and see their own site, not company finances. Site users are not charged per seat, so adding a storekeeper costs nothing." },
+    { q: "How do approvals work for a large purchase?", a: "Approval levels are value-based (L1, L2). The approver sees the vendor comparison behind the request, and the approval is recorded in the audit log with who approved it and when." },
+    { q: "Can we compare vendor quotations inside the system?", a: "Yes. The RFQ queue puts the rates from your approved vendors against one specification in a single comparison, so the decision and the reason for it are both on record." },
+    { q: "Does it track material across sites?", a: "Yes — inventory is per site, and movements between sites are recorded, so stock at Site B is visible before Site A orders more." },
+    { q: "What about material that was bought but over-consumed?", a: "That is the reconciliation side: BOQ versus actual consumption, per line and per site. See material reconciliation." },
+  ],
+  related: [
+    { name: "Material reconciliation", href: "/material-reconciliation" },
+    { name: "Subcontractor billing", href: "/subcontractor-billing-software" },
+    { name: "RA billing", href: "/ra-billing-software" },
+    { name: "The platform", href: "/platform" },
+  ],
+};
+
+const schema = [
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Platform", item: `${SITE.url}/platform` },
+    { "@type": "ListItem", position: 3, name: data.crumbName, item: `${SITE.url}/construction-procurement-software` },
+  ]},
+];
+---
+<BaseLayout
+  title="Construction Procurement Software — indent, approval & PO | sotyn.ai India"
+  description="Procurement software for Indian EPC, MEP and solar contractors: site indents, RFQ rate comparison, L1/L2 purchase approvals, POs, receiving and debit notes — with stock per site. See a worked example, then book a demo."
+  path="/construction-procurement-software"
+  schema={schema}
+>
+  <ProblemPage data={data} />
+</BaseLayout>

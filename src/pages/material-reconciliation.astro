@@ -4,6 +4,7 @@ import ProblemPage from "../components/ProblemPage.astro";
 import { SITE } from "../config/site";
 
 const data = {
+  ctaLabel: "See BOQ vs actual consumption", ctaHref: "/demo?from=material-reconciliation",
   crumbName: "Material reconciliation",
   eyebrow: "Material reconciliation",
   h1: "Know what you consumed vs what you quoted — per line, per site.",
@@ -30,8 +31,9 @@ const data = {
     { q: "Can I see it working before I commit?", a: "Yes. In the demo we open the real system on our own live projects — no mockups, no staged data." },
   ],
   related: [
-    { name: "Reduce project delays", href: "/reduce-project-delays" },
+    { name: "Procurement & approvals", href: "/construction-procurement-software" },
     { name: "Accelerate RA billing", href: "/ra-billing-software" },
+    { name: "Reduce project delays", href: "/reduce-project-delays" },
     { name: "The platform", href: "/platform" },
   ],
 };
