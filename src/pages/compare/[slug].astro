@@ -24,9 +24,9 @@ export function getStaticPaths() {
     metaTitle: "sotyn.ai vs RDash: An Honest Comparison for EPC Contractors (2026)",
     metaDesc: "sotyn.ai vs RDash for EPC contractors — EPC-native billing, AI BOQ quoting and ₹/day TOC costing, built by a live EPC company. An honest, side-by-side comparison.",
     tag: "Generalist construction platform vs EPC-native depth",
-    coreDiff: "RDash is a capable, well-funded construction-management platform with a genuinely simple interface and reach across many construction segments. sotyn.ai is narrower on purpose: it's built by Secured Engineers — a 14-year EPC company — to run its own 535+ projects across 18 states, and then offered to peers. That origin shows up in the parts generalists tend to simplify: EPC-native billing, BOQ-to-quote pricing, and costing bottlenecks in rupees per day.",
-    strong: ["Well-funded with a strong national brand", "Simple, polished interface", "Serves construction broadly, beyond EPC"],
-    vals: ["General billing*", "Estimation module*", "Yes", "Attendance; payroll*", "Dashboards, not ₹/day TOC", "No — software company", "*", "Sales-led / quote", "Deployment guarantee"],
+    coreDiff: "RDash is a capable construction-management platform with a genuinely simple interface and reach across many construction segments. sotyn.ai is narrower on purpose: it's built by Secured Engineers — a 14-year EPC company — to run its own 535+ projects across 18 states, and then offered to peers. That origin shows up in the parts generalists tend to simplify: EPC-native billing, BOQ-to-quote pricing, and costing bottlenecks in rupees per day.",
+    strong: ["Simple, polished interface", "Serves construction broadly, beyond EPC", "90-day deployment guarantee"],
+    vals: ["General billing*", "Estimation module*", "Yes", "Attendance/payroll not stated*", "Dashboards, not ₹/day TOC", "No — software company", "*", "USD 1,000/user/yr published*", "Deployment guarantee"],
     them: "If you run mixed construction beyond EPC, want a big-brand vendor with outside funding, or prefer their specific UI, RDash is a fair pick — demo both.",
     win: "If you need RA/MB/T&C billing that matches your measurement book, BOQ-to-quote pricing with per-line margin, and a CMD console that costs delays in ₹/day — from a team that runs an EPC business on it daily — sotyn.ai was built for exactly you.",
   },
@@ -36,20 +36,20 @@ export function getStaticPaths() {
     metaDesc: "sotyn.ai vs Powerplay — a full quote-to-cash EPC ERP versus a site-collaboration app. Compare billing, procurement, payroll and owner dashboards.",
     tag: "Site-collaboration app vs full quote-to-cash ERP",
     coreDiff: "Powerplay is loved for field and daily-progress collaboration — it's a strong site app. sotyn.ai is a full ERP: the same site execution, plus EPC billing, procurement, HRMS-payroll, quotation and an owner's control tower in one system, so money and site live together.",
-    strong: ["Excellent field / DPR experience", "Popular with site teams", "Low-friction freemium entry"],
-    vals: ["Basic billing*", "Estimation*", "Material & PO mgmt", "Attendance*", "Reports, not ₹/day TOC", "No", "*", "Freemium + paid", "—"],
+    strong: ["Excellent field / DPR experience", "Popular with site teams", "Free trial to get started"],
+    vals: ["Billing scope not stated*", "Estimation*", "Material & PO mgmt", "Attendance + payroll", "Reports, not ₹/day TOC", "No", "*", "Not published*", "—"],
     them: "If all you need is site updates and task collaboration for a small team, Powerplay is quick and pleasant to start with.",
     win: "If you want the site AND the money — billing, cash, procurement and payroll — in one system that an owner can run the whole company from, sotyn.ai goes further.",
   },
   "sotyn-vs-onsite": {
     name: "Onsite",
     metaTitle: "sotyn.ai vs Onsite: EPC ERP vs Site Tracker (2026)",
-    metaDesc: "sotyn.ai vs Onsite — compare a full EPC ERP with EPC billing, procurement and payroll against a simple site-tracking app for small teams.",
-    tag: "SMB site-tracking vs EPC billing + procurement + payroll",
-    coreDiff: "Onsite is simple site and expense tracking that very small teams start with quickly. sotyn.ai is built for contractors who've outgrown that — where BOQ quoting, RA/MB billing, procurement approvals and payroll all need to be in one place.",
-    strong: ["Very simple for tiny teams", "Fast to start", "Low cost of entry"],
-    vals: ["Simple billing*", "Estimation*", "Basic PO", "Attendance", "Dashboards", "No", "*", "Freemium + paid", "—"],
-    them: "If you're a one-or-two-site operation that mainly needs to log site activity and expenses, Onsite is an easy first step.",
+    metaDesc: "sotyn.ai vs Onsite — per-company pricing with unlimited site users against Onsite's published per-user pricing. Compare EPC billing, procurement and payroll.",
+    tag: "Per-user pricing vs one price per company, with EPC bill types",
+    coreDiff: "Onsite covers project tracking, procurement and billing and is priced per user — ₹12,000 per user per year with a five-user minimum, plus paid add-ons for Tally and Zoho integrations (their published pricing, checked September 2026). sotyn.ai is priced per company instead, so every site worker is included, and it ships with EPC bill types — RA, MB and T&C — that Onsite does not name publicly.",
+    strong: ["Fast to start", "Publishes its pricing openly", "Integrations with Tally, Zoho Books, SAP and Excel"],
+    vals: ["Client invoicing & vendor billing; RA/MB not stated*", "Estimation*", "Procurement + multi-level approvals", "GPS attendance*", "Dashboards", "No", "*", "₹12,000/user/yr, min 5 users*", "—"],
+    them: "If you have a small office team and want per-user pricing with published integrations to Tally or Zoho Books, Onsite is a straightforward choice — and they serve EPC companies too. Compare the per-user total against a per-company price at your headcount.",
     win: "The day you need real EPC billing, procurement approvals and payroll — not just tracking — sotyn.ai is the system you grow into.",
   },
   "sotyn-vs-procore": {
@@ -58,8 +58,8 @@ export function getStaticPaths() {
     metaDesc: "sotyn.ai vs Procore — India-priced, EPC-native and GST-ready versus a global enterprise construction platform. Compare fit, price and billing for Indian EPC.",
     tag: "Global enterprise platform vs India-priced, EPC-native",
     coreDiff: "Procore is a mature, deep, global platform — and priced and built for that market. sotyn.ai is built for Indian EPC reality: RA/MB/T&C bill types with GST, ₹-based costing, data hosted in India, at a price a ₹5–100 Cr contractor can actually run on.",
-    strong: ["Deep enterprise feature set", "Large integration ecosystem", "Mature, global product"],
-    vals: ["Global types, not India EPC", "Estimating add-on*", "Yes (enterprise)", "Via integrations*", "Analytics, not ₹/day TOC", "No — US software co.", "Global cloud*", "Enterprise quote", "—"],
+    strong: ["Deep enterprise feature set", "500+ integrations in their marketplace", "Unlimited users in every contract"],
+    vals: ["Global types, not India EPC*", "Estimating add-on*", "Yes*", "Resource management; payroll not stated*", "Analytics, not ₹/day TOC", "No — US software co.", "India residency not stated*", "Priced by product + construction volume*", "—"],
     them: "If you're a large enterprise with global operations and the budget to match, Procore's depth is hard to beat.",
     win: "If you're an Indian EPC contractor who needs GST-ready RA/MB billing and India-hosted data without an enterprise price tag, sotyn.ai fits the way you actually work.",
   },
@@ -70,7 +70,7 @@ export function getStaticPaths() {
     tag: "Horizontal suite you configure vs vertical ERP that ships EPC-ready",
     coreDiff: "Zoho is a broad, affordable suite you assemble and configure into a workflow. sotyn.ai arrives already shaped for EPC — BOQ estimation, RA/MB/T&C billing and site execution are built in, not something you stitch together across Books, Projects, Inventory and People.",
     strong: ["Vast, affordable ecosystem", "Low per-user cost", "Familiar to many teams"],
-    vals: ["Generic invoicing (Books)", "No BOQ-native*", "Via Zoho Inventory", "Zoho People (add-on)", "Analytics, DIY", "No — software suite", "India DC available", "Per-user, public", "—"],
+    vals: ["Generic invoicing (Books)", "BOQ not native*", "Via Zoho Inventory", "Zoho People (add-on)", "Analytics, DIY", "No — software suite", "India DC available", "Per-user, public", "—"],
     them: "If you have the appetite to configure and maintain a suite, and want the wider Zoho ecosystem, it's flexible and cheap per seat.",
     win: "If you'd rather buy software that already knows what an RA bill and a BOQ are — and never pay per site worker — sotyn.ai is EPC-ready on day one.",
   },
@@ -80,8 +80,8 @@ export function getStaticPaths() {
     metaDesc: "sotyn.ai vs Odoo — a done-for-you, EPC-native ERP versus a flexible open-source platform that depends on an implementer. Compare fit, billing and onboarding.",
     tag: "Implementer-dependent open ERP vs done-for-you EPC onboarding",
     coreDiff: "Odoo is a powerful, flexible open-source ERP — but for EPC it depends heavily on an implementer to build and maintain the workflows. sotyn.ai ships EPC-native and is onboarded for you by a team that runs an EPC company, so you go live on your real data fast.",
-    strong: ["Highly flexible and modular", "Open-source foundation", "Broad app library"],
-    vals: ["Generic accounting", "No BOQ-native", "Purchase module", "Odoo HR (config)", "DIY dashboards", "No — open-source ERP", "Self/partner hosted", "Per-user + implementer", "—"],
+    strong: ["Highly flexible and modular", "Open-source foundation", "A free tier for a single app, unlimited users"],
+    vals: ["Generic accounting*", "BOQ not native*", "Purchase module", "Odoo HR (config)*", "DIY dashboards", "No — open-source ERP", "Odoo Online, or self/partner hosted", "From ₹725/user/mo + implementer*", "—"],
     them: "If you have strong in-house or partner ERP capability and want total flexibility, Odoo can be shaped into almost anything.",
     win: "If you'd rather not run an ERP project — and just want EPC billing, quoting and payroll working next month — sotyn.ai is done for you.",
   },
@@ -135,7 +135,7 @@ const breadcrumb = {
           </tbody>
         </table>
       </div>
-      <p class="ctable-note"><span class="vf">*</span> Verify against {r.name}'s current product before relying on it — we keep this fair and up to date, and never overstate a rival's gaps.</p>
+      <p class="ctable-note"><span class="vf">*</span> Checked against {r.name}'s own website in September 2026. Where their public pages don't state something, we say so rather than assume they can't do it — verify against their current product before relying on this.</p>
     </div>
   </section>
 

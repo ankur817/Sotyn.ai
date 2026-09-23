@@ -122,7 +122,42 @@ Tracking on the live site: no GA4 or GTM tag was found in the page source (SOURC
 
 ---
 
-## 7. Rollback
+## 8. Second pass — competitor accuracy, calculators, performance (same branch)
+
+### Competitor claims corrected on `/compare/*`
+Each rival's own website was fetched on 2026-09-23. Claims that their public pages contradict, or do not support, were corrected. Full evidence in [keyword-map.md](keyword-map.md) and below.
+
+| Page | Was | Now | Why |
+|---|---|---|---|
+| `/compare/sotyn-vs-onsite` | "Freemium + paid", "Low cost of entry" | "₹12,000/user/yr, min 5 users", integrations named | **Contradicted.** Onsite publishes per-user pricing with a ₹60,000/yr five-user floor and **no free tier**. The old claim was both false and against sotyn.ai's own interest — a per-company price beats a per-user floor, and the page was giving that away |
+| `/compare/sotyn-vs-onsite` | "Basic PO", "Simple billing*" | "Procurement + multi-level approvals", "Client invoicing & vendor billing; RA/MB not stated*" | Onsite names multi-level approvals, procurement, vendor billing and client invoicing, and targets EPC companies explicitly |
+| `/compare/sotyn-vs-powerplay` | "Attendance*" (implying no payroll) | "Attendance + payroll" | **Contradicted.** Their module is literally named "Labour & Payroll Management" |
+| `/compare/sotyn-vs-powerplay` | "Freemium + paid", "Low-friction freemium entry" | "Not published*", "Free trial to get started" | No pricing page exists on either Powerplay domain; a free trial is not freemium |
+| `/compare/sotyn-vs-procore` | "Global cloud*" | "India residency not stated*" | **Unsourced negative about data residency** — the kind of claim a large vendor asks you to retract |
+| `/compare/sotyn-vs-procore` | "Yes (enterprise)", "Via integrations*", "Enterprise quote" | "Yes*", "Resource management; payroll not stated*", "Priced by product + construction volume*" | Procore prices by product and Annual Construction Volume, not by an "enterprise tier" |
+| `/compare/sotyn-vs-odoo` | "Self/partner hosted", "No BOQ-native" | "Odoo Online, or self/partner hosted", "BOQ not native*" | **Contradicted.** Odoo Online is included in all plans; and an unqualified absolute negative is indefensible against an app ecosystem that large |
+| `/compare/sotyn-vs-rdash` | "Well-funded…", "Attendance; payroll*", "Sales-led / quote" | funding claim removed, "Attendance/payroll not stated*", "USD 1,000/user/yr published*" | Funding is not stated on their site; attendance/payroll is not claimed on their site (sotyn.ai was **over**-crediting them); their pricing is published |
+| all six | "we keep this fair and up to date, and never overstate a rival's gaps" | "Checked against their own website in September 2026. Where their public pages don't state something, we say so rather than assume they can't do it" | The promise now matches the method, and every competitor-negative cell carries the marker |
+
+**Powerplay is repositioning:** `getpowerplay.in` feature URLs now 301 to `getpowerplay.ai`, whose homepage leads on AI quantity takeoffs and bidding rather than site collaboration. That page should be re-verified before more is invested in it.
+
+### Calculators
+The ten calculators' arithmetic was DOM-coupled and untestable. It now lives in `src/lib/calc-formulas.js` as pure functions, with `CalcEngine.astro` as thin glue, and **23 unit tests** covering units (lakh/crore thresholds), zero, negative and extreme inputs, margin-vs-markup, GST add/remove as exact inverses, RA-bill net payable, and retention carrying cost. Three real defects fixed:
+- a margin of 100%+ silently returned the un-margined base price → now refused with an explanation;
+- an impossible GST rate divided by zero → refused;
+- a zero recoverable amount produced a **fabricated payback period** (it divided by a hard-coded 1) → now "—".
+Assumption labelling is now in the source and belongs on the pages too: leakage and recovery percentages are the **user's estimates**, never a measured customer saving; `cash-stuck` adds retention to receivables, which can overlap; GST/TDS rates are inputs, not advice.
+Verified live in a browser: `/tools/gst` removing 18% from ₹1,18,000 returns ₹1,00,000 base / ₹18,000 GST, and the WhatsApp link is encoded exactly once.
+
+### Performance
+Measured and fixed: the Google Fonts request (18,776 B → 3,762 B of render-blocking CSS, 52 → 10 `@font-face` rules), the lazy-loaded LCP hero, the header logo's missing dimensions, and images served with `max-age=0`. The largest win — 1.29 MB of PNG/JPEG that re-encodes to ~0.59 MB — is deliberately held for its own change; details and the measured per-file table are in [performance.md](performance.md). **Field data (CrUX) and Lighthouse scores are BLOCKED** and no number was invented in their place.
+
+### Form behaviour verified in a real browser
+On a local build with the webhook unreachable (CORS), submitting the demo form now shows *"We couldn't send that request. Your details are still here…"*, keeps every entered value, stays on `/demo` instead of redirecting to `/thank-you`, and offers retry / call / WhatsApp with a correctly encoded message (`Test & Co #2` survives intact). Before this branch, the same failure showed a success screen.
+
+---
+
+## 9. Rollback
 
 Everything is one branch, one PR, no data migration and no URL deletions.
 - Revert the merge commit, or `git revert <sha>` — the site returns to `fef5f86` behaviour exactly.
