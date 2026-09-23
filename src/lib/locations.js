@@ -17,10 +17,12 @@ import publication from "../data/locations/publication.json";
 export const SNAPSHOT = registry.snapshot;
 export const STATES = registry.states || [];
 
-/** Every district, flattened, with its state attached. */
+/** Every ACTIVE district, flattened, with its state attached. Abolished and
+ *  disputed records stay in the registry (for successor mapping and history)
+ *  but are never offered as coverage, lookups or pages. */
 export function allDistricts() {
   return STATES.flatMap((s) =>
-    (s.districts || []).map((d) => ({
+    (s.districts || []).filter((d) => (d.status || "active") === "active").map((d) => ({
       ...d,
       state_code: s.state_code,
       state_name: s.state_name,
@@ -39,10 +41,17 @@ export function getDistrictByCode(code) {
   return allDistricts().find((d) => d.district_code === code) || null;
 }
 
+/** Non-active records, kept for successor mapping — never rendered. */
+export function historicalDistricts() {
+  return STATES.flatMap((s) =>
+    (s.districts || []).filter((d) => (d.status || "active") !== "active").map((d) => ({ ...d, state_slug: s.state_slug, state_name: s.state_name }))
+  );
+}
+
 export function getDistrict(stateSlug, districtSlug) {
   const state = getState(stateSlug);
   if (!state) return null;
-  const d = (state.districts || []).find((x) => x.district_slug === districtSlug);
+  const d = (state.districts || []).find((x) => x.district_slug === districtSlug && (x.status || "active") === "active");
   return d ? { ...d, state_code: state.state_code, state_name: state.state_name, state_slug: state.state_slug } : null;
 }
 

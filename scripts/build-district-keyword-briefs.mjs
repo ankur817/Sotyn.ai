@@ -54,7 +54,7 @@ const esc = (v) => {
 
 let districts = 0;
 for (const st of registry.states || []) {
-  for (const d of st.districts || []) {
+  for (const d of (st.districts || []).filter((x) => (x.status || 'active') === 'active')) {
     districts++;
     const isPublished = approved.has(d.district_code);
     for (const slot of SLOTS) {

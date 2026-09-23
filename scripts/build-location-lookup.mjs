@@ -18,7 +18,7 @@ if (!existsSync(SRC)) {
 const registry = JSON.parse(readFileSync(SRC, "utf8"));
 const entries = [];
 for (const s of registry.states || []) {
-  for (const d of s.districts || []) {
+  for (const d of (s.districts || []).filter((x) => (x.status || 'active') === 'active')) {
     entries.push([
       `${s.state_slug}/${d.district_slug}`,
       { s: s.state_code, d: d.district_code, sn: s.state_name, dn: d.district_name },

@@ -86,12 +86,12 @@ const schema = [
             <summary>
               <span class="loc-state__name">{s.state_name}</span>
               <span class="loc-state__meta">
-                {(s.districts || []).length} districts
+                {(s.districts || []).filter((d) => (d.status || "active") === "active").length} districts
                 {publishedByState.has(s.state_slug) && <span class="loc-tag">{publishedByState.get(s.state_slug).length} page</span>}
               </span>
             </summary>
             <div class="loc-districts">
-              {(s.districts || []).map((d) => {
+              {(s.districts || []).filter((d) => (d.status || "active") === "active").map((d) => {
                 const page = published.find((p) => p.district_code === d.district_code);
                 return page
                   ? <a class="loc-d loc-d--linked" href={`/locations/${s.state_slug}/${d.district_slug}`}>{d.district_name}</a>

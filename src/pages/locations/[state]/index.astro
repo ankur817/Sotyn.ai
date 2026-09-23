@@ -70,7 +70,7 @@ const schema = [
       </div>
       <p class="st-note">
         <Icon name="alert" size={16} />
-        The other {(state.districts || []).length - districts.length} districts of {state.state_name} are covered the
+        The other {(state.districts || []).filter((d) => (d.status || "active") === "active").length - districts.length} districts of {state.state_name} are covered the
         same way — the software, the price and the remote onboarding do not change by district. They do not have a
         separate page because there is nothing locally specific to add, and a page that only swaps the district name
         would waste your time. <a href="/locations">See the full coverage list</a> or
