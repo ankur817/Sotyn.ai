@@ -38,6 +38,8 @@ import { SITE, waLink, telLink } from "../config/site";
     </select>
   </label>
 
+  <input type="hidden" name="context" id="dfContext" value="" />
+
   <!-- honeypot: hidden from humans, bots fill it -->
   <input type="text" name="website" class="df__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
@@ -104,6 +106,26 @@ import { SITE, waLink, telLink } from "../config/site";
   const waBtn = document.getElementById("dfWa");
 
   if (form) {
+    // A CTA like /demo?from=ra-billing carries the workflow the visitor was
+    // reading about into the enquiry, so they don't have to type it again.
+    // Only a short slug is accepted — never an arbitrary query string.
+    const FROM_LABELS = {
+      "ra-billing": "RA billing workflow",
+      "subcontractor-billing": "Subcontractor bill checking",
+      "procurement": "Procurement & purchase approvals",
+      "material-reconciliation": "BOQ vs actual consumption",
+      "implementation": "Implementation & migration from Excel",
+      "pricing": "Pricing / plan question",
+      "platform": "Platform overview",
+    };
+    try {
+      const from = (new URLSearchParams(location.search).get("from") || "").toLowerCase();
+      if (/^[a-z0-9-]{1,40}$/.test(from)) {
+        const ctx = document.getElementById("dfContext");
+        if (ctx) ctx.value = `Came from: ${FROM_LABELS[from] || from}`;
+      }
+    } catch (_) { /* a malformed query string must not break the form */ }
+
     const endpoint = form.dataset.webhook || "";
     const fallbackEndpoint = form.dataset.fallback || "";
     const wa = form.dataset.wa;
@@ -138,7 +160,12 @@ import { SITE, waLink, telLink } from "../config/site";
         endpoint,
         {
           ...data,
-          ...intentPayload({ intent: "demo_request", placement: form.dataset.placement || "demo-form", source: "demo-form" }),
+          ...intentPayload({
+            intent: "demo_request",
+            placement: form.dataset.placement || "demo-form",
+            source: "demo-form",
+            context: data.context || "",
+          }),
           page: location.pathname,
           referrer: document.referrer || "",
           landingSearch: location.search || "",

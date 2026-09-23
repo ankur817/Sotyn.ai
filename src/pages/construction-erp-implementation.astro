@@ -1,0 +1,91 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProblemPage from "../components/ProblemPage.astro";
+import { SITE } from "../config/site";
+
+// Cluster F (implementation & commercial evaluation) — see docs/keyword-map.md.
+// Commercial facts are read from SITE.pricing so this page can never drift from
+// /pricing. Scope wording follows the approved onboarding description.
+const setup = SITE.pricing.setup;
+const data = {
+  crumbName: "Implementation",
+  eyebrow: "Implementation & data migration",
+  h1: "Construction ERP implementation — what it takes to move off Excel.",
+  lead: "Most contractor ERP projects do not fail on features. They fail because the masters were never cleaned, the running projects were never brought across, and nobody agreed what 'live' meant. Here is how onboarding actually runs, what we do, and what your team has to do.",
+  ctaLabel: "Discuss migration from Excel",
+  ctaHref: "/demo?from=implementation",
+  calcHref: "/tools/erp-roi",
+  calcLabel: "Check the payback maths",
+  whyTitle: "Why ERP rollouts stall at contractors",
+  why: [
+    "The software goes live on a clean, empty database while the real business keeps running on spreadsheets.",
+    "Running projects are left out because migrating a half-finished BOQ is awkward — so two systems run in parallel, forever.",
+    "Item, vendor and rate masters arrive dirty: the same cable in four spellings, at three rates.",
+    "Site staff are trained once, in an office, on a projector, and never again.",
+    "Nobody wrote down what had to be true before everyone stopped using the old way.",
+  ],
+  howTitle: "How onboarding runs",
+  howLead: "A staged sequence with a named owner on both sides at each step.",
+  steps: [
+    { icon: "layers", t: "1. Masters first", d: "Items, vendors, labour and subcontract rates, cost heads and users. We import from your Excel or Tally exports and de-duplicate with you — this is where most of the effort goes, and it is worth it." },
+    { icon: "box", t: "2. Live projects and BOQs", d: "Your running projects are set up with their BOQs, so the system starts where the business actually is rather than at the next new job." },
+    { icon: "wallet", t: "3. Opening balances", d: "Outstanding receivables, payables, retention held and advances with subcontractors are entered as opening positions, so the first month's numbers mean something." },
+    { icon: "users", t: "4. Training, by role", d: "Two sessions, split by what each group actually does — site staff on DPRs and indents, office staff on procurement, billing and approvals." },
+    { icon: "check", t: "5. Go-live with acceptance criteria", d: "Agreed in advance and in writing: which workflows must run in the system, who signs each off, and the date the old way stops." },
+  ],
+  workedExample: {
+    title: "A typical onboarding, week by week",
+    intro: "An illustrative plan for a mid-sized contractor — your sequence is agreed before work starts and may differ.",
+    rows: [
+      { step: "Week 1", who: "Us + your accounts team", in: "Item, vendor and rate exports from Excel or Tally", out: "Cleaned, de-duplicated masters loaded and checked by your team" },
+      { step: "Week 2", who: "Us + your project leads", in: "Running projects with their BOQs and contract values", out: "Projects live in the system with budgets against them" },
+      { step: "Week 2–3", who: "Your accounts team", in: "Outstanding receivables, payables, retention held, advances", out: "Opening balances entered and agreed against your books" },
+      { step: "Week 3", who: "Us", in: "Role lists per site and per office function", out: "Two training sessions, split by role, with the actual data in front of them" },
+      { step: "Week 4", who: "Both, against agreed criteria", in: "DPRs filed daily, indents raised in the system, one full billing cycle completed", out: "Go-live signed off; the parallel spreadsheet stops" },
+    ],
+    note: `Onboarding is a one-time fee — ${SITE.pricing.currency}${setup.bands[0].fee} on ${setup.bands[0].team}, ${SITE.pricing.currency}${setup.bands[1].fee} on ${setup.bands[1].team} — separate from the subscription. ${setup.note}`,
+  },
+  limits: {
+    title: "What you need to bring, honestly",
+    items: [
+      "Someone who owns the data. If nobody on your side can say which of three rates is the right one, migration stalls — and we cannot decide that for you.",
+      "Exports, not screenshots. Excel or Tally exports of items, vendors, rates and outstanding balances.",
+      "Time from the people who do the work. Roughly a few hours a week from accounts and one project lead during onboarding.",
+      "A decision to stop the old way. Running spreadsheets alongside the system for months is the single most common reason a rollout fails.",
+      "We migrate your data at setup. Describe this as a migration, not a permanent two-way sync with your existing accounting software.",
+      "Timelines above are typical, not contractual. A multi-company group with heavy history takes longer, and we will say so before you commit.",
+    ],
+  },
+  proofText: "Verified: the same sequence was used to move Secured Engineers — a 14-year EPC contractor with live projects across multiple states — off spreadsheets and onto sotyn.ai.",
+  faqs: [
+    { q: "How long does implementation take?", a: "A typical mid-sized contractor is running in about four weeks: masters, live projects and BOQs, opening balances, role-based training, then go-live against agreed acceptance criteria. Larger or multi-company groups take longer, and we say so before you commit." },
+    { q: "What does implementation cost?", a: `Onboarding is a one-time fee — ${SITE.pricing.currency}${setup.bands[0].fee} on ${setup.bands[0].team} and ${SITE.pricing.currency}${setup.bands[1].fee} on ${setup.bands[1].team} — separate from the annual subscription. Full pricing is on the pricing page.` },
+    { q: "Do we have to start from a blank system?", a: "No. Your existing masters, running projects, BOQs, vendors and opening balances are migrated at setup, so the system starts where your business already is." },
+    { q: "We run on Tally and Excel. What happens to them?", a: "Your item, vendor, rate and balance data is exported and migrated during onboarding. Accounting stays where your accountant wants it; the project, procurement and billing operations move here." },
+    { q: "Who trains the site teams?", a: "We do, by role and on your own data — site staff on daily reports and indents, office staff on procurement, billing and approvals. Site users are not charged per seat, so training everyone on site does not raise the price." },
+    { q: "What if it does not work for us?", a: `Every plan carries a ${SITE.pricing.guarantee}. ${SITE.pricing.guaranteeNote}` },
+  ],
+  related: [
+    { name: "Pricing", href: "/pricing" },
+    { name: "Procurement", href: "/construction-procurement-software" },
+    { name: "Subcontractor billing", href: "/subcontractor-billing-software" },
+    { name: "The platform", href: "/platform" },
+  ],
+};
+
+const schema = [
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Platform", item: `${SITE.url}/platform` },
+    { "@type": "ListItem", position: 3, name: data.crumbName, item: `${SITE.url}/construction-erp-implementation` },
+  ]},
+];
+---
+<BaseLayout
+  title="Construction ERP Implementation & Data Migration | sotyn.ai India"
+  description="What it takes to move a contracting business off Excel: masters cleaned, live projects and BOQs migrated, opening balances entered, role-based training and go-live acceptance criteria — with the one-time onboarding fee stated up front."
+  path="/construction-erp-implementation"
+  schema={schema}
+>
+  <ProblemPage data={data} />
+</BaseLayout>

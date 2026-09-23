@@ -1,0 +1,90 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProblemPage from "../components/ProblemPage.astro";
+import { SITE } from "../config/site";
+
+// Cluster D (billing & collections) — see docs/keyword-map.md.
+// Grounded in shipped capability: Labour Rate Master ("agreed rates that bills
+// are checked against"), Sub-contractor hiring and billing against contracts,
+// MB/RA bill types with GST, TDS and retention, approvals and the audit log.
+const data = {
+  crumbName: "Subcontractor billing",
+  eyebrow: "Subcontractor bills & deductions",
+  h1: "Subcontractor billing software — check the bill before you pay it.",
+  lead: "Measured quantity against agreed rate, with advances, retention, debits and TDS applied the same way every cycle. For contractors whose labour and subcontract spend is checked by hand, in a hurry, at month end.",
+  ctaLabel: "See the bill-checking workflow",
+  ctaHref: "/demo?from=subcontractor-billing",
+  calcHref: "/tools/labour-leak",
+  calcLabel: "Cost your labour leakage",
+  whyTitle: "Where subcontractor money quietly goes",
+  why: [
+    "The bill arrives with the subcontractor's own measurement, and nobody has time to verify it line by line.",
+    "The agreed rate is in a contract file; the rate on the bill is whatever was typed.",
+    "Advances and material issued to the subcontractor are remembered by one person, and sometimes not deducted at all.",
+    "Retention is worked out on a calculator each time, so two bills for the same job are computed two different ways.",
+    "Nobody can say what has been certified this month against what was budgeted for the package.",
+  ],
+  howTitle: "How the checking actually happens",
+  howLead: "The bill is built from measurements and the rate master, not typed in from a piece of paper.",
+  steps: [
+    { icon: "layers", t: "Measurement against the MB", d: "Work is recorded as measured quantity, in the measurement-book format the industry already uses, tied to the project and the item." },
+    { icon: "check", t: "Rate comes from the agreed rate master", d: "The labour and subcontract rate master holds what was agreed. The bill is priced from it, so a rate on a bill can be compared with the rate in the contract — not taken on trust." },
+    { icon: "wallet", t: "Deductions applied the same way every time", d: "Advances, material issued, debits, retention and TDS are applied by rule, in one order, on every bill. GST is computed with them." },
+    { icon: "shield", t: "Certification with a name against it", d: "Who checked the measurement, who certified the value, who released the payment — each step sits in the audit log with a time." },
+    { icon: "gauge", t: "Package-level visibility", d: "What has been certified and paid on a subcontract package, against what it was let for — visible while the job is running, not at closeout." },
+  ],
+  workedExample: {
+    title: "One subcontractor bill, checked",
+    intro: "Illustrative figures for a single package — sample data, not a customer's account.",
+    rows: [
+      { step: "1. Measure", who: "Site engineer", in: "Conduiting, 1,860 m measured this cycle against the MB", out: "Measured quantity recorded against the package and the item" },
+      { step: "2. Price", who: "System", in: "Agreed rate ₹42/m from the rate master", out: "Gross value ₹78,120 — priced from the contract, not from the bill" },
+      { step: "3. Check", who: "Billing engineer", in: "Subcontractor claimed 1,940 m", out: "80 m difference raised before certification, not after payment" },
+      { step: "4. Deduct", who: "System", in: "Advance ₹15,000 · material issued ₹6,400 · retention 5% · TDS 1%", out: "Retention ₹3,906 · TDS ₹781 · net certified ₹52,033" },
+      { step: "5. Certify", who: "Approver", in: "Checked value with the difference noted", out: "Certified with a name and a time in the audit log" },
+      { step: "6. Track", who: "Accounts", in: "Certified value", out: "Payable scheduled; retention held and visible until release is due" },
+    ],
+    note: "Deduction order and rates are configured to match your contracts during onboarding. The numbers above are illustrative only.",
+  },
+  limits: {
+    title: "What this does not do",
+    items: [
+      "It does not measure work for you. Someone still records the measurement — the system holds it, prices it and checks it.",
+      "It does not read a subcontractor's PDF bill and extract quantities automatically.",
+      "Rate masters and deduction rules must be set up from your actual contracts at onboarding. Bad rate data produces confident, wrong bills.",
+      "TDS and GST rates are configuration, not tax advice. Your accountant confirms what applies to each contract.",
+      "Payments are recorded here and reconciled with your books; the system does not move money or connect to your bank.",
+    ],
+  },
+  proofText: "Verified: subcontract packages at Secured Engineers — a live 14-year EPC contractor, and sotyn.ai's first customer — are billed and certified through this workflow.",
+  faqs: [
+    { q: "Can it handle MB-based billing?", a: "Yes. Measurement-book billing is one of the supported bill types, alongside Sales, RA, Installation and T&C — all with GST." },
+    { q: "How are advances and material issued to a subcontractor recovered?", a: "They are held against the package and applied as deductions in a fixed order on each bill, so a recovery cannot be forgotten in a busy month." },
+    { q: "Does it show what is still held as retention?", a: "Yes — retention held per package and per bill, and what becomes releasable. The retention calculator on the tools page does the same maths for a single bill." },
+    { q: "Can a site engineer certify a bill?", a: "Only if you give them that role. Checking, certification and payment release are separate permissions, and each action is recorded in the audit log." },
+    { q: "Is this the same as RA billing to our client?", a: "No — related but opposite. RA billing is what you bill your client; this is what your subcontractors bill you. Both use the same measurement and deduction engine." },
+  ],
+  related: [
+    { name: "RA billing", href: "/ra-billing-software" },
+    { name: "Retention calculator", href: "/tools/retention" },
+    { name: "Procurement", href: "/construction-procurement-software" },
+    { name: "The platform", href: "/platform" },
+  ],
+};
+
+const schema = [
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Platform", item: `${SITE.url}/platform` },
+    { "@type": "ListItem", position: 3, name: data.crumbName, item: `${SITE.url}/subcontractor-billing-software` },
+  ]},
+];
+---
+<BaseLayout
+  title="Subcontractor Billing Software for Contractors | sotyn.ai India"
+  description="Check subcontractor bills before you pay: measured quantity against the agreed rate master, advances and material recovered, retention and TDS applied by rule, certification recorded. Built for Indian EPC, MEP and civil contractors."
+  path="/subcontractor-billing-software"
+  schema={schema}
+>
+  <ProblemPage data={data} />
+</BaseLayout>

@@ -16,7 +16,7 @@ const { data } = Astro.props;
     <h1>{data.h1}</h1>
     <p class="lead" style="margin-inline:auto">{data.lead}</p>
     <div class="btn-row" style="justify-content:center;margin-top:26px">
-      <a href="/demo" class="btn btn--primary btn--lg">Book a free demo</a>
+      <a href={data.ctaHref || "/demo"} class="btn btn--primary btn--lg">{data.ctaLabel || "Book a free demo"}</a>
       {data.calcHref && <a href={data.calcHref} class="btn btn--ghost btn--lg">{data.calcLabel}</a>}
     </div>
   </div>
@@ -52,6 +52,43 @@ const { data } = Astro.props;
     <p class="pp-proof"><Icon name="check" size={16} /> {data.proofText}</p>
   </div>
 </section>
+
+{data.workedExample && (
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Worked example</span>
+        <h2>{data.workedExample.title}</h2>
+        {data.workedExample.intro && <p class="lead" style="margin-inline:auto">{data.workedExample.intro}</p>}
+      </div>
+      <div class="we-wrap">
+        <table class="we">
+          <thead><tr><th>Step</th><th>Who does it</th><th>Goes in</th><th>Comes out</th></tr></thead>
+          <tbody>
+            {data.workedExample.rows.map((r) => (
+              <tr><td data-l="Step"><b>{r.step}</b></td><td data-l="Who">{r.who}</td><td data-l="In">{r.in}</td><td data-l="Out">{r.out}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="we-note">{data.workedExample.note}</p>
+    </div>
+  </section>
+)}
+
+{data.limits && (
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Before you buy</span>
+        <h2>{data.limits.title}</h2>
+      </div>
+      <ul class="pp-limits">
+        {data.limits.items.map((l) => <li><Icon name="alert" size={17} /> <span>{l}</span></li>)}
+      </ul>
+    </div>
+  </section>
+)}
 
 <section class="section section--narrowfaq">
   <div class="container container--narrow">
@@ -118,4 +155,22 @@ const { data } = Astro.props;
   .pp-related span { font-weight: 700; }
   .pp-related a { color: #bfdbfe; font-weight: 600; }
   .pp-related a:hover { color: #fff; }
+  .we-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-elevated, #fff); }
+  .we { width: 100%; border-collapse: collapse; font-size: .94rem; }
+  .we th, .we td { padding: 13px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .we th { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: var(--brand-50, #f4f8ff); }
+  .we tr:last-child td { border-bottom: 0; }
+  .we-note { font-size: .86rem; color: var(--muted); margin: 12px 2px 0; }
+  .pp-limits { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .pp-limits li { display: flex; gap: 11px; align-items: flex-start; font-size: .98rem; line-height: 1.55; }
+  .pp-limits :global(.ico) { flex: none; margin-top: 3px; color: var(--brand-600); }
+  @media (max-width: 640px) {
+    .we thead { display: none; }
+    .we, .we tbody, .we tr, .we td { display: block; width: 100%; }
+    .we tr { border-bottom: 1px solid var(--line); padding: 6px 0; }
+    .we tr:last-child { border-bottom: 0; }
+    .we td { border: 0; padding: 6px 16px; }
+    .we td::before { content: attr(data-l) " — "; font-weight: 700; color: var(--muted); font-size: .8rem; }
+    .we td[data-l="Step"]::before { content: ""; }
+  }
 </style>

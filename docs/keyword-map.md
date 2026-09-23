@@ -55,3 +55,32 @@ One intent → one primary URL. Nothing below creates a second page for an inten
 2. Fill the gaps in pages that already exist — solar regulatory vocabulary, MEP trade names, BOQ + subcontractor billing on `/ra-billing-software`, a DPR block on `/reduce-project-delays`. Cheapest work, best-placed assets.
 3. Build `/construction-procurement-software`, then the Tally page, then cash-flow. Labour/payroll waits on the geofencing decision; BOQ waits on India keyword data.
 4. Get Search Console access before anything is judged a success or a failure.
+
+
+---
+
+# Consolidated cluster map — release of 2026-09-23
+
+Clusters A–H as briefed, folded into the map above rather than restarted. **Metrics column is "unknown" everywhere**: no Search Console, Keyword Planner or Trends access exists (see `TOOL_ACCESS.md`), and no volume, CPC or difficulty number has been invented. Priority is reasoned from product fit, buying intent and the evidence we can publish — in that order.
+
+| Cluster | Buyer need | Intent | Metrics | Canonical URL | Action taken this release | Verified capability behind it | CTA | Priority |
+|---|---|---|---|---|---|---|---|---|
+| **A. Core categories** | "what software runs a contracting business" | commercial | unknown | `/` (broad), `/epc-erp-software` (EPC), `/platform` (project management) | **Split the three competing titles** — they all led on "EPC ERP Software". Home now claims *construction ERP software India*, `/epc-erp-software` the EPC term, `/platform` project management | whole product | Book a free demo | High — the collision was costing all three |
+| **B. Contractor types** | "software for my trade" | commercial | unknown | `/solutions/{mep,solar-epc,civil,industrial-epc}` | Kept as the canonical trade pages; now linked from the new workflow pages | trade-specific setups that exist today | Book a demo | Medium — needs trade vocabulary next (MEP expansion, solar DISCOM/subsidy terms) |
+| **C. Procurement & inventory** | indent → approval → PO → receipt, across sites | commercial | unknown | **`/construction-procurement-software` (new)** | **Published.** Buyer fit, 5-step workflow, 6-row worked example, limitations, 5 FAQs | RFQ queue, vendor & item master, indent→dispatch, L1/L2 approvals, PO pipeline, debit notes, per-site inventory | *See procurement approvals* → `/demo?from=procurement` | **High** — module-level buying term with no page before this |
+| **D. Billing & collections** | check what a subcontractor bills before paying | commercial | unknown | **`/subcontractor-billing-software` (new)** + `/ra-billing-software` | **Published**, and RA billing now links to it (the two were being conflated) | MB/RA bill types, labour & subcontract rate master, advances/retention/TDS deductions, certification in the audit log | *See the bill-checking workflow* → `/demo?from=subcontractor-billing` | **High** |
+| **E. Project & cost control** | BOQ vs actual, DPR, cash | mixed | unknown | `/material-reconciliation`, `/reduce-project-delays`, `/tools/*` | Reconciliation now links to procurement; page CTA made specific | DPR, BOQ vs consumed, AR/AP, cash flow | *See BOQ vs actual consumption* | Medium — a DPR section on `/reduce-project-delays` is next, not a new page |
+| **F. Implementation & evaluation** | "what does it take to move off Excel, and what does it cost" | commercial, late-stage | unknown | **`/construction-erp-implementation` (new)** | **Published.** Week-by-week plan, what the buyer must bring, onboarding fee read from `SITE.pricing` so it cannot drift from `/pricing` | masters/BOQ/opening-balance migration, role-based training, go-live acceptance | *Discuss migration from Excel* → `/demo?from=implementation` | **High** — buyers at this stage are closest to signing |
+| **G. Practical resources** | formats, checklists, templates | informational | unknown | `/resources/*`, `/tools/*` | **Not done this release** — deliberately deferred, see below | — | — | Medium |
+| **H. Alternatives & comparisons** | "X vs Y", "alternatives to Excel" | commercial | unknown | `/compare/*` | Corrected in the previous release against each vendor's own site; no new pages | — | — | Low — accuracy fixed, expansion not yet justified |
+
+## Decisions and the reasons for them
+
+- **Three pages, not thirty.** Procurement, subcontractor billing and implementation each serve a distinct need that no existing URL covered. Everything else in clusters A–H was folded into a page that already exists, because a second page for one intent competes with the first.
+- **The resource cluster (G) is deferred to the next batch.** A checklist that is really a download form is worse than no checklist. The three planned assets — purchase-approval checklist, subcontractor bill-verification checklist, ERP migration checklist — need the actual working file first, and each should attach to the commercial page published above.
+- **Excluded despite looking attractive:** drawing takeoff / BOQ-from-drawings terms (we do not do takeoff, so the traffic would bounce), US "pay application" and "lien waiver" phrasing, and the bare phrase "measurement book software", which returns software-engineering measurement literature rather than contractor MB billing.
+- **Nothing below was claimed on any new page:** AI auto-quotation, geofenced attendance, native mobile apps, a live two-way Tally sync. Each page carries a "what this does not do" section for the same reason — it is the section a buyer trusts.
+
+## Measurement dependency
+
+None of this can be reported as impressions, positions or clicks until the Sotyn Search Console property is accessible. The release date (2026-09-23) and the affected URLs are recorded here so a comparable before/after window can be measured once it is.
