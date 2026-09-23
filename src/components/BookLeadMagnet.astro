@@ -1,11 +1,11 @@
 ---
-import { SITE } from "../config/site";
+import { SITE, waLink, telLink } from "../config/site";
 import Icon from "./Icon.astro";
 const PDF = "/downloads/11-point-project-savings-checklist.pdf";
 const { source = "book-checklist" } = Astro.props;
 ---
 <div class="magnet">
-  <form class="magnet__form" id="magnetForm" data-source={source} novalidate>
+  <form class="magnet__form" id="magnetForm" data-source={source} novalidate data-webhook={SITE.leadWebhookUrl} data-wa={SITE.whatsapp} data-pdf={PDF}>
     <div class="magnet__grid">
       <div class="field">
         <label for="mg-name">Name<span aria-hidden="true">*</span></label>
@@ -24,6 +24,13 @@ const { source = "book-checklist" } = Astro.props;
     <button type="submit" class="btn btn--primary btn--lg" id="mg-submit"><Icon name="download" size={20} /> Get the free checklist</button>
     <p class="magnet__note"><Icon name="lock" size={14} /> Instant download. No spam — just practical project guides, occasionally.</p>
     <p class="magnet__status" id="mg-status" role="status" aria-live="polite"></p>
+    <div class="magnet__recover" id="mg-recover" hidden>
+      <p class="magnet__recover-h">You have the checklist, but we couldn't save your details — so we can't send the follow-up guides yet.</p>
+      <div class="magnet__recover-acts">
+        <button type="submit" class="btn btn--primary btn--sm">Try again</button>
+        <a class="btn btn--ghost btn--sm" id="mg-wa" href={waLink()} target="_blank" rel="noopener">Send details on WhatsApp instead</a>
+      </div>
+    </div>
   </form>
 
   <div class="magnet__done" id="magnetDone" hidden>
@@ -74,73 +81,106 @@ const { source = "book-checklist" } = Astro.props;
     display: grid; place-items: center; margin: 0 auto 12px;
   }
   .magnet__done h3 { margin: 6px 0 4px; }
+  .magnet__recover { margin-top: 12px; padding: 14px; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: var(--brand-50, #f4f8ff); }
+  .magnet__recover-h { margin: 0 0 10px; font-size: .88rem; font-weight: 600; }
+  .magnet__recover-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .magnet__recover-acts .btn { flex: 1 1 auto; }
   @media (max-width: 560px) { .magnet__grid { grid-template-columns: 1fr; } }
 </style>
 
-<script is:inline define:vars={{ WEBHOOK: SITE.leadWebhookUrl, WA: SITE.whatsapp, PDF }}>
+<script>
+  import { submitLead, waLink, newRequestId, trackAcceptedLead } from "../lib/lead-client.js";
+  import { intentPayload } from "../lib/lead-intents.js";
+
   const form = document.getElementById("magnetForm");
   const statusEl = document.getElementById("mg-status");
   const btn = document.getElementById("mg-submit");
   const done = document.getElementById("magnetDone");
+  const recover = document.getElementById("mg-recover");
+  const waBtn = document.getElementById("mg-wa");
 
-  function triggerDownload() {
-    const a = document.createElement("a");
-    a.href = PDF;
-    a.download = "";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }
+  if (form) {
+    const endpoint = form.dataset.webhook || "";
+    const wa = form.dataset.wa;
+    const pdf = form.dataset.pdf;
+    let requestId = newRequestId();
+    let sending = false;
 
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (form.website_hp.value) return; // bot
-    const data = Object.fromEntries(new FormData(form).entries());
-    delete data.website_hp;
-    data.source = form.dataset.source || "book-checklist";
-    data.magnet = "11-point-project-savings-checklist";
-    data.page = location.pathname;
-    data.submittedAt = new Date().toISOString();
-
-    if (!data.name || !data.phone) {
-      statusEl.textContent = "Please add your name and phone.";
-      statusEl.dataset.state = "err";
-      return;
-    }
-
-    btn.disabled = true;
-    statusEl.dataset.state = "";
-    statusEl.textContent = "Preparing your download…";
-    if (window.fbq) window.fbq("track", "Lead");
-
-    // 1) Record the lead via the same ERP/CRM webhook the demo form uses
-    let delivered = false;
-    if (WEBHOOK) {
+    function triggerDownload() {
+      const a = document.createElement("a");
+      a.href = pdf;
+      a.download = "";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      // A download is an interaction, not an enquiry — tracked separately from
+      // generate_lead so it can never be counted as a lead.
       try {
-        const r = await fetch(WEBHOOK, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-        delivered = r.ok;
-      } catch (_) { delivered = false; }
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: "file_download", file_name: "11-point-project-savings-checklist.pdf", lead_page: location.pathname });
+      } catch {}
     }
 
-    // 2) Always give them the asset
-    triggerDownload();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (sending) return;
+      if (form.website_hp.value) return; // honeypot
+      const data = Object.fromEntries(new FormData(form).entries());
+      delete data.website_hp;
+      if (!data.name || !data.phone) {
+        statusEl.dataset.state = "err";
+        statusEl.textContent = "Please add your name and phone.";
+        return;
+      }
 
-    // 3) If no webhook captured it, hand the lead to WhatsApp so it is never lost
-    if (!delivered) {
-      const msg =
-        `Free checklist request%0A` +
-        `Name: ${data.name}%0APhone: ${data.phone}%0A` +
-        (data.email ? `Email: ${data.email}%0A` : "") +
-        `Downloaded: 11-Point Project Savings Checklist`;
-      window.open(`https://wa.me/${WA}?text=${msg}`, "_blank");
-    }
+      const source = form.dataset.source || "book-checklist";
+      sending = true;
+      btn.disabled = true;
+      recover.hidden = true;
+      statusEl.dataset.state = "";
+      statusEl.textContent = "Preparing your download…";
 
-    // 4) Show the success state
-    form.hidden = true;
-    done.hidden = false;
-  });
+      const result = await submitLead(
+        endpoint,
+        {
+          ...data,
+          ...intentPayload({ intent: "resource_request", placement: source, source }),
+          magnet: "11-point-project-savings-checklist",
+          page: location.pathname,
+          referrer: document.referrer || "",
+          landingSearch: location.search || "",
+          submittedAt: new Date().toISOString(),
+        },
+        { requestId }
+      );
+
+      sending = false;
+      btn.disabled = false;
+
+      // They get the asset either way — it was promised for the click.
+      triggerDownload();
+
+      if (result.accepted) {
+        trackAcceptedLead({ source, intent: "resource_request", page: location.pathname, leadId: result.leadId });
+        statusEl.textContent = "";
+        form.hidden = true;
+        done.hidden = false;
+        return;
+      }
+
+      requestId = newRequestId();
+      statusEl.dataset.state = "err";
+      statusEl.textContent = "Your download has started.";
+      if (waBtn) {
+        waBtn.href = waLink(wa, [
+          "Free checklist request",
+          `Name: ${data.name}`,
+          `Phone: ${data.phone}`,
+          data.email ? `Email: ${data.email}` : "",
+          "Downloaded: 11-Point Project Savings Checklist",
+        ]);
+      }
+      recover.hidden = false;
+    });
+  }
 </script>

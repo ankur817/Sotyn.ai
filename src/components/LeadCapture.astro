@@ -2,7 +2,7 @@
 // Generic lead-capture. Reuses the demo/CRM webhook with a WhatsApp fallback so
 // no lead is ever lost. A page tool may set #leadContext (hidden) to attach the
 // visitor's computed result to the lead. One instance per page.
-import { SITE } from "../config/site";
+import { SITE, waLink, telLink } from "../config/site";
 import Icon from "./Icon.astro";
 const {
   source = "resource",
@@ -12,7 +12,7 @@ const {
   cta = "Send it to me",
 } = Astro.props;
 ---
-<div class="lc" data-magnet={magnet} data-source={source} data-wa={SITE.whatsapp}>
+<div class="lc" data-magnet={magnet} data-source={source} data-wa={SITE.whatsapp} data-webhook={SITE.leadWebhookUrl}>
   <form class="lc__form" id="leadForm" novalidate>
     <h3 class="lc__h">{heading}</h3>
     <p class="lc__sub">{sub}</p>
@@ -29,6 +29,15 @@ const {
     <button type="submit" class="btn btn--primary btn--lg" id="lc-submit"><Icon name="download" size={19} /> {cta}</button>
     <p class="lc__note"><Icon name="lock" size={14} /> No spam — just practical EPC guides, occasionally. Your data stays in India.</p>
     <p class="lc__status" id="lc-status" role="status" aria-live="polite"></p>
+    <!-- Shown only when the request did NOT reach us. Your entries are kept. -->
+    <div class="lc__recover" id="lc-recover" hidden>
+      <p class="lc__recover-h">We couldn't send that just now — nothing has been lost, your details are still in the form.</p>
+      <div class="lc__recover-acts">
+        <button type="submit" class="btn btn--primary btn--sm">Try again</button>
+        <a class="btn btn--ghost btn--sm" href={telLink}>Call {SITE.phone}</a>
+        <a class="btn btn--ghost btn--sm" id="lc-wa" href={waLink()} target="_blank" rel="noopener">Send it on WhatsApp instead</a>
+      </div>
+    </div>
   </form>
   <div class="lc__done" id="leadDone" hidden>
     <div class="lc__check" aria-hidden="true"><Icon name="check" size={28} /></div>
@@ -60,44 +69,90 @@ const {
   .lc__done { text-align: center; padding: 10px 4px; }
   .lc__check { width: 60px; height: 60px; border-radius: 50%; background: var(--brand-50); color: var(--brand-600); display: grid; place-items: center; margin: 0 auto 12px; }
   .lc__done h3 { margin: 6px 0 4px; }
+  .lc__recover { margin-top: 14px; padding: 14px; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: var(--brand-50, #f4f8ff); }
+  .lc__recover-h { margin: 0 0 10px; font-size: .9rem; font-weight: 600; color: var(--ink); }
+  .lc__recover-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .lc__recover-acts .btn { flex: 1 1 auto; }
   @media (max-width: 560px) { .lc__grid { grid-template-columns: 1fr; } }
 </style>
 
-<script is:inline define:vars={{ WEBHOOK: SITE.leadWebhookUrl, WA: SITE.whatsapp }}>
-  (function () {
-    var box = document.querySelector(".lc");
-    var form = document.getElementById("leadForm");
-    var statusEl = document.getElementById("lc-status");
-    var btn = document.getElementById("lc-submit");
-    var done = document.getElementById("leadDone");
-    if (!form) return;
-    form.addEventListener("submit", async function (e) {
+<script>
+  import { submitLead, waLink, newRequestId, trackAcceptedLead } from "../lib/lead-client.js";
+  import { intentPayload } from "../lib/lead-intents.js";
+
+  const box = document.querySelector(".lc");
+  const form = document.getElementById("leadForm");
+  const statusEl = document.getElementById("lc-status");
+  const btn = document.getElementById("lc-submit");
+  const done = document.getElementById("leadDone");
+  const recover = document.getElementById("lc-recover");
+  const waBtn = document.getElementById("lc-wa");
+
+  if (form && box) {
+    const endpoint = box.dataset.webhook || "";
+    const wa = box.dataset.wa;
+    // One id per submission attempt — kept across retries so a lead that was
+    // in fact stored on a timed-out attempt is not duplicated.
+    let requestId = newRequestId();
+    let sending = false;
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      if (form.website_hp.value) return;
-      var data = Object.fromEntries(new FormData(form).entries());
+      if (sending) return;
+      if (form.website_hp.value) return; // honeypot
+      const data = Object.fromEntries(new FormData(form).entries());
       delete data.website_hp;
-      data.source = box.dataset.source;
-      data.magnet = box.dataset.magnet;
-      data.page = location.pathname;
-      data.submittedAt = new Date().toISOString();
+
       if (!data.name || !data.phone) {
-        statusEl.textContent = "Please add your name and phone."; statusEl.dataset.state = "err"; return;
+        statusEl.dataset.state = "err";
+        statusEl.textContent = "Please add your name and phone.";
+        return;
       }
-      btn.disabled = true; statusEl.dataset.state = ""; statusEl.textContent = "Sending…";
-      if (window.fbq) window.fbq("track", "Lead");
-      var delivered = false;
-      if (WEBHOOK) {
-        try { var r = await fetch(WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); delivered = r.ok; }
-        catch (_) { delivered = false; }
+
+      const payload = {
+        ...data,
+        ...intentPayload({ intent: "resource_request", placement: box.dataset.source, source: box.dataset.source, context: data.context }),
+        magnet: box.dataset.magnet,
+        page: location.pathname,
+        referrer: document.referrer || "",
+        landingSearch: location.search || "",
+        submittedAt: new Date().toISOString(),
+      };
+
+      sending = true;
+      btn.disabled = true;
+      recover.hidden = true;
+      statusEl.dataset.state = "";
+      statusEl.textContent = "Sending…";
+
+      const result = await submitLead(endpoint, payload, { requestId });
+      sending = false;
+      btn.disabled = false;
+
+      if (result.accepted) {
+        // Only now is the lead really ours — track once, then confirm.
+        trackAcceptedLead({ source: box.dataset.source, intent: "resource_request", page: location.pathname, leadId: result.leadId });
+        statusEl.textContent = "";
+        form.hidden = true;
+        done.hidden = false;
+        return;
       }
-      if (!delivered) {
-        var msg = box.dataset.magnet + " request%0A" +
-          "Name: " + data.name + "%0APhone: " + data.phone + "%0A" +
-          (data.company ? "Company: " + data.company + "%0A" : "") +
-          (data.context ? "Context: " + data.context + "%0A" : "");
-        window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg).replace(/%2520/g, "%20"), "_blank");
+
+      // Not delivered. Keep every entered value, say so, and offer real routes out.
+      requestId = newRequestId();
+      statusEl.dataset.state = "err";
+      statusEl.textContent = "That didn't go through. Please try again, or use one of the options below.";
+      if (waBtn) {
+        waBtn.href = waLink(wa, [
+          `${box.dataset.magnet} request`,
+          `Name: ${data.name}`,
+          `Phone: ${data.phone}`,
+          data.company ? `Company: ${data.company}` : "",
+          data.context ? `Context: ${data.context}` : "",
+        ]);
       }
-      form.hidden = true; done.hidden = false;
+      recover.hidden = false;
+      recover.querySelector(".lc__recover-h")?.focus?.();
     });
-  })();
+  }
 </script>

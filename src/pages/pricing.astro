@@ -69,10 +69,10 @@ const faqSchema = [{
         <aside class="gso__price">
           <span class="gso__plbl">Launch offer</span>
           <div class="gso__pamt">40%<span> off yr 1</span></div>
-          <p class="gso__pnote">from {currency}6,000/mo · + onboarding from ₹25,000</p>
+          <p class="gso__pnote">from {currency}{plans[0].price}{plans[0].per} · + onboarding from {currency}{setup.bands[0].fee}</p>
           <div class="gso__guarantee"><Icon name="shield" size={18} /> {guarantee}</div>
           <div style="margin:18px 0"><Countdown variant="dark" /></div>
-          <div class="gso__scarcity"><Icon name="alert" size={16} /> Only {offer.seatsLeft} of {offer.seatsTotal} launch seats left</div>
+          {offer.showSeatsLeft && <div class="gso__scarcity"><Icon name="alert" size={16} /> Only {offer.seatsLeft} of {offer.seatsTotal} launch seats left</div>}
           <a href="/webinar" class="btn btn--primary btn--lg" style="width:100%">Claim your launch seat</a>
           <a href="/scorecard" class="btn btn--ghost" style="width:100%;margin-top:10px">Get your free leak score first</a>
         </aside>
@@ -99,7 +99,7 @@ const faqSchema = [{
             </div>
             <p class="plan__billed">{p.billed}</p>
             {p.note && <p class="plan__note">{p.note}</p>}
-            <a href={p.highlight ? "/webinar" : "/#demo"} class={`btn ${p.highlight ? "btn--primary" : "btn--ghost"}`} style="width:100%">{p.cta}</a>
+            <a href="/demo" class={`btn ${p.highlight ? "btn--primary" : "btn--ghost"}`} style="width:100%">{p.cta}</a>
             <ul class="plan__feats">
               {p.features.map((f) => <li>{f}</li>)}
             </ul>

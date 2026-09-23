@@ -46,7 +46,7 @@ const eventSchema = [{
           <strong>Reserve your free seat</strong>
           <span>{w.seats} · no cost, no recording sent</span>
         </div>
-        <RegisterForm source="webinar-page" />
+        <RegisterForm source="webinar-page" intent="webinar_registration" placement="webinar-page" event={w.title} />
       </div>
     </div>
   </section>
