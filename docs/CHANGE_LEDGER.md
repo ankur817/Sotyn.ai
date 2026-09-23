@@ -58,3 +58,19 @@ Browser evidence, local production build, stubbed endpoint (no production CRM wa
 ## Rollback
 
 One branch, two prior commits plus this one, no data migration, no URL deleted or redirected. `git revert` the merge, or flip the individual switches: `countdown.enabled`, `offer.showSeatsLeft`, `SITE.url`, the `vercel.json` `cleanUrls`/`trailingSlash` keys. Intent changes revert with the branch; the receiver keeps working either way because `source` was never removed.
+
+
+---
+
+## Round 3 — released to production 2026-09-23
+
+| # | Change | Implemented | Tested | Deployed | Production verification | Outcome measurable? |
+|---|---|---|---|---|---|---|
+| 12 | Merge of PR #8 (all earlier fixes) | `48d6e69` | 86 tests | **Yes** | Verified live: `AggregateOffer` INR 72,000–3,00,000, `+917009987817`, one Organization, canonical `https://www.sotyn.ai/...`, `/pricing/` and `/index.html` → 308, sitemap 38 URLs without noindex pages, scorecard copy, countdown and "25 of 25 seats" gone, corrected competitor claims, font `wght@400..900` | No — no GSC/GA4 |
+| 13 | **Regression I caused:** `X-Request-Id` was not in the endpoint's `Access-Control-Allow-Headers`, so the preflight failed and **no lead could be submitted from the live site** for ~1h35m | `b82c7c2` (PR #10) | 88 tests incl. 2 regressions | **Yes** | An authorised QA submission then reached the ERP and returned `{"ok":true,"id":7}` | Forms showed the honest failure panel throughout — no lead was lost to a false success |
+| 14 | **Lead endpoint contract documented** | — | — | — | `200`, `application/json; charset=utf-8`, body `{"ok":true,"id":7,"duplicate":true}`. The endpoint de-duplicates by contact, so repeat QA submissions map to one record | — |
+| 15 | Google Sheets register + same-origin intake `/api/lead` | `2166495` (PR #11) | 113 tests (25 new) | **Yes** | `GET /api/lead` → 405 (exists); QA POST → `{"ok":true,"id":"SOTYN-20260923-U4GF82","erp":"ok","erpRef":"7","sheet":"not_configured","isTest":true}`; invalid payload → 422 `["name_required","phone_invalid"]`; honeypot → silently ignored; browser scorecard QA through `/api/lead` showed the diagnostic confirmation | Sheet rows **pending** the Apps Script deploy + 2 env vars |
+
+**Spreadsheet created:** [SOTYN Website Leads](https://docs.google.com/spreadsheets/d/1RUuz2bdpzI--arBU2rkp1Rm_JUpTI7rMU77QE-aBmUc/edit) — website enquiries only, shared with dme@securedengineers.com. Setup steps in [SHEETS_SETUP.md](SHEETS_SETUP.md).
+
+**Test lead IDs:** `SOTYN-20260923-U4GF82` (intake QA, ERP ref 7) · ERP record **7** (browser demo-form QA, before the intake existed) · one scorecard diagnostic QA through `/api/lead`. All carry `is_test` or the "SOTYN WEBSITE TEST" label and are excluded from Dashboard totals.
