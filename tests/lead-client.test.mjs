@@ -103,6 +103,32 @@ test("a missing endpoint is reported, not silently treated as success", async ()
   assert.equal(r.reason, "no_endpoint");
 });
 
+test("only CORS-safelisted headers are sent, so no preflight can fail", async () => {
+  // Regression: an X-Request-Id header was rejected by the endpoint's
+  // Access-Control-Allow-Headers, blocking every live submission.
+  let seen = null;
+  await submitLead("https://example.test/hook", { name: "A" }, {
+    requestId: "req-5",
+    fetchImpl: async (_url, init) => {
+      seen = init.headers;
+      return { ok: true, status: 200, headers: jsonHeaders, text: async () => '{"ok":true}' };
+    },
+  });
+  assert.deepEqual(Object.keys(seen), ["Content-Type"]);
+});
+
+test("the idempotency key still travels in the body", async () => {
+  let body = null;
+  await submitLead("https://example.test/hook", { name: "A" }, {
+    requestId: "req-6",
+    fetchImpl: async (_url, init) => {
+      body = JSON.parse(init.body);
+      return { ok: true, status: 200, headers: jsonHeaders, text: async () => '{"ok":true}' };
+    },
+  });
+  assert.equal(body.requestId, "req-6");
+});
+
 test("request ids are unique", () => {
   const ids = new Set(Array.from({ length: 50 }, () => newRequestId()));
   assert.equal(ids.size, 50);
