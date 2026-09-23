@@ -20,7 +20,9 @@ export const SITE = {
   parentCompany: "Secured Engineers Pvt. Ltd.",
 
   // ── Domain / URL ─────────────────────────────────────────────────────────
-  url: "https://sotyn.ai",
+  // The host that actually serves the site. Vercel 308-redirects the apex to
+  // www, so canonicals/sitemap/robots must use www or they point at a redirect.
+  url: "https://www.sotyn.ai",
   appUrl: "https://securederp.in",
 
   // ── Contact ──────────────────────────────────────────────────────────────
@@ -98,8 +100,11 @@ export const SITE = {
   // Founding-price countdown. mode "monthly" rolls to the end of the current
   // month and auto-resets (never shows expired). Set mode "fixed" + a `deadline`
   // ISO string (e.g. "2026-07-31T23:59:59+05:30") for a hard one-time deadline.
+  // ⚠️ Disabled on 2026-09-23: "monthly" mode silently rolls the deadline to the
+  // end of every month, so the advertised close never happens. Re-enable ONLY
+  // with mode "fixed" and a real deadline you intend to honour.
   countdown: {
-    enabled: true,
+    enabled: false,
     mode: "monthly",
     deadline: "",
     label: "Launch offer closes in",
@@ -111,6 +116,13 @@ export const SITE = {
   // ⚠️ Adjust the numbers to your market — everything reads from here.
   pricing: {
     currency: "₹",
+    // ISO code + the machine-readable annual figures. Structured data and any
+    // calculation must read these, never a display string. They are asserted
+    // against the display strings below by `npm run test` (tests/pricing.test.mjs),
+    // so a price can never be changed in one place only.
+    currencyCode: "INR",
+    annualLowInr: 72000, // Starter, billed yearly
+    annualHighInr: 300000, // Enterprise, from
     anchor:
       "The market charges ₹70K–₹1.2L a year for point tools. sotyn.ai bundles projects, procurement, EPC billing, HRMS & payroll into one price — less than one site supervisor's salary to run your whole company.",
     guarantee: "30-day money-back guarantee",
@@ -123,6 +135,7 @@ export const SITE = {
         price: "6,000",
         per: "/mo",
         billed: "₹72,000 billed yearly",
+        annualInr: 72000,
         strike: "",
         note: "Up to 10 office users · 5 live projects · unlimited site users",
         highlight: false,
@@ -143,6 +156,7 @@ export const SITE = {
         price: "12,500",
         per: "/mo",
         billed: "₹1,50,000 billed yearly",
+        annualInr: 150000,
         strike: "",
         note: "Up to 25 office users · 20 live projects · unlimited site users",
         highlight: true,
@@ -162,6 +176,7 @@ export const SITE = {
         price: "3,00,000",
         per: "+/yr",
         billed: "custom quote",
+        annualInr: 300000,
         from: true,
         strike: "",
         note: "Unlimited users & projects",
@@ -198,7 +213,10 @@ export const SITE = {
     // Launch offer value stack — first 25 contractors, 40% off year 1.
     offer: {
       seatsTotal: 25,
-      seatsLeft: 25, // ⚠️ update as launch seats fill
+      // ⚠️ Hard-coded, nothing decrements it. `showSeatsLeft` stays false until
+      // the count comes from a real record of sign-ups.
+      seatsLeft: 25,
+      showSeatsLeft: false,
       stack: [
         { item: "The full sotyn.ai ERP — 14 module groups, unlimited site users", value: "₹3–10 L / yr value" },
         { item: "AI Auto-Quotation — BOQ to priced quote in minutes", value: "₹1,00,000 / yr" },

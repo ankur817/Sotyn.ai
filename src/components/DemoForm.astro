@@ -1,7 +1,7 @@
 ---
-import { SITE } from "../config/site";
+import { SITE, waLink, telLink } from "../config/site";
 ---
-<form class="df" id="demoForm" novalidate>
+<form class="df" id="demoForm" novalidate data-webhook={SITE.leadWebhookUrl} data-wa={SITE.whatsapp}>
   <div class="df__row">
     <label>Your name
       <input type="text" name="name" required autocomplete="name" placeholder="e.g. Ankur Kaplesh" />
@@ -43,7 +43,14 @@ import { SITE } from "../config/site";
 
   <button type="submit" class="btn btn--primary btn--lg df__submit">Book my free demo</button>
   <p class="df__status" id="dfStatus" role="status" aria-live="polite"></p>
-  <p class="df__note">No spam. We'll WhatsApp you to fix a 20-minute walkthrough on your own numbers.</p>
+  <div class="df__recover" id="dfRecover" hidden>
+    <div class="df__recover-acts">
+      <button type="submit" class="btn btn--primary btn--sm">Try again</button>
+      <a class="btn btn--ghost btn--sm" href={telLink}>Call {SITE.phone}</a>
+      <a class="btn btn--ghost btn--sm" id="dfWa" href={waLink()} target="_blank" rel="noopener">Send on WhatsApp instead</a>
+    </div>
+  </div>
+  <p class="df__note">No spam. We'll WhatsApp you to agree a time for a 20-minute walkthrough on your own numbers.</p>
 </form>
 
 <style>
@@ -81,63 +88,88 @@ import { SITE } from "../config/site";
   .df__status[data-state="ok"] { color: var(--brand-700); }
   .df__status[data-state="err"] { color: var(--graphite-800); }
   .df__note { margin: 0; font-size: .82rem; color: var(--muted); }
+  .df__recover { padding: 14px; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: var(--brand-50, #f4f8ff); }
+  .df__recover-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .df__recover-acts .btn { flex: 1 1 auto; }
   @media (max-width: 560px) { .df__row { grid-template-columns: 1fr; } }
 </style>
 
-<script define:vars={{ WEBHOOK: SITE.leadWebhookUrl, WA: SITE.whatsapp, MAIL: SITE.emailFallback }}>
+<script>
+  import { submitLead, waLink, newRequestId, trackAcceptedLead } from "../lib/lead-client.js";
+
   const form = document.getElementById("demoForm");
   const status = document.getElementById("dfStatus");
-  const loadTime = Date.now();
+  const recover = document.getElementById("dfRecover");
+  const waBtn = document.getElementById("dfWa");
 
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(form));
-    
-    // Advanced Honeypot & Speed Trap (Backend-less rate limiting for static sites)
-    // 1. If hidden website field is filled, it's a bot.
-    // 2. If form is submitted in under 3.5 seconds, it's a bot.
-    if (data.website || (Date.now() - loadTime) < 3500) {
-      console.warn("Bot detected: Form filled too quickly or honeypot triggered.");
-      return; 
-    }
-    if (!data.name || !data.company || !data.phone) {
+  if (form) {
+    const endpoint = form.dataset.webhook || "";
+    const wa = form.dataset.wa;
+    let requestId = newRequestId();
+    let sending = false;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (sending) return;
+      const data = Object.fromEntries(new FormData(form));
+
+      // Honeypot only. (A timing threshold used to silently drop fast and
+      // autofilled submissions from real people — abuse control belongs on the
+      // server, not in the visitor's browser.)
+      if (data.website) return;
+      delete data.website;
+
+      if (!data.name || !data.company || !data.phone) {
+        status.dataset.state = "err";
+        status.textContent = "Please add your name, company and phone.";
+        return;
+      }
+
+      const btn = form.querySelector("button[type=submit]");
+      sending = true;
+      btn.disabled = true;
+      recover.hidden = true;
+      status.dataset.state = "";
+      status.textContent = "Sending…";
+
+      const result = await submitLead(
+        endpoint,
+        {
+          ...data,
+          source: "demo-form",
+          page: location.pathname,
+          referrer: document.referrer || "",
+          landingSearch: location.search || "",
+          submittedAt: new Date().toISOString(),
+        },
+        { requestId }
+      );
+
+      sending = false;
+      btn.disabled = false;
+
+      if (result.accepted) {
+        trackAcceptedLead({ source: "demo-form", page: location.pathname, leadId: result.leadId });
+        window.location.href = "/thank-you";
+        return;
+      }
+
+      // Delivery failed. Keep what they typed, tell the truth, offer a way out.
+      requestId = newRequestId();
       status.dataset.state = "err";
-      status.textContent = "Please add your name, company and phone.";
-      return;
-    }
-
-    const btn = form.querySelector("button[type=submit]");
-    btn.disabled = true;
-    status.dataset.state = "";
-    status.textContent = "Sending…";
-    if (window.fbq) window.fbq("track", "Lead");
-
-    const payload = {
-      ...data,
-      source: "sotynerp-website",
-      page: location.pathname,
-      submittedAt: new Date().toISOString(),
-    };
-
-    // 1) Try the CRM/ERP webhook if configured.
-    if (WEBHOOK) {
-      try {
-        const res = await fetch(WEBHOOK, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (res.ok) { window.location.href = "/thank-you"; return; }
-      } catch (_) { /* fall through to WhatsApp */ }
-    }
-
-    // 2) Fallback so NO lead is ever lost → open a pre-filled WhatsApp chat.
-    const msg =
-      `New sotyn.ai demo request%0A` +
-      `Name: ${data.name}%0ACompany: ${data.company}%0APhone: ${data.phone}` +
-      `%0ACity: ${data.city || "-"}%0ATrade: ${data.trade || "-"}%0ATeam: ${data.team || "-"}`;
-    status.dataset.state = "ok";
-    status.textContent = "Opening WhatsApp to confirm your demo…";
-    window.location.href = `https://wa.me/${WA}?text=${msg}`;
-  });
+      status.textContent = "We couldn't send that request. Your details are still here — try again, or use an option below.";
+      if (waBtn) {
+        waBtn.href = waLink(wa, [
+          "New sotyn.ai demo request",
+          `Name: ${data.name}`,
+          `Company: ${data.company}`,
+          `Phone: ${data.phone}`,
+          `City: ${data.city || "-"}`,
+          `Trade: ${data.trade || "-"}`,
+          `Team: ${data.team || "-"}`,
+        ]);
+      }
+      recover.hidden = false;
+    });
+  }
 </script>

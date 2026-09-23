@@ -160,32 +160,14 @@ const faqSchema = [{
   mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
 }];
 
-// Organization schema — brand entity for Google & AI answer engines.
-const orgSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: SITE.name,
-  legalName: SITE.parentCompany,
-  url: SITE.url,
-  logo: `${SITE.url}/favicon.svg`,
-  slogan: SITE.motto,
-  telephone: SITE.phone,
-  email: SITE.emailFallback,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: SITE.address.street,
-    addressLocality: SITE.address.city,
-    addressRegion: SITE.address.region,
-    postalCode: SITE.address.postalCode,
-    addressCountry: SITE.address.country,
-  },
-  sameAs: [SITE.social.linkedin, SITE.social.instagram].filter(Boolean),
-};
+// The Organization entity is emitted once, sitewide, by BaseLayout
+// (@id ".../#organization") — a second, differently-named copy here split the
+// brand into two entities.
 ---
 <BaseLayout
   title="EPC ERP Software for Contractors in India — sotyn.ai | Contracting without the chaos"
   description="The EPC ERP built inside a 535+ project contracting company — projects, procurement, billing, payroll & weekly scorecards in one login, in 11 languages. Live in 30 days. If it’s not in SOTYN, it didn’t happen."
-  schema={[...faqSchema, orgSchema]}
+  schema={faqSchema}
 >
   <!-- ── HERO ─────────────────────────────────────────────────────────── -->
   <section class="hero">

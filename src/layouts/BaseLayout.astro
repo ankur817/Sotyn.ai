@@ -33,6 +33,7 @@ const ogImageUrl = new URL(ogImage, SITE.url).href;
 const orgSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": `${SITE.url}/#organization`,
   name: SITE.parentCompany,
   alternateName: SITE.name,
   url: SITE.url,
@@ -48,9 +49,11 @@ const orgSchema = {
     addressCountry: SITE.address.country,
   },
   areaServed: { "@type": "Country", name: "India" },
+  email: SITE.emailFallback,
+  slogan: SITE.motto,
   contactPoint: {
     "@type": "ContactPoint",
-    telephone: `+${SITE.phoneHref}`,
+    telephone: SITE.phoneHref,
     contactType: "sales",
     areaServed: "IN",
     availableLanguage: ["en", "hi"],
@@ -62,6 +65,7 @@ const orgSchema = {
 const appSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  "@id": `${SITE.url}/#software`,
   name: SITE.name,
   applicationCategory: "BusinessApplication",
   applicationSubCategory: "Construction Management Software",
@@ -70,8 +74,8 @@ const appSchema = {
     "sotyn.ai is an AI construction operating system for Indian EPC, MEP and solar contractors. It connects projects, procurement, site reporting (DPR), BOQ tracking, billing and finance in one platform — so teams reduce delays, protect margins and get paid faster. Built and run inside a live 535+ project EPC company.",
   url: SITE.url,
   inLanguage: "en-IN",
-  author: { "@type": "Organization", name: SITE.parentCompany },
-  publisher: { "@type": "Organization", name: SITE.parentCompany },
+  author: { "@id": `${SITE.url}/#organization` },
+  publisher: { "@id": `${SITE.url}/#organization` },
   featureList: [
     "AI project & site intelligence",
     "Daily Progress Reports (DPR)",
@@ -82,11 +86,18 @@ const appSchema = {
     "Weekly performance scorecard",
     "Dedicated Solar EPC division",
   ],
+  // Paid subscription. Prices are read from SITE.pricing so the markup can never
+  // drift from the plan cards on /pricing (a free demo does not make the app free).
   offers: {
-    "@type": "Offer",
-    priceCurrency: "INR",
-    price: "0",
-    description: "Book a free demo. Pricing tailored to your team size.",
+    "@type": "AggregateOffer",
+    priceCurrency: SITE.pricing.currencyCode,
+    lowPrice: String(SITE.pricing.annualLowInr),
+    highPrice: String(SITE.pricing.annualHighInr),
+    offerCount: SITE.pricing.plans.length,
+    url: new URL("/pricing", SITE.url).href,
+    availability: "https://schema.org/InStock",
+    description:
+      "Annual subscription, billed yearly. One-time onboarding is charged separately. A demo is free.",
   },
   areaServed: { "@type": "Country", name: "India" },
 };
@@ -109,7 +120,7 @@ const fbNoscript = SITE.metaPixelId
     <meta name="color-scheme" content="light" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     {!noindex && <meta name="robots" content="index, follow, max-image-preview:large" />}
 

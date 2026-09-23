@@ -1,9 +1,9 @@
 ---
-import { SITE } from "../config/site";
+import { SITE, waLink, telLink } from "../config/site";
 import Icon from "./Icon.astro";
 const { source = "webinar-registration" } = Astro.props;
 ---
-<form class="rf" id="regForm" data-source={source} novalidate>
+<form class="rf" id="regForm" data-source={source} novalidate data-webhook={SITE.leadWebhookUrl} data-wa={SITE.whatsapp}>
   <div class="rf__row">
     <label>Your name<input type="text" name="name" required autocomplete="name" placeholder="Full name" /></label>
     <label>Phone / WhatsApp<input type="tel" name="phone" required inputmode="tel" autocomplete="tel" placeholder="10-digit mobile" /></label>
@@ -22,6 +22,14 @@ const { source = "webinar-registration" } = Astro.props;
   <input type="text" name="website_hp" tabindex="-1" autocomplete="off" class="rf__hp" aria-hidden="true" />
   <button type="submit" class="btn btn--primary btn--lg rf__submit">Reserve my free seat</button>
   <p class="rf__status" id="rfStatus" role="status" aria-live="polite"></p>
+  <div class="rf__recover" id="rfRecover" hidden>
+    <p class="rf__recover-h">Nothing was lost — your details are still in the form.</p>
+    <div class="rf__recover-acts">
+      <button type="submit" class="btn btn--primary btn--sm">Try again</button>
+      <a class="btn btn--ghost btn--sm" href={telLink}>Call {SITE.phone}</a>
+      <a class="btn btn--ghost btn--sm" id="rfWa" href={waLink()} target="_blank" rel="noopener">Register on WhatsApp instead</a>
+    </div>
+  </div>
   <p class="rf__note"><Icon name="lock" size={14} /> Free. We’ll WhatsApp you the joining link &amp; a reminder.</p>
 
   <div class="rf__done" id="rfDone" hidden>
@@ -49,54 +57,87 @@ const { source = "webinar-registration" } = Astro.props;
   .rf__done { text-align: center; padding: 6px 4px; }
   .rf__check { width: 60px; height: 60px; border-radius: 50%; background: var(--brand-50); color: var(--brand-600); display: grid; place-items: center; margin: 0 auto 10px; }
   .rf__done h3 { margin: 6px 0 4px; }
+  .rf__recover { margin-top: 12px; padding: 14px; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: var(--brand-50, #f4f8ff); }
+  .rf__recover-h { margin: 0 0 10px; font-size: .9rem; font-weight: 600; }
+  .rf__recover-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rf__recover-acts .btn { flex: 1 1 auto; }
   @media (max-width: 560px) { .rf__row { grid-template-columns: 1fr; } }
 </style>
 
-<script is:inline define:vars={{ WEBHOOK: SITE.leadWebhookUrl, WA: SITE.whatsapp }}>
+<script>
+  import { submitLead, waLink, newRequestId, trackAcceptedLead } from "../lib/lead-client.js";
+
   const form = document.getElementById("regForm");
   const statusEl = document.getElementById("rfStatus");
   const done = document.getElementById("rfDone");
+  const recover = document.getElementById("rfRecover");
+  const waBtn = document.getElementById("rfWa");
 
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (form.website_hp.value) return; // bot
-    const data = Object.fromEntries(new FormData(form).entries());
-    delete data.website_hp;
-    if (!data.name || !data.phone) {
+  if (form) {
+    const endpoint = form.dataset.webhook || "";
+    const wa = form.dataset.wa;
+    let requestId = newRequestId();
+    let sending = false;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (sending) return;
+      if (form.website_hp.value) return; // honeypot
+      const data = Object.fromEntries(new FormData(form).entries());
+      delete data.website_hp;
+      if (!data.name || !data.phone) {
+        statusEl.dataset.state = "err";
+        statusEl.textContent = "Please add your name and phone.";
+        return;
+      }
+
+      const source = form.dataset.source || "webinar-registration";
+      const btn = form.querySelector("button[type=submit]");
+      sending = true;
+      btn.disabled = true;
+      recover.hidden = true;
+      statusEl.dataset.state = "";
+      statusEl.textContent = "Sending your registration…";
+
+      const result = await submitLead(
+        endpoint,
+        {
+          ...data,
+          source,
+          event: "Contractor's Profit Masterclass",
+          page: location.pathname,
+          referrer: document.referrer || "",
+          landingSearch: location.search || "",
+          submittedAt: new Date().toISOString(),
+        },
+        { requestId }
+      );
+
+      sending = false;
+      btn.disabled = false;
+
+      if (result.accepted) {
+        trackAcceptedLead({ source, page: location.pathname, leadId: result.leadId });
+        form.querySelectorAll(".rf__row, label, .rf__submit, .rf__note, .rf__status").forEach((el) => el.setAttribute("hidden", ""));
+        done.hidden = false;
+        return;
+      }
+
+      // The seat was NOT reserved — never pretend otherwise.
+      requestId = newRequestId();
       statusEl.dataset.state = "err";
-      statusEl.textContent = "Please add your name and phone.";
-      return;
-    }
-    data.source = form.dataset.source || "webinar-registration";
-    data.event = "Contractor's Profit Masterclass";
-    data.page = location.pathname;
-    data.submittedAt = new Date().toISOString();
-
-    const btn = form.querySelector("button[type=submit]");
-    btn.disabled = true;
-    statusEl.dataset.state = "";
-    statusEl.textContent = "Reserving your seat…";
-
-    let delivered = false;
-    if (WEBHOOK) {
-      try {
-        const r = await fetch(WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-        delivered = r.ok;
-      } catch (_) { delivered = false; }
-    }
-
-    // Fire Meta Pixel conversion events for ad optimisation (no-op if pixel absent)
-    if (window.fbq) { window.fbq("track", "CompleteRegistration"); window.fbq("track", "Lead"); }
-
-    // Show success, then hand to WhatsApp if the webhook didn't capture it
-    form.querySelectorAll(".rf__row, label, .rf__submit, .rf__note, .rf__status").forEach((el) => el.setAttribute("hidden", ""));
-    done.hidden = false;
-
-    if (!delivered) {
-      const msg = `Webinar registration%0AName: ${data.name}%0APhone: ${data.phone}%0A` +
-        (data.company ? `Company: ${data.company}%0A` : "") + (data.turnover ? `Turnover: ${data.turnover}%0A` : "") +
-        `Event: Contractor's Profit Masterclass`;
-      setTimeout(() => window.open(`https://wa.me/${WA}?text=${msg}`, "_blank"), 400);
-    }
-  });
+      statusEl.textContent = "We couldn't register you just now. Your details are still here — try again, or use an option below.";
+      if (waBtn) {
+        waBtn.href = waLink(wa, [
+          "Webinar registration",
+          `Name: ${data.name}`,
+          `Phone: ${data.phone}`,
+          data.company ? `Company: ${data.company}` : "",
+          data.turnover ? `Turnover: ${data.turnover}` : "",
+          "Event: Contractor's Profit Masterclass",
+        ]);
+      }
+      recover.hidden = false;
+    });
+  }
 </script>
