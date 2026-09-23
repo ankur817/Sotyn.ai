@@ -25,6 +25,14 @@ export const SITE = {
   url: "https://www.sotyn.ai",
   appUrl: "https://securederp.in",
 
+  // ── Search Console ───────────────────────────────────────────────────────
+  // Google Search Console HTML-tag verification. Paste ONLY the token from the
+  // meta tag Google shows you (the content="..." value, not the whole tag).
+  // Leave empty and no tag is rendered. Prefer the DNS/domain property when you
+  // control the DNS — it verifies apex + www + http in one go and never breaks
+  // on a redeploy. This tag is the fallback / second property.
+  googleSiteVerification: "", // ⚠️ REPLACE with your GSC token
+
   // ── Contact ──────────────────────────────────────────────────────────────
   phone: "+91 70099 87817",
   phoneHref: "+917009987817",

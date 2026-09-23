@@ -139,6 +139,11 @@ const fbNoscript = SITE.metaPixelId
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
 
+    <!-- Google Search Console ownership (set SITE.googleSiteVerification) -->
+    {SITE.googleSiteVerification && (
+      <meta name="google-site-verification" content={SITE.googleSiteVerification} />
+    )}
+
     <!-- Brand / perf -->
     <meta name="theme-color" content="#163a72" />
     <meta name="author" content={SITE.parentCompany} />
