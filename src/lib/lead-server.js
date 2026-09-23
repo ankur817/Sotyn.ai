@@ -148,10 +148,13 @@ export const LEAD_COLUMNS = [
   "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "Calculator/resource context",
   "Status", "Assigned owner", "Next follow-up", "Demo status", "Qualification", "ERP reference",
   "ERP sync", "Sheet sync", "Consent", "Is test", "Submission ID",
+  // Appended 2026-09-23. New columns go at the END so existing formulas,
+  // staff-managed fields and the Apps Script's column lookups keep working.
+  "Location page state", "Location page district", "Location page district code",
 ];
 
 /** Build the row exactly as the Leads tab expects it. */
-export function toSheetRow({ leadId, lead, receivedAt, utm, erpRef = "", erpSync = "pending", owner = "" }) {
+export function toSheetRow({ leadId, lead, receivedAt, utm, erpRef = "", erpSync = "pending", owner = "", pageLocation = null }) {
   const label = ENQUIRY_LABEL[lead.intent] || lead.intent;
   const requirement = [lead.team && `Team: ${lead.team}`, lead.turnover && `Turnover: ${lead.turnover}`, lead.event && `Event: ${lead.event}`]
     .filter(Boolean)
@@ -189,5 +192,10 @@ export function toSheetRow({ leadId, lead, receivedAt, utm, erpRef = "", erpSync
     "Submitted via website form",
     lead.isTest ? "TRUE" : "FALSE",
     safeCell(lead.requestId),
+    // Which location page they were reading — NOT their company's location,
+    // which is the City column above and is theirs to state.
+    pageLocation ? safeCell(pageLocation.state_name) : "",
+    pageLocation ? safeCell(pageLocation.district_name) : "",
+    pageLocation ? safeCell(pageLocation.district_code) : "",
   ];
 }

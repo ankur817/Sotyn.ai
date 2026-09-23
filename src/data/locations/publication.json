@@ -1,0 +1,40 @@
+{
+  "_comment": "The publication gate. A district gets a standalone page ONLY from a record here with status 'approved', a stated district-specific reason, and at least one evidence item. Everything else stays a draft and is served by the state hub and the national pages. Drafts are never rendered as public routes.",
+  "_fields": {
+    "district_code": "LGD code \u2014 the identity, not the name",
+    "status": "approved | draft | rejected",
+    "reason_page_exists": "the district-specific reason this page is separately useful. 'We want to rank in X' is not a reason.",
+    "evidence": "verified, checkable items. Never a manufactured local claim.",
+    "delivery_mode": "remote | remote+visits | on-site team \u2014 must be true",
+    "workflows": "the 2-3 national workflow pages this district's buyers most need",
+    "blocker": "for drafts: exactly what is missing before it could be approved",
+    "approved_by": "who signed off the local claims",
+    "approved_on": "date",
+    "office_here": "true only where sotyn.ai genuinely has premises in that district"
+  },
+  "records": [
+    {
+      "district_code": "36",
+      "district_name": "Ludhiana",
+      "state_name": "Punjab",
+      "status": "approved",
+      "reason_page_exists": "sotyn.ai's own office is in this district: Secured Engineers Pvt. Ltd. is at 2480/1, BK Tower, Gill Road, Ludhiana 141003, and the team that built the software runs its own contracting business on it from here. A contractor in Ludhiana can meet the people who built it \u2014 true in this district and in no other.",
+      "evidence": [
+        "Registered office at 2480/1, BK Tower, Gill Road, Ludhiana 141003 \u2014 published sitewide (src/config/site.ts)",
+        "The product is operated daily from this district by the company that built it, which is also its first customer",
+        "Owner confirmation 2026-09-23: Ludhiana is our office; customer support is provided online"
+      ],
+      "office_here": true,
+      "delivery_mode": "remote",
+      "support_note": "Being down the road does not buy a different service, and we are not offering site visits as part of the subscription.",
+      "workflows": [
+        "/construction-procurement-software",
+        "/subcontractor-billing-software",
+        "/ra-billing-software"
+      ],
+      "blocker": "",
+      "approved_by": "Director, sotyn.ai (confirmed in writing 2026-09-23)",
+      "approved_on": "2026-09-23"
+    }
+  ]
+}

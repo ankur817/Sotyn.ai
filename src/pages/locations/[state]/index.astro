@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Icon from "../../../components/Icon.astro";
+import { SITE } from "../../../config/site";
+import { STATES, publishedDistricts } from "../../../lib/locations.js";
+
+// A state hub exists only where at least one district in it has earned a page.
+// Everywhere else the India hub and its selector serve the whole state, which
+// is why there are no empty state pages built for search engines to find.
+export function getStaticPaths() {
+  const published = publishedDistricts();
+  const slugs = [...new Set(published.map((d) => d.state_slug))];
+  return slugs.map((slug) => {
+    const state = STATES.find((s) => s.state_slug === slug);
+    return { params: { state: slug }, props: { state, districts: published.filter((d) => d.state_slug === slug) } };
+  });
+}
+const { state, districts } = Astro.props;
+const schema = [
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Coverage", item: `${SITE.url}/locations` },
+    { "@type": "ListItem", position: 3, name: state.state_name, item: `${SITE.url}/locations/${state.state_slug}` },
+  ]},
+];
+---
+<BaseLayout
+  title={`Construction ERP Software for Contractors in ${state.state_name} | sotyn.ai`}
+  description={`How sotyn.ai works for EPC, MEPF, solar and civil contracting companies in ${state.state_name}: what implementation involves, which districts have a detailed page, and how to see the software on your own projects.`}
+  path={`/locations/${state.state_slug}`}
+  schema={schema}
+>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <div class="container">
+      <a href="/">Home</a> <span aria-hidden="true">/</span>
+      <a href="/locations">Coverage</a> <span aria-hidden="true">/</span>
+      <span>{state.state_name}</span>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container container--narrow text-center">
+      <span class="eyebrow">{state.state_name}</span>
+      <h1>Contractor ERP software for firms in {state.state_name}</h1>
+      <p class="lead" style="margin-inline:auto">
+        Software your contracting business runs on — procurement, site reporting, EPC billing and
+        collections in one system. Onboarding is delivered remotely from {SITE.address.city},
+        {SITE.address.region}, and the price is the same everywhere in India.
+      </p>
+      <div class="btn-row" style="justify-content:center;margin-top:24px">
+        <a href={`/demo?from=state&state=${state.state_slug}`} class="btn btn--primary btn--lg">Book a contractor-software demo</a>
+        <a href="/construction-erp-implementation" class="btn btn--ghost btn--lg">How implementation works</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Districts with their own page</span>
+        <h2>Where we have something locally specific to say</h2>
+      </div>
+      <div class="st-list">
+        {districts.map((d) => (
+          <a class="st-d" href={`/locations/${d.state_slug}/${d.district_slug}`}>
+            <strong>{d.district_name}</strong>
+            <span>{d.publication.reason_page_exists}</span>
+          </a>
+        ))}
+      </div>
+      <p class="st-note">
+        <Icon name="alert" size={16} />
+        The other {(state.districts || []).length - districts.length} districts of {state.state_name} are covered the
+        same way — the software, the price and the remote onboarding do not change by district. They do not have a
+        separate page because there is nothing locally specific to add, and a page that only swaps the district name
+        would waste your time. <a href="/locations">See the full coverage list</a> or
+        <a href={`/demo?from=state&state=${state.state_slug}`}>book a demo</a> and tell us where your sites are.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="sec-head text-center"><span class="eyebrow">Start here</span><h2>The workflows most contractors look at first</h2></div>
+      <div class="st-flows">
+        <a class="st-flow" href="/construction-procurement-software"><strong>Procurement &amp; approvals</strong><span>Indent → rate comparison → approval → PO → receipt</span></a>
+        <a class="st-flow" href="/subcontractor-billing-software"><strong>Subcontractor bill checking</strong><span>Measured quantity against the agreed rate, deductions by rule</span></a>
+        <a class="st-flow" href="/ra-billing-software"><strong>RA billing</strong><span>Bill the day work is approved, with GST, TDS and retention</span></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .st-list { display: grid; gap: 14px; }
+  .st-d { display: block; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-elevated, #fff); text-decoration: none; color: inherit; }
+  .st-d:hover { border-color: var(--brand-500); }
+  .st-d strong { display: block; font-size: 1.05rem; margin-bottom: 6px; }
+  .st-d span { color: var(--muted); font-size: .92rem; line-height: 1.55; }
+  .st-note { display: flex; gap: 10px; align-items: flex-start; margin: 20px 0 0; font-size: .92rem; color: var(--muted); line-height: 1.65; }
+  .st-note :global(.ico) { flex: none; margin-top: 4px; }
+  .st-flows { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .st-flow { padding: 18px; border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; color: inherit; background: var(--bg-elevated, #fff); }
+  .st-flow:hover { border-color: var(--brand-500); }
+  .st-flow strong { display: block; margin-bottom: 5px; }
+  .st-flow span { font-size: .88rem; color: var(--muted); line-height: 1.5; }
+</style>

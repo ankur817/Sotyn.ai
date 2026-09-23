@@ -33,6 +33,18 @@ export const SITE = {
   // on a redeploy. This tag is the fallback / second property.
   googleSiteVerification: "", // ⚠️ REPLACE with your GSC token
 
+  // ── Analytics ─ ONE STACK ONLY ────────────────────────────────────
+  // docs/lead-and-analytics-spec.md §2: "One stack only. Do not add a second
+  // tag manager or a duplicate GA4 tag." Set EXACTLY ONE of these two:
+  //   • ga4MeasurementId  — "G-XXXXXXXXXX", loads gtag.js directly. Simplest.
+  //   • gtmContainerId    — "GTM-XXXXXXX", loads GTM; configure GA4 INSIDE GTM.
+  // Setting both double-counts every pageview, so the build refuses it.
+  // Both empty = no analytics loads at all (the state today).
+  analytics: {
+    ga4MeasurementId: "", // ⚠️ REPLACE — or leave empty if using GTM
+    gtmContainerId: "", // ⚠️ REPLACE — or leave empty if using gtag
+  },
+
   // ── Contact ──────────────────────────────────────────────────────────────
   phone: "+91 70099 87817",
   phoneHref: "+917009987817",

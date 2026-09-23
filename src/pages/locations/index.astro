@@ -1,0 +1,167 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Icon from "../../components/Icon.astro";
+import { SITE } from "../../config/site";
+import { STATES, coverageSummary, publishedDistricts, SNAPSHOT } from "../../lib/locations.js";
+
+const summary = coverageSummary();
+const published = publishedDistricts();
+const publishedByState = new Map();
+for (const d of published) {
+  if (!publishedByState.has(d.state_slug)) publishedByState.set(d.state_slug, []);
+  publishedByState.get(d.state_slug).push(d);
+}
+const sortedStates = [...STATES].sort((a, b) => a.state_name.localeCompare(b.state_name));
+
+const schema = [
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    { "@type": "ListItem", position: 2, name: "Coverage across India", item: `${SITE.url}/locations` },
+  ]},
+];
+---
+<BaseLayout
+  title="Where sotyn.ai Works Across India — coverage by state and district | sotyn.ai"
+  description="sotyn.ai is contractor ERP software, delivered remotely across India. Find your state and district, see how implementation actually works for contractors there, and book a demo on your own projects."
+  path="/locations"
+  schema={schema}
+>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <div class="container"><a href="/">Home</a> <span aria-hidden="true">/</span> <span>Coverage across India</span></div>
+  </nav>
+
+  <section class="section">
+    <div class="container container--narrow text-center">
+      <span class="eyebrow">Coverage across India</span>
+      <h1>Contractor ERP software, delivered across India.</h1>
+      <p class="lead" style="margin-inline:auto">
+        sotyn.ai is software for EPC, MEPF, solar, civil and industrial <strong>contracting companies</strong> —
+        not a directory of contractors to hire. Onboarding and support are delivered remotely, from
+        {SITE.address.city}, {SITE.address.region}, wherever your sites are.
+      </p>
+      <div class="btn-row" style="justify-content:center;margin-top:26px">
+        <a href="/demo?from=locations" class="btn btn--primary btn--lg">Book a contractor-software demo</a>
+        <a href="/construction-erp-implementation" class="btn btn--ghost btn--lg">How implementation works</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <div class="sec-head text-center">
+        <span class="eyebrow">How delivery actually works</span>
+        <h2>Remote implementation, honestly described.</h2>
+      </div>
+      <ul class="loc-facts">
+        <li><Icon name="check" size={17} /> <span><strong>Onboarding is remote.</strong> Masters, live projects, BOQs and opening balances are migrated, and training runs by role over video on your own data. That is the same everywhere in India.</span></li>
+        <li><Icon name="check" size={17} /> <span><strong>Your team works on any phone.</strong> Site staff file daily reports and raise indents from the browser — there is no separate app to install, and site users are not charged per seat.</span></li>
+        <li><Icon name="alert" size={17} /> <span><strong>On-site visits are not automatic.</strong> We have one office, in {SITE.address.city}. Anything on-site outside it is agreed case by case — we will say what is possible before you commit, not after.</span></li>
+        <li><Icon name="alert" size={17} /> <span><strong>Support is in English today.</strong> Other Indian languages are being rolled out; we will not promise support in a language we cannot yet deliver.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Find your district</span>
+        <h2>Every state and union territory, every verified district.</h2>
+        <p class="lead" style="margin-inline:auto">
+          {summary.districts} districts across {summary.states} states and union territories are in our coverage
+          register. A district is listed because its geography is verified — not because a page has been written
+          about it. {summary.published === 0
+            ? "No district has a standalone page yet: one is published only when there is something true and locally specific to say beyond what this page already tells you."
+            : `${summary.published} district${summary.published === 1 ? " has" : "s have"} a standalone page, for the reasons stated on it.`}
+        </p>
+      </div>
+
+      <label class="loc-filter">
+        <span>Filter states and districts</span>
+        <input type="search" id="locFilter" placeholder="Type a state or district name…" autocomplete="off" />
+      </label>
+
+      <div id="locList">
+        {sortedStates.map((s) => (
+          <details class="loc-state" data-state={s.state_name.toLowerCase()}>
+            <summary>
+              <span class="loc-state__name">{s.state_name}</span>
+              <span class="loc-state__meta">
+                {(s.districts || []).length} districts
+                {publishedByState.has(s.state_slug) && <span class="loc-tag">{publishedByState.get(s.state_slug).length} page</span>}
+              </span>
+            </summary>
+            <div class="loc-districts">
+              {(s.districts || []).map((d) => {
+                const page = published.find((p) => p.district_code === d.district_code);
+                return page
+                  ? <a class="loc-d loc-d--linked" href={`/locations/${s.state_slug}/${d.district_slug}`}>{d.district_name}</a>
+                  : <span class="loc-d" data-district={d.district_name.toLowerCase()}>{d.district_name}</span>;
+              })}
+            </div>
+            <p class="loc-state__cta">
+              Contracting in {s.state_name}? <a href={`/demo?from=locations&state=${s.state_slug}`}>Book a demo</a> and tell us where your sites are.
+            </p>
+          </details>
+        ))}
+      </div>
+
+      <p class="loc-source">
+        Source: {SNAPSHOT?.primary_source || "official district records"} · snapshot retrieved {SNAPSHOT?.retrieved || "—"}.
+        {SNAPSHOT?.completeness && SNAPSHOT.completeness !== "complete" && " Coverage against this snapshot is partial — see the reconciliation note in our register."}
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container container--narrow text-center">
+      <h2 style="color:#fff">Wherever you are, the demo is the same.</h2>
+      <p class="lead" style="margin-inline:auto;color:#cbd5e1">
+        Twenty minutes on your own trades, project sizes and billing — not a slide deck about your district.
+      </p>
+      <div class="btn-row" style="justify-content:center">
+        <a href="/demo?from=locations" class="btn btn--primary btn--lg">Book a free demo</a>
+        <a href="/pricing" class="btn btn--ghost btn--lg">See pricing</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .loc-facts { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .loc-facts li { display: flex; gap: 11px; align-items: flex-start; line-height: 1.6; }
+  .loc-facts :global(.ico) { flex: none; margin-top: 4px; color: var(--brand-600); }
+  .loc-filter { display: block; margin: 0 0 18px; }
+  .loc-filter span { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 7px; }
+  .loc-filter input { width: 100%; font: inherit; padding: 13px 15px; border: 1.5px solid var(--line); border-radius: var(--radius-sm); }
+  .loc-filter input:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 4px rgba(41,151,255,.12); }
+  .loc-state { border: 1px solid var(--line); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--bg-elevated, #fff); }
+  .loc-state[hidden] { display: none; }
+  .loc-state > summary { cursor: pointer; padding: 14px 16px; display: flex; justify-content: space-between; gap: 12px; align-items: center; font-weight: 600; }
+  .loc-state > summary:focus-visible { outline: 3px solid var(--brand-500); outline-offset: 2px; }
+  .loc-state__meta { font-size: .82rem; color: var(--muted); font-weight: 500; display: flex; gap: 8px; align-items: center; }
+  .loc-tag { background: var(--brand-50, #f4f8ff); color: var(--brand-700); border-radius: 999px; padding: 2px 9px; font-weight: 700; }
+  .loc-districts { display: flex; flex-wrap: wrap; gap: 7px; padding: 4px 16px 14px; }
+  .loc-d { font-size: .88rem; color: var(--muted); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; }
+  .loc-d--linked { color: var(--brand-700); border-color: var(--brand-200, #cfe3ff); font-weight: 600; text-decoration: none; }
+  .loc-state__cta { margin: 0; padding: 0 16px 14px; font-size: .9rem; color: var(--muted); }
+  .loc-source { margin-top: 18px; font-size: .82rem; color: var(--muted); }
+</style>
+
+<script>
+  // Progressive enhancement only: every state and district above is already in
+  // the HTML and reachable without JavaScript. This just filters what is shown.
+  const input = document.getElementById("locFilter");
+  const states = [...document.querySelectorAll(".loc-state")];
+  input?.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+    for (const s of states) {
+      if (!q) { s.hidden = false; s.open = false; continue; }
+      const stateHit = (s.dataset.state || "").includes(q);
+      const districtHit = [...s.querySelectorAll(".loc-d")].some((d) =>
+        d.textContent.toLowerCase().includes(q)
+      );
+      s.hidden = !(stateHit || districtHit);
+      s.open = districtHit && !stateHit;
+    }
+  });
+</script>

@@ -39,6 +39,9 @@ import { SITE, waLink, telLink } from "../config/site";
   </label>
 
   <input type="hidden" name="context" id="dfContext" value="" />
+  <!-- The location PAGE the visitor came from. Their own city is the field above. -->
+  <input type="hidden" name="page_state" id="dfPageState" value="" />
+  <input type="hidden" name="page_district" id="dfPageDistrict" value="" />
 
   <!-- honeypot: hidden from humans, bots fill it -->
   <input type="text" name="website" class="df__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
@@ -117,13 +120,27 @@ import { SITE, waLink, telLink } from "../config/site";
       "implementation": "Implementation & migration from Excel",
       "pricing": "Pricing / plan question",
       "platform": "Platform overview",
+      "district": "District coverage page",
+      "state": "State coverage page",
+      "locations": "India coverage page",
     };
     try {
-      const from = (new URLSearchParams(location.search).get("from") || "").toLowerCase();
-      if (/^[a-z0-9-]{1,40}$/.test(from)) {
-        const ctx = document.getElementById("dfContext");
-        if (ctx) ctx.value = `Came from: ${FROM_LABELS[from] || from}`;
-      }
+      const params = new URLSearchParams(location.search);
+      const slug = (v) => (/^[a-z0-9-]{1,60}$/.test(String(v || "").toLowerCase()) ? String(v).toLowerCase() : "");
+      const from = slug(params.get("from"));
+      const st = slug(params.get("state"));
+      const dist = slug(params.get("district"));
+      const parts = [];
+      if (from) parts.push(`Came from: ${FROM_LABELS[from] || from}`);
+      // The page a visitor read is NOT their company's location — the server
+      // records it as "page viewed", and the form still asks for their city.
+      if (st) parts.push(`Location page: ${dist ? dist + ", " : ""}${st}`);
+      const ctx = document.getElementById("dfContext");
+      if (ctx && parts.length) ctx.value = parts.join(" · ");
+      const hs = document.getElementById("dfPageState");
+      const hd = document.getElementById("dfPageDistrict");
+      if (hs) hs.value = st;
+      if (hd) hd.value = dist;
     } catch (_) { /* a malformed query string must not break the form */ }
 
     const endpoint = form.dataset.webhook || "";
