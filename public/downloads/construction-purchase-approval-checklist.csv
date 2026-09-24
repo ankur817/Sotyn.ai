@@ -1,0 +1,39 @@
+﻿Construction purchase-approval checklist
+18 checks · sotyn.ai · https://www.sotyn.ai/resources/purchase-approval-checklist
+
+How to use this
+,"Print it, or open the file in Excel or Google Sheets and use the Done / Owner / Notes columns."
+,"Run it against three purchases you made last month — a small one, a big one and an urgent one. The urgent one is where the control breaks."
+,"Anything you cannot evidence in writing is a gap, even if everyone remembers it going fine."
+
+#,Section,Check,Why it matters,What to look at,Done (Y/N),Owner,Date,Notes
+1,Before the indent leaves site,The indent names the project and the BOQ line or work item it is for.,"A purchase with no work attached to it cannot be reconciled later, and it is the easiest place for quantity to inflate.","Does the indent form have a project and BOQ/item field, and is it filled?",,,,
+2,Before the indent leaves site,"The quantity has a basis — drawing, BOQ, measurement or consumption rate.","""Send 120 m"" and ""120 m per the BOQ line"" look the same on paper and behave very differently at reconciliation.",Ask the person who raised it how they arrived at the number.,,,,
+3,Before the indent leaves site,Existing stock and other sites were checked first.,Two sites buying the same item in the same week at two rates is the most common avoidable loss in multi-site work.,Stock register or system stock at the time of the indent.,,,,
+4,Before the indent leaves site,The required-by date is realistic and recorded.,"Fake urgency is how rate comparison gets skipped. If everything is urgent, nothing is.",Compare required-by dates against actual delivery dates for last month.,,,,
+5,Before the indent leaves site,The specification is complete enough to quote against.,"Vendors quoting different specifications are not comparable, and the difference surfaces as a debit note later.",Could a vendor quote from this line without phoning you?,,,,
+6,Getting a rate you can defend,"The vendor is on your approved list, with GST and bank details on record.",Ad-hoc vendors are where compliance problems and fake invoices enter.,"Vendor master: GSTIN, PAN, bank account, date added, who added them.",,,,
+7,Getting a rate you can defend,At least two comparable quotes above your agreed value threshold.,"One quote is a price, not a rate. The threshold is yours to set — what matters is that it exists and is followed.","Written quotes against one specification, dated.",,,,
+8,Getting a rate you can defend,"The comparison is on landed cost, not headline rate.","Freight, loading, GST treatment and payment terms routinely move the winner.",Does the comparison sheet have columns for freight and terms?,,,,
+9,Getting a rate you can defend,A rate contract is used where one exists.,Rate contracts stop being useful the moment buyers forget they exist.,"List of live rate contracts, and whether the last five POs used them.",,,,
+10,Getting a rate you can defend,The reason for not choosing the lowest rate is written down.,"There are good reasons — delivery, quality, credit. An unwritten reason looks identical to a kickback in an audit.","A reason field on the comparison, not a verbal explanation.",,,,
+11,Approval that leaves a trail,"Approval limits are defined by value, and everyone knows their limit.",Undefined limits mean either everything reaches the owner or nothing does.,A written matrix: value band → approver. One page is enough.,,,,
+12,Approval that leaves a trail,"The approver sees the comparison, not just the final number.","Approving a figure without its alternatives is a signature, not a decision.",What is attached to the approval request.,,,,
+13,Approval that leaves a trail,"The approval is recorded with who, when and on what.",This is the record that protects the approver as much as the company.,Can you produce the approval for a purchase made six months ago in under a minute?,,,,
+14,Approval that leaves a trail,Split purchases below the threshold are visible.,"Three POs of ₹49,000 against a ₹50,000 limit is the oldest trick in procurement.","Same vendor, same item, same week — sort last quarter's POs and check.",,,,
+15,Receipt and payment,"Goods are received against the PO, with quantity and condition recorded.","Without a receipt record, the bill becomes the only evidence of what arrived.","Receipt note with quantity received vs ordered, signed at site.",,,,
+16,Receipt and payment,"Short supply, rejection and damage are recorded when they happen.","Recorded three weeks later, it becomes an argument. Recorded on the day, it becomes a debit note.","How many debit notes were raised last quarter, and how fast.",,,,
+17,Receipt and payment,The vendor bill is checked against the PO rate and the receipt quantity before payment.,"This single check catches rate creep, quantity inflation and duplicate billing.","Who does the three-way check, and what happens when it fails.",,,,
+18,Receipt and payment,"Advance payments are tracked to adjustment, not just to payment.",An advance nobody recovered is a loss that never appears as one.,"Open advances by vendor, with age.",,,,
+
+What the trail looks like when it works
+"Illustrative — sample data, not a customer record."
+,Indent IND-118,"Site engineer, Project A","120 m of 4-core 16 sq mm cable against BOQ line 4.2, required Thursday"
+,Comparison,Purchase desk,"Three approved vendors, one specification, landed cost with freight"
+,Approval,Approver for that value band,"Approved with the comparison attached, reason recorded for not taking L1"
+,PO-0442,Purchase desk,"Issued against IND-118, with delivery date and site"
+,Receipt,Store at site,112 m received against 120 m ordered — short receipt recorded the same day
+,Settlement,Accounts,Bill checked against PO rate and receipt quantity; debit note for 8 m
+
+"Free to use and share. No sign-up, no attribution required."
+Workflow page: https://www.sotyn.ai/construction-procurement-software
