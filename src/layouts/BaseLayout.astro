@@ -11,6 +11,8 @@ import { SITE } from "../config/site";
 export interface Props {
   title: string;
   description: string;
+  /** set on product pages so the WebPage node says what it is about */
+  about?: string;
   /** path only, e.g. "/features". Defaults to current. */
   path?: string;
   /** extra JSON-LD objects to inject */
@@ -21,6 +23,7 @@ export interface Props {
 const {
   title,
   description,
+  about,
   path = Astro.url.pathname,
   schema = [],
   ogImage = "/og-image.png",
@@ -38,9 +41,10 @@ const orgSchema = {
   name: SITE.parentCompany,
   alternateName: SITE.name,
   url: SITE.url,
-  // The logo now comes from the asset pipeline, so the schema URL must be the
-  // built (hashed) path — the old /images/ copy no longer exists.
-  logo: new URL(sotynLogo.src, SITE.url).href,
+  // A stable URL on purpose: the asset-pipeline path carries a content hash
+  // that changes whenever the image is re-encoded, and an entity's logo should
+  // not move every build. public/logo.png is the same image.
+  logo: new URL("/logo.png", SITE.url).href,
   foundingDate: "2011",
   founder: { "@type": "Person", name: "Er. Ankur Kaplesh" },
   address: {
@@ -119,7 +123,24 @@ const siteSchema = {
 
 // A "page not found" is not a product page: no SoftwareApplication or offer is
 // emitted on noindex utility pages.
-const allSchema = noindex ? [orgSchema, ...schema] : [orgSchema, siteSchema, appSchema, ...schema];
+// One WebPage node per URL, so every page is an addressable thing in the graph
+// rather than an anonymous document. No invented properties: title, canonical
+// and language are all values already on the page.
+const pageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${canonical}#webpage`,
+  url: canonical,
+  name: title,
+  description,
+  isPartOf: { "@id": `${SITE.url}/#website` },
+  ...(about ? { about: { "@id": about } } : {}),
+  inLanguage: "en-IN",
+};
+
+const allSchema = noindex
+  ? [orgSchema, ...schema]
+  : [orgSchema, siteSchema, pageSchema, appSchema, ...schema];
 
 // ── Analytics ── one stack only (docs/lead-and-analytics-spec.md §2).
 const ga4 = SITE.analytics.ga4MeasurementId;

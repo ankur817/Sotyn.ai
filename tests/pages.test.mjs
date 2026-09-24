@@ -229,3 +229,81 @@ test("trade pages name their trades instead of saying 'multi-trade'", async () =
     for (const term of terms) assert.ok(html.includes(term.toLowerCase()), `${route} never mentions "${term}"`);
   }
 });
+
+// ── Structured data: one entity per thing, and nothing claimed that is not shown
+test("no page emits two nodes of the same schema type", async () => {
+  const { readdirSync, readFileSync } = await import("node:fs");
+  const problems = [];
+  const walk = (dir, prefix = "") => {
+    for (const e of readdirSync(new URL(dir, dist), { withFileTypes: true })) {
+      if (e.isDirectory()) walk(`${dir}${e.name}/`, `${prefix}${e.name}/`);
+      else if (e.name.endsWith(".html")) {
+        const html = readFileSync(new URL(`${dir}${e.name}`, dist), "utf8");
+        const nodes = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+          .flatMap((m) => { const d = JSON.parse(m[1]); return Array.isArray(d) ? d : [d]; });
+        const counts = {};
+        for (const n of nodes) counts[n["@type"]] = (counts[n["@type"]] || 0) + 1;
+        for (const [type, n] of Object.entries(counts)) {
+          if (n > 1) problems.push(`/${prefix}${e.name}: ${n}× ${type}`);
+        }
+      }
+    }
+  };
+  walk("");
+  assert.deepEqual(problems, [], problems.join(" · "));
+});
+
+test("every marked FAQ question is visible on its page", async () => {
+  const { readdirSync, readFileSync } = await import("node:fs");
+  const norm = (t) => t.replace(/&#?\w+;/g, " ").replace(/[‘’]/g, "'").replace(/[^a-z0-9]+/gi, " ").toLowerCase().trim();
+  const problems = [];
+  const walk = (dir, prefix = "") => {
+    for (const e of readdirSync(new URL(dir, dist), { withFileTypes: true })) {
+      if (e.isDirectory()) walk(`${dir}${e.name}/`, `${prefix}${e.name}/`);
+      else if (e.name.endsWith(".html")) {
+        const html = readFileSync(new URL(`${dir}${e.name}`, dist), "utf8");
+        const body = norm((html.match(/<main[^>]*>([\s\S]*?)<\/main>/) || ["", ""])[1].replace(/<[^>]+>/g, " "));
+        const nodes = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+          .flatMap((m) => { const d = JSON.parse(m[1]); return Array.isArray(d) ? d : [d]; });
+        for (const n of nodes.filter((x) => x["@type"] === "FAQPage")) {
+          for (const q of n.mainEntity || []) {
+            if (!body.includes(norm(q.name))) problems.push(`/${prefix}: "${q.name}" is marked up but not on the page`);
+          }
+        }
+      }
+    }
+  };
+  walk("");
+  assert.deepEqual(problems, [], problems.join(" · "));
+});
+
+test("no invented review, rating or local-business markup anywhere", async () => {
+  const { readdirSync, readFileSync } = await import("node:fs");
+  const banned = ["aggregateRating", '"Review"', "LocalBusiness", "ratingValue", "reviewCount"];
+  const problems = [];
+  const walk = (dir, prefix = "") => {
+    for (const e of readdirSync(new URL(dir, dist), { withFileTypes: true })) {
+      if (e.isDirectory()) walk(`${dir}${e.name}/`, `${prefix}${e.name}/`);
+      else if (e.name.endsWith(".html")) {
+        const html = readFileSync(new URL(`${dir}${e.name}`, dist), "utf8");
+        const ld = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1]).join(" ");
+        for (const term of banned) if (ld.includes(term)) problems.push(`/${prefix}${e.name}: ${term}`);
+      }
+    }
+  };
+  walk("");
+  assert.deepEqual(problems, [], problems.join(" · "));
+});
+
+test("the paid product is never marked as free, and the phone is well formed", async () => {
+  const { readFileSync } = await import("node:fs");
+  const html = readFileSync(new URL("index.html", dist), "utf8");
+  const nodes = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+    .flatMap((m) => { const d = JSON.parse(m[1]); return Array.isArray(d) ? d : [d]; });
+  const app = nodes.find((n) => n["@type"] === "SoftwareApplication");
+  assert.ok(Number(app.offers.lowPrice) > 0, "lowPrice must be the real annual price");
+  assert.equal(app.offers["@type"], "AggregateOffer");
+  const org = nodes.find((n) => n["@type"] === "Organization");
+  assert.match(org.contactPoint.telephone, /^\+\d{10,14}$/, `bad phone: ${org.contactPoint.telephone}`);
+  assert.ok(!org.logo.includes("_astro/"), "the logo URL must be stable, not a build-hashed asset");
+});

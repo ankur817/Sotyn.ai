@@ -9,9 +9,11 @@
  */
 import Icon from "./Icon.astro";
 import { SITE } from "../config/site";
+import { districtFaqs } from "../lib/district-faqs.js";
 export interface Props { district: any }
 const { district } = Astro.props;
 const p = district.publication;
+const faqs = districtFaqs(district, SITE);
 const WORKFLOW_LABELS = {
   "/construction-procurement-software": { t: "Procurement & purchase approvals", d: "Site indent → vendor rate comparison → L1/L2 approval → PO → receiving → debit note." },
   "/subcontractor-billing-software": { t: "Subcontractor bill checking", d: "Measured quantity against the agreed rate master, with advances, retention and TDS applied by rule." },
@@ -145,23 +147,9 @@ const DELIVERY = {
       <h2>Straight answers</h2>
     </div>
     <div class="dp-faq">
-      <details><summary>Do you have an office in {district.district_name}?</summary>
-        <p>{p.office_here
-          ? `Yes — our office is at ${SITE.address.street}, ${SITE.address.city} ${SITE.address.postalCode}, and the team that built sotyn.ai runs its own contracting business from here. Support and onboarding are still delivered online, the same as everywhere else; we are not offering site visits as part of the subscription.`
-          : `No. Our office is in ${SITE.address.city}, ${SITE.address.region}. Onboarding and support for ${district.district_name} are delivered online, and we would rather say that plainly than imply a local branch.`}</p>
-      </details>
-      <details><summary>Can my site staff use it on their phones?</summary>
-        <p>Yes — through the browser, on any phone, and site users are not charged per seat. Native Android and iOS apps are not released yet.</p>
-      </details>
-      <details><summary>We run on Tally and Excel. Do we start over?</summary>
-        <p>No. Your masters, live projects, BOQs, vendors and opening balances are migrated at setup. Accounting stays where your accountant wants it; projects, procurement and billing move here.</p>
-      </details>
-      <details><summary>Is support available in my language?</summary>
-        <p>Support is in English today. Other Indian languages are being rolled out, and we will not promise support in one before it is real.</p>
-      </details>
-      <details><summary>What if it does not suit us?</summary>
-        <p>{SITE.pricing.guarantee}. {SITE.pricing.guaranteeNote}</p>
-      </details>
+      {faqs.map((f) => (
+        <details><summary>{f.q}</summary><p>{f.a}</p></details>
+      ))}
     </div>
   </div>
 </section>

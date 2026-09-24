@@ -86,6 +86,11 @@ export function getStaticPaths() {
 }
 const { v, slug } = Astro.props as { v: any; slug: string };
 
+const faqSchema = v.faqs
+  ? [{ "@context": "https://schema.org", "@type": "FAQPage",
+       mainEntity: v.faqs.map(([q, a]: [string, string]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) }]
+  : [];
+
 const breadcrumb = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -96,7 +101,7 @@ const breadcrumb = {
   ],
 };
 ---
-<BaseLayout title={v.metaTitle} description={v.metaDesc} path={`/solutions/${slug}`} schema={[breadcrumb]}>
+<BaseLayout title={v.metaTitle} description={v.metaDesc} path={`/solutions/${slug}`} schema={[breadcrumb, ...faqSchema]}>
   <nav class="crumb" aria-label="Breadcrumb">
     <div class="container"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/platform">Platform</a> <span aria-hidden="true">/</span> <span>{v.name}</span></div>
   </nav>
