@@ -1,0 +1,165 @@
+---
+/**
+ * Shared body for the three workflow checklists.
+ *
+ * The whole checklist is on the page, ungated. The download is the same
+ * content as a file you can fill in — not a reason to hand over a phone
+ * number. The enquiry form sits at the bottom, after the useful part, and asks
+ * for contact details only for something the page does not already give you.
+ */
+import Icon from "./Icon.astro";
+import { countChecks } from "../data/checklists.js";
+export interface Props { c: any }
+const { c } = Astro.props;
+const total = countChecks(c);
+---
+<nav class="crumb" aria-label="Breadcrumb">
+  <div class="container"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/resources">Resources</a> <span aria-hidden="true">/</span> <span>{c.h1}</span></div>
+</nav>
+
+<section class="section" style="padding-bottom:12px">
+  <div class="container container--narrow text-center">
+    <span class="eyebrow">{c.eyebrow}</span>
+    <h1>{c.h1}</h1>
+    <p class="lead" style="margin-inline:auto">{c.lead}</p>
+    <div class="btn-row" style="justify-content:center;margin-top:24px">
+      <a class="btn btn--primary btn--lg" href={`/downloads/${c.file}`} download data-dl>
+        <Icon name="download" size={18} /> Download the {total}-point checklist
+      </a>
+      <a class="btn btn--ghost btn--lg" href={c.workflow.href}>{c.workflow.label}</a>
+    </div>
+    <p class="cl__note">Opens in Excel, Google Sheets or LibreOffice, with Done / Owner / Notes columns to fill in. Free to use and share — no sign-up, no email required.</p>
+  </div>
+</section>
+
+<section class="section section--alt" style="padding-block:30px">
+  <div class="container container--narrow">
+    <h2 class="cl__h2">How to use it</h2>
+    <ol class="cl__how">{c.howToUse.map((h) => <li>{h}</li>)}</ol>
+  </div>
+</section>
+
+<section class="section" id="checklist">
+  <div class="container container--narrow">
+    <div class="cl__bar">
+      <p class="cl__count"><b id="clDone">0</b> of {total} checks ticked</p>
+      <div class="cl__track" role="presentation"><div class="cl__fill" id="clFill"></div></div>
+      <button type="button" class="btn btn--ghost btn--sm" id="clPrint"><Icon name="download" size={15} /> Print / save as PDF</button>
+    </div>
+
+    {c.groups.map((g) => (
+      <div class="cl__group">
+        <div class="cl__ghead"><span class="cl__gic"><Icon name={g.icon} size={19} /></span><h2>{g.name}</h2></div>
+        {g.items.map((item) => (
+          <div class="cl__item">
+            <label class="cl__check"><input type="checkbox" data-check /> <span class="cl__txt">{item.check}</span></label>
+            <div class="cl__detail">
+              <p><b>Why it matters.</b> {item.why}</p>
+              <p><b>What to look at.</b> {item.look}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    ))}
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="container container--narrow">
+    <div class="sec-head"><span class="eyebrow">Worked example</span><h2>{c.example.title}</h2><p class="cl__note">{c.example.intro}</p></div>
+    <div class="cl__ex">
+      {c.example.rows.map((r) => (
+        <div class="cl__exrow"><b>{r[0]}</b><span class="cl__exwho">{r[1]}</span><span>{r[2]}</span></div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container container--narrow">
+    <div class="cl__sys">
+      <h2 class="cl__h2">Doing this without remembering to</h2>
+      <p>{c.system}</p>
+      <div class="btn-row">
+        <a class="btn btn--primary" href={`/demo?from=${c.demoFrom}`}>{c.workflow.label.replace("See ", "See it live: ")}</a>
+        <a class="btn btn--ghost" href={c.workflow.href}>Read the workflow page</a>
+      </div>
+      <p class="cl__note">A demo is 20 minutes on your own trades and project sizes. Nothing is booked until you confirm a time.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cl__note { font-size: .86rem; color: var(--muted); margin: 14px 0 0; line-height: 1.6; }
+  .cl__h2 { margin: 0 0 14px; }
+  .cl__how { margin: 0; padding-left: 20px; display: grid; gap: 9px; line-height: 1.65; }
+  .cl__bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--bg-elevated, #fff); position: sticky; top: 12px; z-index: 5; margin-bottom: 22px; }
+  .cl__count { margin: 0; font-size: .92rem; white-space: nowrap; }
+  .cl__track { flex: 1 1 140px; height: 7px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .cl__fill { height: 100%; width: 0; background: var(--brand-500); transition: width .25s var(--ease, ease); }
+  .cl__group { margin-bottom: 30px; }
+  .cl__ghead { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .cl__ghead h2 { margin: 0; font-size: 1.15rem; }
+  .cl__gic { width: 34px; height: 34px; border-radius: 9px; background: var(--brand-50, #f4f8ff); color: var(--brand-600); display: grid; place-items: center; flex: none; }
+  .cl__item { border-bottom: 1px solid var(--line); padding: 13px 0; }
+  .cl__item:last-child { border-bottom: 0; }
+  .cl__check { display: flex; gap: 11px; align-items: flex-start; cursor: pointer; font-weight: 600; line-height: 1.55; }
+  .cl__check input { margin-top: 4px; width: 18px; height: 18px; flex: none; accent-color: var(--brand-600); }
+  .cl__check input:focus-visible { outline: 3px solid var(--brand-500); outline-offset: 2px; }
+  .cl__check input:checked + .cl__txt { color: var(--muted); text-decoration: line-through; }
+  .cl__detail { margin: 7px 0 0 29px; }
+  .cl__detail p { margin: 4px 0; font-size: .9rem; color: var(--muted); line-height: 1.6; }
+  .cl__ex { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--bg-elevated, #fff); }
+  .cl__exrow { display: grid; grid-template-columns: 150px 190px 1fr; gap: 14px; padding: 13px 16px; border-bottom: 1px solid var(--line); font-size: .92rem; line-height: 1.5; }
+  .cl__exrow:last-child { border-bottom: 0; }
+  .cl__exwho { color: var(--muted); }
+  .cl__sys { padding: 26px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--brand-50, #f4f8ff); }
+  .cl__sys p { line-height: 1.7; margin: 0 0 16px; }
+  @media (max-width: 680px) {
+    .cl__exrow { grid-template-columns: 1fr; gap: 3px; }
+    .cl__bar { position: static; }
+  }
+  @media print {
+    .cl__bar button, .btn-row, .crumb { display: none !important; }
+    .cl__detail { color: #444; }
+  }
+</style>
+
+<script>
+  // Ticks are a convenience for reading on screen; the downloadable file is the
+  // version you actually fill in. Progress is kept per page in this browser.
+  const boxes = [...document.querySelectorAll("[data-check]")];
+  const done = document.getElementById("clDone");
+  const fill = document.getElementById("clFill");
+  const KEY = `sotyn_checklist_${location.pathname}`;
+
+  function paint() {
+    const n = boxes.filter((b) => b.checked).length;
+    if (done) done.textContent = String(n);
+    if (fill) fill.style.width = boxes.length ? `${(n / boxes.length) * 100}%` : "0";
+    try {
+      sessionStorage.setItem(KEY, JSON.stringify(boxes.map((b) => b.checked)));
+    } catch {
+      /* storage blocked — ticking still works, it just is not remembered */
+    }
+  }
+
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(KEY) || "[]");
+    saved.forEach((v, i) => { if (boxes[i]) boxes[i].checked = !!v; });
+  } catch {
+    /* ignore */
+  }
+  boxes.forEach((b) => b.addEventListener("change", paint));
+  paint();
+
+  document.getElementById("clPrint")?.addEventListener("click", () => window.print());
+
+  // A download is an interaction, not an enquiry — tracked as one.
+  document.querySelector("[data-dl]")?.addEventListener("click", () => {
+    try {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: "file_download", file_name: document.querySelector("[data-dl]").getAttribute("href"), lead_page: location.pathname });
+    } catch {}
+  });
+</script>

@@ -1,0 +1,41 @@
+﻿Construction ERP migration checklist
+21 checks · sotyn.ai · https://www.sotyn.ai/resources/erp-migration-checklist
+
+How to use this
+,"Use it before you sign, not after. Half of these checks are questions for your vendor."
+,Assign an owner per row on your side. A migration with no named data owner stalls at the first disagreement about which rate is correct.
+,Treat the go-live section as a contract with yourself — agree it in writing before the work starts.
+
+#,Section,Check,Why it matters,What to look at,Done (Y/N),Owner,Date,Notes
+1,Before you commit,You have written down the three workflows that must work on day one.,"""Everything"" is not a scope. Three workflows can be tested; everything cannot.","Your own list — typically site reporting, procurement and billing.",,,,
+2,Before you commit,You know who owns the data on your side.,Migration stalls the first time nobody can say which of three rates is right.,"One named person for masters, one for projects, one for balances.",,,,
+3,Before you commit,You have asked what is included in onboarding and what is chargeable.,Implementation cost is where quoted price and final invoice usually part company.,"Get it in writing: migration, training sessions, configuration, support period.",,,,
+4,Before you commit,You know what happens to your existing accounting system.,Most contractors keep their accounting software. Find out whether it is a migration or an ongoing integration — they are very different promises.,"Ask specifically: one-time import, or continuous two-way sync?",,,,
+5,Before you commit,You have agreed what 'go-live' means and who signs it off.,"Without acceptance criteria, a rollout has no end and the spreadsheets never stop.","A short written list: these workflows, running in the system, signed by these people.",,,,
+6,Masters — where the work actually is,Item master is de-duplicated before import.,"The same cable in four spellings at three rates produces confident, wrong reporting forever.",Sort your item list alphabetically and read it. You will find them.,,,,
+7,Masters — where the work actually is,"Vendor master has GSTIN, PAN and bank details, with dead vendors removed.",Importing dead vendors carries a decade of noise into a clean system.,Vendors with no transaction in 24 months.,,,,
+8,Masters — where the work actually is,Labour and subcontract rate masters reflect current signed contracts.,Bills will be checked against these rates. Wrong rates are worse than no rates.,Spot-check ten rates against the actual work orders.,,,,
+9,Masters — where the work actually is,Cost heads and BOQ structure are agreed before anything is imported.,Changing the structure after data is in is the most expensive rework in any rollout.,"One page: how you want to see cost, and whether reports can produce it.",,,,
+10,Masters — where the work actually is,"Users and their roles are listed, including site staff.",Role design decides whether site staff actually use the system or work around it.,"Who raises, who approves, who sees money. Write it as a table.",,,,
+11,Live projects and balances,"Running projects are migrated with their BOQs, not just new ones.","If only new projects go in, two systems run in parallel and one of them wins — usually the spreadsheet.",Count your live projects. All of them should appear in the plan.,,,,
+12,Live projects and balances,Work already executed on those projects is brought in as opening position.,"Otherwise the first RA bill from the new system is wrong, and trust is lost in week one.","Cumulative quantity billed per project, as at the cut-off date.",,,,
+13,Live projects and balances,"Opening receivables, payables and retention held are entered and agreed.",Without them the first month's cash view is fiction.,"Tie the totals to your books at the cut-off date, and have your accountant sign it.",,,,
+14,Live projects and balances,Open advances with subcontractors and vendors are carried over.,An advance that does not migrate is an advance nobody recovers.,Ledger of open advances at cut-off.,,,,
+15,Live projects and balances,"A cut-off date is fixed, and everyone knows what happens either side of it.",Ambiguity about the cut-off produces double entry and missing entry at once.,"One date, written down, communicated to site and office.",,,,
+16,People and go-live,"Training is by role and uses your own data, not a demo company.",Generic training does not survive contact with a real site.,"Separate sessions for site staff and office staff, on your migrated projects.",,,,
+17,People and go-live,Site staff can do their part on the phone they already have.,"If the field cannot file from a phone, the data stops at the office and the system becomes a reporting burden.","Have one site engineer file a daily report during the demo, on their own handset.",,,,
+18,People and go-live,A parallel-run period is defined — and has an end date.,Parallel running without an end date is how a rollout quietly becomes permanent duplication.,Two to four weeks is typical. Write the end date down.,,,,
+19,People and go-live,Acceptance criteria are tested and signed before the old way stops.,This is the moment the rollout either lands or drifts.,"Each agreed workflow demonstrated end to end, signed by the person who owns it.",,,,
+20,People and go-live,"You know who to call, and what the support arrangement is.",The first month generates more questions than the next year.,"Named contact, hours, channel, and what counts as chargeable.",,,,
+21,People and go-live,You have a rollback position if go-live fails.,"Rarely needed, and the day you need it you will need it badly.","Your exported data, and the date until which the old system stays available.",,,,
+
+A four-week sequence that works
+Illustrative plan for a mid-sized contractor — yours is agreed before work starts and may differ.
+,Week 1,You + the vendor,"Item, vendor and rate masters exported, de-duplicated, imported, checked by your team"
+,Week 2,You + project leads,"Live projects with BOQs and contract values, plus work already executed"
+,Week 2–3,Your accounts team,"Opening receivables, payables, retention and advances, tied to the books"
+,Week 3,The vendor,"Training by role, on your own migrated data, site and office separately"
+,Week 4,"Both, against criteria","DPRs filed daily, indents raised in the system, one full billing cycle, then sign-off"
+
+"Free to use and share. No sign-up, no attribution required."
+Workflow page: https://www.sotyn.ai/construction-erp-implementation
