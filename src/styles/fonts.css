@@ -1,0 +1,47 @@
+/* Self-hosted fonts — Inter (variable 400-900) and Anton, latin + latin-ext.
+ * Pulled from Google Fonts on 2026-09-24 and served from this origin, so there
+ * is no render-blocking cross-origin request on first paint and no third party
+ * sees a visitor's IP just for loading the page. Both families are SIL Open
+ * Font License 1.1, which permits self-hosting.
+ *
+ * Only latin and latin-ext ship, and each file is subsetted to the characters
+ * this site actually renders (scripts/subset-fonts.mjs reads them out of the
+ * built HTML): 167,004 B -> 39,848 B. The rupee sign lives in latin-ext, which
+ * is why that file is still needed — but it is now 1.5 kB rather than 85 kB.
+ *
+ * The Devanagari, Bengali, Gujarati and Urdu words on the homepage fall back to
+ * system fonts, exactly as they did before: Google does not include those
+ * scripts in Inter or Anton either.
+ */
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/anton-latin-ext-subset.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/anton-latin-subset.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('/fonts/inter-latin-ext-subset.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('/fonts/inter-latin-subset.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}

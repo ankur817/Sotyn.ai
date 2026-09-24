@@ -13,7 +13,8 @@
     "locations": "node scripts/build-location-lookup.mjs",
     "briefs": "node scripts/build-district-keyword-briefs.mjs",
     "checklists": "node scripts/build-checklist-files.mjs",
-    "data": "npm run locations && npm run briefs && npm run checklists"
+    "data": "npm run locations && npm run briefs && npm run checklists",
+    "fonts": "node scripts/subset-fonts.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

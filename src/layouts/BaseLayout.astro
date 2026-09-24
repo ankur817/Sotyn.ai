@@ -184,13 +184,10 @@ const fbNoscript = SITE.metaPixelId
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
-    <!-- Inter Variable Font — optical sizing, 300-900 weight range -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400..900&display=swap"
-    />
+    <!-- Fonts are self-hosted (src/styles/fonts.css). Only the latin subset of
+         Inter is preloaded: it carries the body text and is needed for first
+         paint. latin-ext and Anton load on demand. -->
+    <link rel="preload" href="/fonts/inter-latin-subset.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- Structured data (JSON-LD) -->
     {allSchema.map((s) => (
