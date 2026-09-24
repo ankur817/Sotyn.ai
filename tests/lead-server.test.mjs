@@ -181,3 +181,51 @@ test("both destinations failing is still a failure, never a false success", asyn
   const r = await submitLead("/api/lead", {}, { requestId: "r4", fetchImpl, fallbackEndpoint: "https://erp.test/hook" });
   assert.equal(r.accepted, false);
 });
+
+// ── First-touch attribution (fixes: referrer written into "Landing page",
+//    and Google → internal page → demo being recorded as "internal") ────────
+test("the landing page column holds the first page of the visit, not the referrer", () => {
+  const { lead } = validateLead({
+    ...base,
+    page: "/demo",
+    referrer: "https://www.sotyn.ai/construction-procurement-software",
+    firstLanding: "/construction-procurement-software",
+    firstReferrer: "https://www.google.com/",
+  });
+  const r = toSheetRow({ leadId: "X", lead, receivedAt: "t", utm: utmFrom(lead.firstSearch) });
+  assert.equal(r[LEAD_COLUMNS.indexOf("Landing page")], "/construction-procurement-software");
+  assert.equal(r[LEAD_COLUMNS.indexOf("Submission page")], "/demo");
+  assert.ok(!String(r[LEAD_COLUMNS.indexOf("Landing page")]).startsWith("http"), "a referrer URL is not a landing page");
+});
+
+test("an external source survives internal navigation", () => {
+  const { lead } = validateLead({
+    ...base,
+    page: "/demo",
+    referrer: "https://www.sotyn.ai/pricing", // where they came from last
+    firstReferrer: "https://www.google.com/search?q=ra+billing+software",
+  });
+  const r = toSheetRow({ leadId: "X", lead, receivedAt: "t", utm: {} });
+  assert.equal(r[LEAD_COLUMNS.indexOf("Acquisition source")], "google-organic",
+    "the visit's real source must not be overwritten by the visitor's own navigation");
+});
+
+test("campaign parameters come from the first URL of the visit", () => {
+  const { lead } = validateLead({
+    ...base,
+    landingSearch: "",                                  // the /demo URL had none
+    firstSearch: "?utm_source=linkedin&utm_medium=post", // the entry URL did
+  });
+  const utm = utmFrom(lead.firstSearch || lead.landingSearch);
+  assert.equal(utm.utm_source, "linkedin");
+  const r = toSheetRow({ leadId: "X", lead, receivedAt: "t", utm });
+  assert.equal(r[LEAD_COLUMNS.indexOf("Acquisition source")], "linkedin");
+});
+
+test("first-touch capture never throws when storage is unavailable", async () => {
+  const { getFirstTouch } = await import("../src/lib/attribution.js");
+  const prev = globalThis.sessionStorage;
+  globalThis.sessionStorage = { getItem() { throw new Error("blocked"); }, setItem() { throw new Error("blocked"); } };
+  assert.deepEqual(getFirstTouch(), {});
+  if (prev === undefined) delete globalThis.sessionStorage; else globalThis.sessionStorage = prev;
+});

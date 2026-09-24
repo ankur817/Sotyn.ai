@@ -42,7 +42,7 @@ export const SITE = {
   // Both empty = no analytics loads at all (the state today).
   analytics: {
     ga4MeasurementId: "", // ⚠️ REPLACE — or leave empty if using GTM
-    gtmContainerId: "", // ⚠️ REPLACE — or leave empty if using gtag
+    gtmContainerId: "GTM-M7RVVGSG", // live container for www.sotyn.ai
   },
 
   // ── Contact ──────────────────────────────────────────────────────────────

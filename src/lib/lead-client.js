@@ -9,6 +9,8 @@
  *  3. Nothing here sends personal data to analytics.
  */
 
+import { getFirstTouch } from "./attribution.js";
+
 /** Build a WhatsApp deep link. `lines` are plain text — encoded once, here. */
 export function waLink(phone, lines) {
   const body = (Array.isArray(lines) ? lines : [String(lines)])
@@ -76,7 +78,8 @@ export async function submitLead(endpoint, payload, { requestId, timeoutMs = 120
       // the preflight fail and every browser submission is blocked before it is
       // sent. Idempotency therefore travels in the body as `requestId`.
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...payload, requestId }),
+      // First-touch attribution is merged here so no form can forget it.
+      body: JSON.stringify({ ...getFirstTouch(), ...payload, requestId }),
       signal: controller ? controller.signal : undefined,
     });
     const raw = await res.text().catch(() => "");
