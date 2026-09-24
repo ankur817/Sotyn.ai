@@ -87,6 +87,25 @@ const total = questions.length + 1; // + turnover step
       </div>
     </div>
   </section>
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <div class="sec-head text-center"><span class="eyebrow">After your score</span><h2>Where each leak actually gets plugged</h2></div>
+      <div class="nextgrid">
+        <a class="nextcard" href="/construction-procurement-software"><strong>Procurement & approvals</strong><span>If buying and rate comparison scored badly, start here.</span></a>
+        <a class="nextcard" href="/subcontractor-billing-software"><strong>Subcontractor bill checking</strong><span>Measured quantity against the agreed rate, deductions by rule.</span></a>
+        <a class="nextcard" href="/ra-billing-software"><strong>RA billing</strong><span>Bill the day work is approved, with GST, TDS and retention.</span></a>
+        <a class="nextcard" href="/tools/profit-leak"><strong>Put a ₹ figure on it</strong><span>Turn the score into an annual number on your own turnover.</span></a>
+      </div>
+    </div>
+  </section>
+
+<style is:global>
+  .nextgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .nextcard { display: block; padding: 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-elevated, #fff); text-decoration: none; color: inherit; }
+  .nextcard:hover { border-color: var(--brand-500); }
+  .nextcard strong { display: block; margin-bottom: 5px; }
+  .nextcard span { font-size: .88rem; color: var(--muted); line-height: 1.5; }
+</style>
 </BaseLayout>
 
 <style>

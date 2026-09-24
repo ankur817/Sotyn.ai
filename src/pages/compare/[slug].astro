@@ -178,6 +178,33 @@ const breadcrumb = {
       </div>
     </div>
   </section>
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <div class="sec-head text-center">
+        <span class="eyebrow">Judge it on the work</span>
+        <h2>The workflows this comparison is really about</h2>
+      </div>
+      <div class="nextgrid">
+        <a class="nextcard" href="/construction-procurement-software"><strong>Procurement &amp; approvals</strong><span>Indent against a BOQ line, rate comparison, L1/L2 approval, PO, receipt.</span></a>
+        <a class="nextcard" href="/subcontractor-billing-software"><strong>Subcontractor bill checking</strong><span>Measured quantity against the agreed rate master, deductions by rule.</span></a>
+        <a class="nextcard" href="/ra-billing-software"><strong>RA billing</strong><span>Sales, RA, MB, Installation and T&amp;C, with GST, TDS and retention.</span></a>
+        <a class="nextcard" href="/construction-erp-implementation"><strong>Implementation</strong><span>What moving off your current setup actually involves.</span></a>
+      </div>
+      <p class="cmp-more">
+        Comparing more than one? See <a href="/compare">all comparisons</a>, or read
+        <a href="/pricing">what sotyn.ai costs</a> before you shortlist.
+      </p>
+    </div>
+  </section>
+
+<style is:global>
+  .nextgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .nextcard { display: block; padding: 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-elevated, #fff); text-decoration: none; color: inherit; }
+  .nextcard:hover { border-color: var(--brand-500); }
+  .nextcard strong { display: block; margin-bottom: 5px; }
+  .nextcard span { font-size: .88rem; color: var(--muted); line-height: 1.5; }
+  .cmp-more { margin: 18px 0 0; font-size: .92rem; color: var(--muted); text-align: center; }
+</style>
 </BaseLayout>
 
 <style>

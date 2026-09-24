@@ -117,3 +117,49 @@ test("no page claims a capability that is marked coming soon", () => {
     }
   }
 });
+
+// ── Internal linking: no orphans, no dead ends ──────────────────────────────
+test("no indexable page is an orphan or a dead end", async () => {
+  const { readdirSync, readFileSync, existsSync } = await import("node:fs");
+  const pages = new Map();
+  const walk = (dir, prefix = "") => {
+    for (const e of readdirSync(new URL(dir, dist), { withFileTypes: true })) {
+      if (e.isDirectory()) walk(`${dir}${e.name}/`, `${prefix}${e.name}/`);
+      else if (e.name === "index.html") {
+        const route = `/${prefix}`.replace(/\/$/, "") || "/";
+        pages.set(route, readFileSync(new URL(`${dir}${e.name}`, dist), "utf8"));
+      }
+    }
+  };
+  walk("");
+  const mainOf = (html) => (html.match(/<main[^>]*>([\s\S]*?)<\/main>/) || ["", ""])[1];
+  const inbound = new Map(), outbound = new Map();
+  for (const [route, html] of pages) {
+    for (const m of mainOf(html).matchAll(/<a[^>]*href="(\/[^"#?]*)"/g)) {
+      const target = m[1].replace(/\/$/, "") || "/";
+      if (!pages.has(target) || target === route) continue;
+      inbound.set(target, (inbound.get(target) || new Set()).add(route));
+      outbound.set(route, (outbound.get(route) || new Set()).add(target));
+    }
+  }
+  // Utility pages are deliberately orphaned; everything else must be reachable
+  // from page content, not only from the nav.
+  const utility = new Set(["/", "/thank-you", "/social-kit", "/404"]);
+  const orphans = [...pages.keys()].filter((r) => !utility.has(r) && !inbound.has(r));
+  const deadEnds = [...pages.keys()].filter((r) => !utility.has(r) && (outbound.get(r)?.size ?? 0) < 2);
+  assert.deepEqual(orphans, [], `orphaned: ${orphans.join(", ")}`);
+  assert.deepEqual(deadEnds, [], `dead ends: ${deadEnds.join(", ")}`);
+});
+
+test("links use descriptive anchor text", async () => {
+  const { readFileSync } = await import("node:fs");
+  const weak = /^(click here|read more|learn more|here|more|this page|link)$/i;
+  for (const route of ["/", "/pricing", "/features", "/platform", "/demo"]) {
+    const html = readFileSync(new URL(route === "/" ? "index.html" : `${route.slice(1)}/index.html`, dist), "utf8");
+    const main = (html.match(/<main[^>]*>([\s\S]*?)<\/main>/) || ["", ""])[1];
+    for (const m of main.matchAll(/<a[^>]*href="\/[^"]*"[^>]*>([\s\S]*?)<\/a>/g)) {
+      const anchor = m[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      assert.ok(!weak.test(anchor), `${route}: weak anchor "${anchor}"`);
+    }
+  }
+});
