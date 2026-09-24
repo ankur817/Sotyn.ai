@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+import founderPhoto from "../assets/founder-ankur-kaplesh.jpg";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CTABand from "../components/CTABand.astro";
 import Icon from "../components/Icon.astro";
@@ -74,7 +76,7 @@ const values = [
 
   <section class="section section--dark" id="consultant">
     <div class="container founder">
-      <img class="founder__photo" src="/images/founder-ankur-kaplesh.jpg" alt="Er. Ankur Kaplesh — AI ERP Implementation Consultant and founder of sotyn.ai" width="638" height="720" loading="lazy" />
+      <Image class="founder__photo" src={founderPhoto} alt="Er. Ankur Kaplesh — AI ERP Implementation Consultant and founder of sotyn.ai" width="638" height="720" loading="lazy" format="webp" />
       <div class="founder__copy">
         <span class="eyebrow">Meet your AI ERP Implementation Consultant</span>
         <h2>He built it on 535+ sites. He'll implement it on yours.</h2>

@@ -1,4 +1,5 @@
 ---
+import sotynLogo from "../assets/sotyn_logo_v2.png";
 import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
@@ -37,7 +38,9 @@ const orgSchema = {
   name: SITE.parentCompany,
   alternateName: SITE.name,
   url: SITE.url,
-  logo: new URL("/images/sotyn_logo_v2.png", SITE.url).href,
+  // The logo now comes from the asset pipeline, so the schema URL must be the
+  // built (hashed) path — the old /images/ copy no longer exists.
+  logo: new URL(sotynLogo.src, SITE.url).href,
   foundingDate: "2011",
   founder: { "@type": "Person", name: "Er. Ankur Kaplesh" },
   address: {

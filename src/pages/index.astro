@@ -1,4 +1,13 @@
 ---
+import { Image } from "astro:assets";
+import heroDashboard from "../assets/hero-dashboard.png";
+import appMobile from "../assets/app-mobile.png";
+import realSite from "../assets/real-site.jpg";
+import realTeam from "../assets/real-team.jpg";
+import realPhone from "../assets/real-phone.jpg";
+import bookAutocad from "../assets/book-autocad-to-site.jpg";
+import bookFacts from "../assets/book-11-deadly-facts.jpg";
+import founderPhoto from "../assets/founder-ankur-kaplesh.jpg";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DemoForm from "../components/DemoForm.astro";
 import BookLeadMagnet from "../components/BookLeadMagnet.astro";
@@ -251,7 +260,7 @@ const faqSchema = [{
       <span class="eyebrow">One login. Every project, every rupee, every person. Live.</span>
       <h2>This is what “one source of truth” looks like.</h2>
       <p class="lead" style="margin-inline:auto">Margin, cash, receivables and every site — live, on one screen. No more year-end surprises.</p>
-      <img class="showcase__img" src="/images/hero-dashboard.png" alt="sotyn.ai control tower showing margin, cash, receivables and live site status" width="1280" height="820" fetchpriority="high" decoding="async" />
+      <Image class="showcase__img" src={heroDashboard} alt="sotyn.ai control tower showing margin, cash, receivables and live site status" width="1280" height="820" fetchpriority="high" loading="eager" decoding="async" format="webp" />
     </div>
   </section>
 
@@ -413,15 +422,15 @@ const faqSchema = [{
       </div>
       <div class="rw__grid">
         <figure class="rw__photo">
-          <img src="/images/real-site.jpg" alt="Two Indian MEP site engineers in hard hats and hi-vis vests inspecting overhead services on an under-construction site, one holding a tablet" loading="lazy" width="1200" height="1697" />
+          <Image src={realSite} alt="Two Indian MEP site engineers in hard hats and hi-vis vests inspecting overhead services on an under-construction site, one holding a tablet" loading="lazy" width="1200" height="1697" format="webp" />
           <figcaption>On site — services checked against the plan, on a tablet.</figcaption>
         </figure>
         <figure class="rw__photo">
-          <img src="/images/real-phone.jpg" alt="An Indian site supervisor in a hard hat and hi-vis vest checking the sotyn.ai app on his phone at a construction site" loading="lazy" width="1200" height="1697" />
+          <Image src={realPhone} alt="An Indian site supervisor in a hard hat and hi-vis vest checking the sotyn.ai app on his phone at a construction site" loading="lazy" width="1200" height="1697" format="webp" />
           <figcaption>In the field — DPRs, attendance and snags from the phone in a worker’s pocket.</figcaption>
         </figure>
         <figure class="rw__photo">
-          <img src="/images/real-team.jpg" alt="An Indian engineering team in hi-vis vests reviewing live project data together on a laptop in a site office" loading="lazy" width="1200" height="1697" />
+          <Image src={realTeam} alt="An Indian engineering team in hi-vis vests reviewing live project data together on a laptop in a site office" loading="lazy" width="1200" height="1697" format="webp" />
           <figcaption>In the office — the weekly review, on live numbers.</figcaption>
         </figure>
       </div>
@@ -455,7 +464,7 @@ const faqSchema = [{
   <!-- ── BUILT FOR THE FIELD (mobile) ─────────────────────────────────── -->
   <section class="section section--alt field">
     <div class="container field__in">
-      <img class="field__img" src="/images/app-mobile.png" alt="sotyn.ai site app on a phone — daily report, attendance and snags" width="600" height="1080" loading="lazy" />
+      <Image class="field__img" src={appMobile} alt="sotyn.ai site app on a phone — daily report, attendance and snags" width="600" height="1080" loading="lazy" format="webp" />
       <div class="field__copy">
         <span class="eyebrow">Runs on the phones your staff already carry</span>
         <h2>If a supervisor can use WhatsApp, he can file a DPR.</h2>
@@ -594,7 +603,7 @@ const faqSchema = [{
   <!-- ── FOUNDER STRIP (consultant) ───────────────────────────────────── -->
   <section class="section fstrip-sec">
     <div class="container fstrip">
-      <img class="fstrip__photo" src="/images/founder-ankur-kaplesh.jpg" alt="Er. Ankur Kaplesh — AI ERP Implementation Consultant" width="638" height="720" loading="lazy" />
+      <Image class="fstrip__photo" src={founderPhoto} alt="Er. Ankur Kaplesh — AI ERP Implementation Consultant" width="638" height="720" loading="lazy" format="webp" />
       <div class="fstrip__copy">
         <span class="eyebrow">Your AI ERP Implementation Consultant</span>
         <h2>Not a software vendor — a contractor who’ll implement it himself.</h2>
@@ -617,7 +626,7 @@ const faqSchema = [{
       </div>
       <div class="books">
         <article class="book">
-          <img class="book__cover" src="/images/book-11-deadly-facts.jpg" alt="Book cover: 11 Deadly Facts You Must Know to Save up to 27% of Your Project Value, by Er. Ankur Kaplesh" width="964" height="1500" loading="lazy" />
+          <Image class="book__cover" src={bookFacts} alt="Book cover: 11 Deadly Facts You Must Know to Save up to 27% of Your Project Value, by Er. Ankur Kaplesh" width="964" height="1500" loading="lazy" format="webp" />
           <div class="book__body">
             <span class="pill">Bestseller on Amazon</span>
             <h3>11 Deadly Facts to Save up to 27% of Your Project Value</h3>
@@ -626,7 +635,7 @@ const faqSchema = [{
           </div>
         </article>
         <article class="book">
-          <img class="book__cover" src="/images/book-autocad-to-site.jpg" alt="Book cover: From AutoCAD to Actual Site, by Er. Ankur Kaplesh" width="551" height="780" loading="lazy" />
+          <Image class="book__cover" src={bookAutocad} alt="Book cover: From AutoCAD to Actual Site, by Er. Ankur Kaplesh" width="551" height="780" loading="lazy" format="webp" />
           <div class="book__body">
             <span class="pill">New release</span>
             <h3>From AutoCAD to Actual Site</h3>

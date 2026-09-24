@@ -1,4 +1,7 @@
 ---
+import { Image } from "astro:assets";
+import realTeam from "../assets/real-team.jpg";
+import realPhone from "../assets/real-phone.jpg";
 // Campaign creatives — theme matched to the approved ad designs:
 // condensed uppercase (Anton), navy/yellow, chat & notification mockups,
 // coloured CTA bands. Stats sync from SITE config (single source of truth).
@@ -37,7 +40,7 @@ const years = SITE.trust.numbers[1].value;     // 14+
 
 {variant === "phone" && (
   <div class="cc cc--phone">
-    <img class="cc__bg" src="/images/real-phone.jpg" alt="" loading="lazy" width="1200" height="1697" />
+    <Image class="cc__bg" src={realPhone} alt="" loading="lazy" width="1200" height="1697" format="webp" />
     <div class="cc__shade" aria-hidden="true"></div>
     <div class="cc__pad cc__pad--overlay">
       <div>
@@ -61,7 +64,7 @@ const years = SITE.trust.numbers[1].value;     // 14+
   <div class="cc cc--proof">
     <div class="cc__pad cc__pad--proof">
       <p class="cc__big cc__big--blue">Anyone can sell software.</p>
-      <img class="cc__photo" src="/images/real-team.jpg" alt="" loading="lazy" width="1200" height="1697" />
+      <Image class="cc__photo" src={realTeam} alt="" loading="lazy" width="1200" height="1697" format="webp" />
       <p class="cc__pline">We run our company on it.</p>
       <p class="cc__pstats">{projects} projects · {years} years · {states} states</p>
       <p class="cc__pcta">Commission your 30-day pilot → sotyn.ai</p>

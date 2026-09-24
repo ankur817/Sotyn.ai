@@ -1,4 +1,8 @@
 ---
+import { Image } from "astro:assets";
+import bookAutocad from "../assets/book-autocad-to-site.jpg";
+import bookFacts from "../assets/book-11-deadly-facts.jpg";
+import founderPhoto from "../assets/founder-ankur-kaplesh.jpg";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import RegisterForm from "../components/RegisterForm.astro";
 import Icon from "../components/Icon.astro";
@@ -71,15 +75,15 @@ const eventSchema = w.startDate
   <!-- HOST (business coach authority) -->
   <section class="section">
     <div class="container host">
-      <img class="host__photo" src="/images/founder-ankur-kaplesh.jpg" alt={w.host} width="638" height="720" loading="lazy" />
+      <Image class="host__photo" src={founderPhoto} alt={w.host} width="638" height="720" loading="lazy" format="webp" />
       <div class="host__copy">
         <span class="eyebrow">Your host</span>
         <h2>{w.host}</h2>
         <p class="host__title">{w.hostTitle}</p>
         <p>Ankur has spent 14 years building a contracting business from the ground up — 535+ projects across 18 states, run by 300+ people on a system he built himself. He's a TEDx speaker and author of two books on where Indian projects lose money. In this masterclass he teaches the exact playbook — not theory, the real numbers and systems from a live EPC business.</p>
         <div class="host__books">
-          <img src="/images/book-11-deadly-facts.jpg" alt="11 Deadly Facts (book)" width="964" height="1500" loading="lazy" />
-          <img src="/images/book-autocad-to-site.jpg" alt="From AutoCAD to Actual Site (book)" width="551" height="780" loading="lazy" />
+          <Image src={bookFacts} alt="11 Deadly Facts (book)" width="964" height="1500" loading="lazy" format="webp" />
+          <Image src={bookAutocad} alt="From AutoCAD to Actual Site (book)" width="551" height="780" loading="lazy" format="webp" />
           <div class="host__stats">
             {SITE.stats.map((s) => (<div><strong>{s.value}</strong><span>{s.label}</span></div>))}
           </div>
