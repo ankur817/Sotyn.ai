@@ -76,8 +76,8 @@ export function getStaticPaths() {
   },
   "sotyn-vs-tally": {
     name: "Tally",
-    metaTitle: "sotyn.ai vs Tally for Contractors: Operations vs Accounting (2026)",
-    metaDesc: "Most Indian contractors keep Tally for accounting. Compare what TallyPrime covers and what a contractor ERP adds — RA/MB billing, site indents, purchase approvals and subcontractor bill checking.",
+    metaTitle: "sotyn.ai vs Tally: Operations vs Accounting (2026)",
+    metaDesc: "Keep Tally for the books. See what a contractor ERP adds on top: RA and MB billing, site indents, purchase approvals and subcontractor bill checking.",
     tag: "Accounting software vs contractor operations — most firms need both",
     coreDiff: "This is not really a head-to-head. TallyPrime is accounting software, and it is very good at being accounting software — vouchers, GST, e-invoicing, e-way bills, inventory and statutory returns. It is not built to run a site: there is no RA or MB bill against a measurement, no site indent raised against a BOQ line, no L1/L2 purchase approval trail, no daily progress report. sotyn.ai runs those operations. Most contractors keep Tally for the books and move projects, procurement and billing here — which is why we migrate your Tally masters at setup rather than asking you to abandon them.",
     strong: ["The accounting standard in India — your CA already knows it", "Published pricing, from ₹750/month", "GST, e-invoicing and e-way bills handled properly"],
@@ -130,7 +130,8 @@ const breadcrumb = {
   <section class="section section--alt">
     <div class="container">
       <div class="cmp-core">
-        <span class="eyebrow">The core difference</span>
+        <span class="eyebrow">Side by side</span>
+        <h2 class="cmp-core__h">The core difference</h2>
         <p>{r.coreDiff}</p>
       </div>
       <div class="ctable-wrap">
@@ -156,12 +157,12 @@ const breadcrumb = {
   <section class="section">
     <div class="container cmp-verdict">
       <div class="vcard">
-        <h3><Icon name="check" size={18} /> Where {r.name} may suit you better</h3>
+        <h2 class="cmp-sub"><Icon name="check" size={18} /> Where {r.name} may suit you better</h2>
         <ul class="tick">{r.strong.map((s: string) => (<li>{s}</li>))}</ul>
         <p>{r.them}</p>
       </div>
       <div class="vcard vcard--us">
-        <h3><Icon name="bolt" size={18} /> Where sotyn.ai wins</h3>
+        <h2 class="cmp-sub"><Icon name="bolt" size={18} /> Where sotyn.ai wins</h2>
         <p>{r.win}</p>
         <a href="/#demo" class="btn btn--primary">See it on your numbers →</a>
       </div>
@@ -204,6 +205,8 @@ const breadcrumb = {
   .nextcard strong { display: block; margin-bottom: 5px; }
   .nextcard span { font-size: .88rem; color: var(--muted); line-height: 1.5; }
   .cmp-more { margin: 18px 0 0; font-size: .92rem; color: var(--muted); text-align: center; }
+  .cmp-core__h { font-size: 1.5rem; margin: 6px 0 12px; }
+  .cmp-sub { font-size: 1.1rem; display: flex; align-items: center; gap: 8px; margin: 0 0 10px; }
 </style>
 </BaseLayout>
 

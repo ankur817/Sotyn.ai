@@ -57,6 +57,33 @@ const breadcrumb = {
       </div>
     </div>
   </section>
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="sec-head"><span class="eyebrow">How to read these</span><h2>The nine things worth comparing</h2></div>
+      <p class="cmph-lead">
+        Every comparison on this site uses the same nine rows, because these are the questions that decide
+        whether contractor software survives contact with a real site. If you are evaluating anyone — including us —
+        these are worth asking them directly.
+      </p>
+      <ol class="cmph-list">
+        <li><strong>Bill types.</strong> Can it raise RA, MB, Installation and T&amp;C bills against a measurement, with GST, TDS and retention — or only a tax invoice? See <a href="/ra-billing-software">RA billing</a>.</li>
+        <li><strong>Quoting from your own rates.</strong> Can a BOQ be priced line by line from your agreed rate masters, with margin visible before it goes out?</li>
+        <li><strong>Procurement chain.</strong> Does a site indent become an RFQ, an approval, a PO and a receipt that all trace back to one request? See <a href="/construction-procurement-software">procurement approvals</a>.</li>
+        <li><strong>Subcontractor bill checking.</strong> Is the bill priced from the contract rate and checked against measured quantity before certification? See <a href="/subcontractor-billing-software">bill checking</a>.</li>
+        <li><strong>Attendance and payroll.</strong> Does site attendance actually reach payroll, or is it a separate system and a monthly re-key?</li>
+        <li><strong>The owner's view.</strong> Committed against actual cost while the job runs — not a report at closeout.</li>
+        <li><strong>Who built it.</strong> Whether anyone in the building has run a contracting business on it.</li>
+        <li><strong>Where the data lives</strong>, and what happens to it if you leave.</li>
+        <li><strong>Published pricing.</strong> Whether the price is on the website at all, and what onboarding costs on top. Ours is on <a href="/pricing">the pricing page</a>.</li>
+      </ol>
+      <p class="cmph-note">
+        Every competitor claim on these pages is checked against that company's own website, with the date it was
+        checked. Where their public pages do not state something, we say so rather than assume they cannot do it —
+        and we would rather you verified both sides than took our word for it.
+      </p>
+    </div>
+  </section>
+
 </BaseLayout>
 
 <style>
@@ -73,4 +100,8 @@ const breadcrumb = {
   .cmp-guide .lead { margin: 0; max-width: 560px; }
   @media (max-width: 860px) { .cmp-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .cmp-grid { grid-template-columns: 1fr; } }
+  .cmph-lead { font-size: 1.02rem; line-height: 1.7; margin: 0 0 18px; }
+  .cmph-list { margin: 0; padding-left: 22px; display: grid; gap: 11px; line-height: 1.65; }
+  .cmph-list strong { color: var(--ink); }
+  .cmph-note { margin: 22px 0 0; padding-left: 14px; border-left: 3px solid var(--brand-500); color: var(--muted); line-height: 1.7; font-size: .95rem; }
 </style>

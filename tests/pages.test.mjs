@@ -163,3 +163,69 @@ test("links use descriptive anchor text", async () => {
     }
   }
 });
+
+// ── On-page basics, enforced across every indexable page ────────────────────
+test("titles, descriptions and headings stay within useful limits", async () => {
+  const { readdirSync, readFileSync } = await import("node:fs");
+  const problems = [];
+  const walk = (dir, prefix = "") => {
+    for (const e of readdirSync(new URL(dir, dist), { withFileTypes: true })) {
+      if (e.isDirectory()) walk(`${dir}${e.name}/`, `${prefix}${e.name}/`);
+      else if (e.name === "index.html") {
+        const html = readFileSync(new URL(`${dir}${e.name}`, dist), "utf8");
+        if (html.includes('content="noindex')) continue;
+        const route = `/${prefix}`.replace(/\/$/, "") || "/";
+        // Measure what a searcher sees: &amp; is one character, not five.
+        const decode = (t) => t.replace(/&amp;/g, "&").replace(/&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#x27;/g, "'");
+        const title = decode((html.match(/<title>([^<]*)<\/title>/) || ["", ""])[1]);
+        const desc = decode((html.match(/<meta name="description" content="([^"]*)"/) || ["", ""])[1]);
+        const main = (html.match(/<main[^>]*>([\s\S]*?)<\/main>/) || ["", ""])[1];
+        const h1s = main.match(/<h1[^>]*>/g) || [];
+        if (title.length > 60) problems.push(`${route}: title ${title.length} chars`);
+        if (desc.length > 160) problems.push(`${route}: description ${desc.length} chars`);
+        if (h1s.length !== 1) problems.push(`${route}: ${h1s.length} H1s`);
+        // Heading levels must not skip — an h3 before any h2 breaks the outline.
+        let prev = 0;
+        for (const m of main.matchAll(/<h([1-6])/g)) {
+          const level = Number(m[1]);
+          if (prev && level > prev + 1) { problems.push(`${route}: heading skip h${prev}->h${level}`); break; }
+          prev = level;
+        }
+      }
+    }
+  };
+  walk("");
+  assert.deepEqual(problems, [], problems.join(" · "));
+});
+
+test("commercial pages carry enough substance to answer a buyer", async () => {
+  const { readFileSync } = await import("node:fs");
+  const commercial = [
+    "/epc-erp-software", "/platform", "/pricing", "/ra-billing-software", "/material-reconciliation",
+    "/construction-procurement-software", "/subcontractor-billing-software", "/construction-erp-implementation",
+    "/solutions/mep-contractors", "/solutions/solar-epc", "/solutions/civil-contractors", "/solutions/industrial-epc",
+    "/compare",
+  ];
+  for (const route of commercial) {
+    const html = readFileSync(new URL(`${route.slice(1)}/index.html`, dist), "utf8");
+    const main = (html.match(/<main[^>]*>([\s\S]*?)<\/main>/) || ["", ""])[1]
+      .replace(/<(script|style)[\s\S]*?<\/\1>/g, " ")
+      .replace(/<[^>]+>/g, " ");
+    const words = main.replace(/\s+/g, " ").trim().split(" ").length;
+    assert.ok(words >= 300, `${route}: ${words} words — too thin for a commercial page`);
+  }
+});
+
+test("trade pages name their trades instead of saying 'multi-trade'", async () => {
+  const { readFileSync } = await import("node:fs");
+  const expect = {
+    "/solutions/mep-contractors": ["electrical", "plumbing", "fire"],
+    "/solutions/solar-epc": ["inverter", "commissioning", "DISCOM"],
+    "/solutions/civil-contractors": ["muster roll", "gang", "payroll"],
+    "/solutions/industrial-epc": ["package", "retention", "turnkey"],
+  };
+  for (const [route, terms] of Object.entries(expect)) {
+    const html = readFileSync(new URL(`${route.slice(1)}/index.html`, dist), "utf8").toLowerCase();
+    for (const term of terms) assert.ok(html.includes(term.toLowerCase()), `${route} never mentions "${term}"`);
+  }
+});

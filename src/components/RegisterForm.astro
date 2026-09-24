@@ -45,7 +45,7 @@ const copy = getIntent(intent);
 
   <div class="rf__done" id="rfDone" hidden>
     <div class="rf__check" aria-hidden="true"><Icon name="check" size={30} /></div>
-    <h3>{copy.doneTitle}</h3>
+    <p class="rf__done-h">{copy.doneTitle}</p>
     <p class="muted">{copy.doneBody}</p>
   </div>
 </form>
@@ -73,6 +73,7 @@ const copy = getIntent(intent);
   .rf__recover-acts { display: flex; flex-wrap: wrap; gap: 8px; }
   .rf__recover-acts .btn { flex: 1 1 auto; }
   @media (max-width: 560px) { .rf__row { grid-template-columns: 1fr; } }
+  .rf__done-h { margin: 6px 0 4px; font-size: 1.15rem; font-weight: 800; color: var(--ink); }
 </style>
 
 <script>

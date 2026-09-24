@@ -35,7 +35,7 @@ const { source = "book-checklist" } = Astro.props;
 
   <div class="magnet__done" id="magnetDone" hidden>
     <div class="magnet__check" aria-hidden="true"><Icon name="check" size={30} /></div>
-    <h3>Your checklist is ready</h3>
+    <p class="magnet__done-h">Your checklist is ready</p>
     <p class="muted">Thanks! Your download should have started automatically.</p>
     <a class="btn btn--primary" href={PDF} download id="mg-dl">Download the PDF again</a>
     <p class="magnet__note" style="margin-top:14px">Want the full playbook? <a href="https://www.amazon.in/Deadly-Facts-value-project-Bestsellers/dp/8197111332" target="_blank" rel="noopener nofollow">View the book on Amazon →</a></p>
@@ -86,6 +86,7 @@ const { source = "book-checklist" } = Astro.props;
   .magnet__recover-acts { display: flex; flex-wrap: wrap; gap: 8px; }
   .magnet__recover-acts .btn { flex: 1 1 auto; }
   @media (max-width: 560px) { .magnet__grid { grid-template-columns: 1fr; } }
+  .magnet__done-h { margin: 6px 0 4px; font-size: 1.15rem; font-weight: 800; color: var(--ink); }
 </style>
 
 <script>

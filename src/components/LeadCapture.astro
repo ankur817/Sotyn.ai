@@ -41,7 +41,7 @@ const {
   </form>
   <div class="lc__done" id="leadDone" hidden>
     <div class="lc__check" aria-hidden="true"><Icon name="check" size={28} /></div>
-    <h3>You're all set.</h3>
+    <p class="lc__done-h">You're all set.</p>
     <p class="muted">Thanks! We'll be in touch on WhatsApp with the full version. Prefer to talk now?</p>
     <a class="btn btn--primary" href="/demo">Book a free demo</a>
   </div>
@@ -74,6 +74,7 @@ const {
   .lc__recover-acts { display: flex; flex-wrap: wrap; gap: 8px; }
   .lc__recover-acts .btn { flex: 1 1 auto; }
   @media (max-width: 560px) { .lc__grid { grid-template-columns: 1fr; } }
+  .lc__done-h { margin: 6px 0 4px; font-size: 1.15rem; font-weight: 800; color: var(--ink); }
 </style>
 
 <script>
