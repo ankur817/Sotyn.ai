@@ -96,6 +96,11 @@ export function validateLead(body = {}) {
       page: clamp(body.page, MAX.city),
       referrer: clamp(body.referrer, MAX.context),
       landingSearch: clamp(body.landingSearch, MAX.context),
+      // First touch of the visit — survives internal navigation, so a Google
+      // visitor who reads two pages before enquiring is still a Google visitor.
+      firstLanding: clamp(body.firstLanding, MAX.city),
+      firstReferrer: clamp(body.firstReferrer, MAX.context),
+      firstSearch: clamp(body.firstSearch, MAX.context),
       requestId: clamp(body.requestId, 80),
       isTest: body.is_test === true || /SOTYN WEBSITE TEST/i.test(name),
     },
@@ -171,10 +176,11 @@ export function toSheetRow({ leadId, lead, receivedAt, utm, erpRef = "", erpSync
     safeCell(lead.trade),
     label,
     safeCell(requirement),
-    safeCell(lead.referrer),
+    // Landing page = where the visit STARTED, not the referring URL.
+    safeCell(lead.firstLanding || lead.page),
     safeCell(lead.page),
     safeCell(lead.placement || lead.source),
-    acquisitionSource(lead.referrer, utm),
+    acquisitionSource(lead.firstReferrer || lead.referrer, utm),
     safeCell(utm.utm_source),
     safeCell(utm.utm_medium),
     safeCell(utm.utm_campaign),

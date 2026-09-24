@@ -105,7 +105,7 @@ export default async function handler(req, res) {
 
   const leadId = makeLeadId();
   const receivedAt = istTimestamp();
-  const utm = utmFrom(lead.landingSearch);
+  const utm = utmFrom(lead.firstSearch || lead.landingSearch);
 
   // The location PAGE the visitor came from, resolved against the district
   // registry. A district name supplied in a query string is never trusted or

@@ -218,5 +218,10 @@ const fbNoscript = SITE.metaPixelId
     <WhatsAppFloat />
     <ExitPopup />
     <ScrollAnimations />
+    <script>
+      // Records the first page and the external referrer of the visit, once.
+      import { captureFirstTouch } from "../lib/attribution.js";
+      captureFirstTouch();
+    </script>
   </body>
 </html>
