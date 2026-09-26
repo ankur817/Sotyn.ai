@@ -33,7 +33,21 @@ Every row is what the repo says today (branch `fix/audit-2026-09-23`). Nothing h
 | CTA band | "Book a free demo" | `/#demo` | unchanged — **open**: the header uses `/demo`, the band uses `/#demo`; pick one |
 | CTA band copy | "Join the free masterclass, or book a 1-on-1 demo." | — | **open** — the band has no masterclass link |
 
-## 3. Language support — DECISION 4
+## 3. Language support — RESOLVED 2026-09-26
+
+**Settled as "English today, ten rolling out"**, driven by `SITE.languages.uiStatus`.
+Evidence for choosing that over "11 live": the product's own sign-in screen is
+English only with no language switcher (checked 2026-09-26); `/demo` and
+`/reduce-project-delays` already told buyers the ten were rolling out; and the
+structured data declared two. Only the homepage claimed eleven were live, and a
+claim the demo itself contradicts costs more than it wins.
+
+**To flip it:** set `uiStatus: "live"` in `src/config/site.ts` and move the
+languages into `uiLive`. The homepage section, the FAQ answer and
+`availableLanguage` all follow from that one line, and a test fails the build if
+any page claims eleven languages while the switch says otherwise.
+
+### Original finding
 
 | Where | Wording | Implied status |
 |---|---|---|

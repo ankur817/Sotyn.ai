@@ -63,7 +63,8 @@ const orgSchema = {
     telephone: SITE.phoneHref,
     contactType: "sales",
     areaServed: "IN",
-    availableLanguage: ["en", "hi"],
+    // Support languages, from SITE.languages.supportLive — not aspirational.
+    availableLanguage: SITE.languages.supportLive.map((l) => (l === "English" ? "en" : l)),
   },
   sameAs: [SITE.social.linkedin, SITE.social.instagram, SITE.social.twitter, SITE.social.youtube].filter(Boolean),
 };

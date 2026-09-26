@@ -45,6 +45,37 @@ export const SITE = {
     gtmContainerId: "GTM-M7RVVGSG", // live container for www.sotyn.ai
   },
 
+  // ── LANGUAGES ────────────────────────────────────────────────────────────
+  // One switch drives every language claim on the site AND the structured data.
+  //
+  // Set to "rolling-out" on 2026-09-26 after checking the product itself: the
+  // sign-in screen at the app is English only, with no language switcher, and
+  // /demo and /reduce-project-delays already told buyers "English is live
+  // today; the ten most-spoken Indian languages are rolling out". The homepage
+  // was the only page claiming all eleven were live, and a claim the demo
+  // contradicts costs more than the claim wins.
+  //
+  // ⚠️ The day the in-app language switcher ships, set uiStatus to "live" and
+  // move those languages into uiLive. Every page and the schema follow.
+  languages: {
+    uiStatus: "rolling-out" as "live" | "rolling-out",
+    uiLive: ["English"],
+    supportLive: ["English"],
+    // English + the ten most-spoken Indian languages (2011 Census figures).
+    planned: [
+      { native: "हिन्दी", name: "Hindi", speakers: "52.8 Cr speakers" },
+      { native: "বাংলা", name: "Bengali", speakers: "9.7 Cr speakers" },
+      { native: "मराठी", name: "Marathi", speakers: "8.3 Cr speakers" },
+      { native: "తెలుగు", name: "Telugu", speakers: "8.1 Cr speakers" },
+      { native: "தமிழ்", name: "Tamil", speakers: "6.9 Cr speakers" },
+      { native: "ગુજરાતી", name: "Gujarati", speakers: "5.5 Cr speakers" },
+      { native: "اردو", name: "Urdu", speakers: "5.1 Cr speakers" },
+      { native: "ಕನ್ನಡ", name: "Kannada", speakers: "4.4 Cr speakers" },
+      { native: "ଓଡ଼ିଆ", name: "Odia", speakers: "3.75 Cr speakers" },
+      { native: "മലയാളം", name: "Malayalam", speakers: "3.48 Cr speakers" },
+    ],
+  },
+
   // ── Contact ──────────────────────────────────────────────────────────────
   phone: "+91 70099 87817",
   phoneHref: "+917009987817",

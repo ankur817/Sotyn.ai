@@ -307,3 +307,45 @@ test("the paid product is never marked as free, and the phone is well formed", a
   assert.match(org.contactPoint.telephone, /^\+\d{10,14}$/, `bad phone: ${org.contactPoint.telephone}`);
   assert.ok(!org.logo.includes("_astro/"), "the logo URL must be stable, not a build-hashed asset");
 });
+
+// ── The language claim: one switch, and the site may not out-run it ─────────
+test("no page claims a language is live while the config says rolling out", async () => {
+  const { readdirSync, readFileSync } = await import("node:fs");
+  const site = readFileSync(new URL("../src/config/site.ts", import.meta.url), "utf8");
+  const live = /uiStatus:\s*"live"/.test(site);
+  if (live) return; // once the switch flips, the claims are allowed
+
+  const overclaims = [
+    /runs in 11 languages/i,
+    /11-language/i,
+    /in 11 languages/i,
+    /available in (?:hindi|tamil|telugu|bengali)/i,
+  ];
+  const problems = [];
+  const walk = (dir, prefix = "") => {
+    for (const e of readdirSync(new URL(dir, dist), { withFileTypes: true })) {
+      if (e.isDirectory()) walk(`${dir}${e.name}/`, `${prefix}${e.name}/`);
+      else if (e.name.endsWith(".html")) {
+        const html = readFileSync(new URL(`${dir}${e.name}`, dist), "utf8");
+        for (const re of overclaims) {
+          if (re.test(html)) problems.push(`/${prefix}${e.name}: ${re}`);
+        }
+      }
+    }
+  };
+  walk("");
+  assert.deepEqual(problems, [], problems.join(" · "));
+});
+
+test("support languages in schema match the config, not the roadmap", async () => {
+  const { readFileSync } = await import("node:fs");
+  const html = readFileSync(new URL("index.html", dist), "utf8");
+  const nodes = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+    .flatMap((m) => { const d = JSON.parse(m[1]); return Array.isArray(d) ? d : [d]; });
+  const org = nodes.find((n) => n["@type"] === "Organization");
+  const site = readFileSync(new URL("../src/config/site.ts", import.meta.url), "utf8");
+  const supportBlock = site.match(/supportLive:\s*\[([^\]]*)\]/)[1];
+  const count = (supportBlock.match(/"/g) || []).length / 2;
+  assert.equal(org.contactPoint.availableLanguage.length, count,
+    "availableLanguage must list exactly the languages support is actually delivered in");
+});
